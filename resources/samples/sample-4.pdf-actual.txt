@@ -1,0 +1,12 @@
+https://aws.amazon.com/kinesis
+https://developers.google.com/protocol-buffers
+https://doi.org/10.1126/science.1213847
+https://flink.apache.org
+https://github.com/nirdslab/streaminghub-conduit
+https://github.com/nirdslab/streaminghub-dfs
+https://github.com/sccn/labstreaminglayer
+https://idl.cs.washington.edu/papers/reactive-vega
+https://kepler-project.org
+https://mqtt.org
+https://nodered.org
+https://www.knime.com
