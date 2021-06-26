@@ -21,45 +21,17 @@ def secure(protocol: str):
     return protocol
 
 
-def is_live_url(url: str):
-    try:
-        res = requests.get(url)
-        return res.ok
-    except:
-        return False
-
-
-def is_syntactically_valid_url(url: str):
-    try:
-        return validators.url(url)
-    except:
-        return False
-
-
 def retain_valid_urls(s: set, validate_online=False):
-    valid_urls = set()
-    if not validate_online:
-        for url in s:
-            if is_syntactically_valid_url(url):
-                valid_urls.add(url)
-    else:
-        for url in s:
-            if is_live_url(url):
-                valid_urls.add(url)
+    # validator function
+    def validator(url):
+        try:
+            return requests.get(url).ok if validate_online else validators.url(url)
+        except:
+            return False
+
+    # filter out invalid urls
+    valid_urls = set(filter(validator, s))
     return valid_urls
-
-
-# prev_ddp: set[str] = s.copy()
-# while True:
-#     if keep_short:
-#         # retain urls that are not super-strings of other urls
-#         next_ddp = {x for x in prev_ddp if all(x.find(y) == -1 for y in prev_ddp.difference([x]))}
-#     else:
-#         # retain urls that are not sub-strings of other urls
-#         next_ddp = {x for x in prev_ddp if all(y.find(x) == -1 for y in prev_ddp.difference([x]))}
-#     if len(next_ddp) == len(prev_ddp):
-#         return next_ddp
-#     prev_ddp = next_ddp
 
 
 def parse(parts: Union[list, str]):
