@@ -19,8 +19,8 @@ class Util:
 
     RE_NEWLINES = re.compile(r"\n+")
     RE_URL_BLACKLIST = re.compile(r'.*(doi|arxiv)\.org/.*')
-    RE_URL_FULL = re.compile(r'(?=((http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?))', re.I)
-    RE_URL_PART = re.compile(r'(?=((www(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?))', re.I)
+    RE_URL_FULL = re.compile(r'((http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)')
+    RE_URL_PART = re.compile(r'((www(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)')
 
     @staticmethod
     def canonicalize_url(url: str) -> Optional[str]:
@@ -35,13 +35,13 @@ class Util:
         # if full URL, return HTTPS/FTP URL
         match = Util.RE_URL_FULL.search(url)
         if match is not None:
-            curl = match.group(1).replace("http://", "https://", 1)
+            curl = match.group(0).replace("http://", "https://", 1)
             # print(f'{url} > {curl}')
             return curl
         # if partial URL, return HTTPS URL
         match = Util.RE_URL_PART.search(url)
         if match is not None:
-            curl = f"https://{match.group(1)}"
+            curl = f"https://{match.group(0)}"
             # print(f'{url} > {curl}')
             return curl
         # if neither, return None
@@ -98,8 +98,8 @@ class Util:
             for m in r.findall(v):
                 yield Util.canonicalize_url(m[i])
 
-        urls = urls.union(find_urls(text, Util.RE_URL_FULL, 1))
-        urls = urls.union(find_urls(text, Util.RE_URL_PART, 1))
+        urls = urls.union(find_urls(text, Util.RE_URL_FULL, 0))
+        urls = urls.union(find_urls(text, Util.RE_URL_PART, 0))
         # get valid urls from the set
         return Util.get_valid_urls(urls)
 
