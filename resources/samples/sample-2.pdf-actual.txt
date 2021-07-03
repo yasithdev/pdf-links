@@ -1,16 +1,2 @@
-https://arxiv.org/abs/1312.6026
-https://arxiv.org/abs/1409.2329
-https://arxiv.org/abs/1412.3555
-https://arxiv.org/abs/1412.6980
-https://arxiv.org/abs/1508.01991
-https://arxiv.org/abs/1511.08308
-https://arxiv.org/abs/1602.06023
-https://arxiv.org/abs/1603.01360
-https://arxiv.org/abs/1609.01704
-https://arxiv.org/abs/1609.07843
-https://arxiv.org/abs/1708.06834
-https://arxiv.org/abs/1711.02085
-https://arxiv.org/abs/1807.03756
-https://arxiv.org/abs/1811.03873
 https://nlp.stanford.edu/projects/glove
 https://www.aaai.org

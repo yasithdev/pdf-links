@@ -1,5 +1,3 @@
-https://arxiv.org/abs/1003.5699v1
-https://doi.org/10.1007/s10902-009-9150-9
 https://terramood.informatics.indiana.edu/data
 https://www.ccs.neu.edu/home/amislove/twittermood
 https://www.cs.pitt.edu/mpqa/opinionfinderrelease
