@@ -19,8 +19,16 @@ class Util:
 
     RE_NEWLINES = re.compile(r"\n+")
     RE_URL_BLACKLIST = re.compile(r'.*(doi|arxiv)\.org/.*')
-    RE_URL_FULL = re.compile(r'((http|ftp|https)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)')
-    RE_URL_PART = re.compile(r'((www(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)')
+
+    # regex set 1 (based on https://stackoverflow.com/questions/6038061/regular-expression-to-find-urls-within-a-string?answertab=votes#tab-top)
+    # RE_URL_FULL = re.compile(r'((https?|ftp)://([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)', re.I)
+    # RE_URL_PART = re.compile(r'(([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)', re.I)
+    # RE_URL_PART = re.compile(r'((www(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?)', re.I)
+
+    # regex set 2 (based on http://www.faqs.org/rfcs/rfc2396.html)
+    RE_URL_FULL = re.compile(r'((https?|ftp)://([^\s@/?#]+\.)+[a-z]{2,}(/[^\s?#]+)?(\?[^\s#]+)?(#\S)?)', re.I)
+    # RE_URL_PART = re.compile(r'(([^\s@/?#]+\.)+[a-z]{2,}(/[^\s?#]+)?(\?[^\s#]+)?(#\S)?)', re.I)
+    RE_URL_PART = re.compile(r'(www\.([^\s@/?#]+\.)*[a-z]{2,}(/[^\s?#]+)?(\?[^\s#]+)?(#\S)?)', re.I)
 
     @staticmethod
     def canonicalize_url(url: str) -> Optional[str]:
@@ -36,16 +44,13 @@ class Util:
         match = Util.RE_URL_FULL.search(url)
         if match is not None:
             curl = match.group(0).replace("http://", "https://", 1)
-            # print(f'{url} > {curl}')
             return curl
         # if partial URL, return HTTPS URL
         match = Util.RE_URL_PART.search(url)
         if match is not None:
             curl = f"https://{match.group(0)}"
-            # print(f'{url} > {curl}')
             return curl
         # if neither, return None
-        # print(f'{url} > None')
         return None
 
     @staticmethod
@@ -252,9 +257,9 @@ class ExtractorA(BaseExtractor):
         full_text = PDFMiner.get_full_text(fp)
         full_text_urls = Util.harvest_urls(full_text)
         # step 3 - get URLs in full_text_urls that do not match (exact/partial) any URL in annot_urls
-        better_full_text_urls = set()
+        better_full_text_urls = annot_urls.copy()
         for url in full_text_urls:
-            if not any(url == x or url.find(x) != -1 or x.find(url) != -1 for x in annot_urls):
+            if not any(url == x or url[8:].find(x[8:]) != -1 or x[8:].find(url[8:]) != -1 for x in annot_urls):
                 better_full_text_urls.add(url)
         # step 4 - concatenate urls, sort, and return
         final_urls = annot_urls.union(better_full_text_urls)
@@ -282,7 +287,7 @@ class ExtractorB(BaseExtractor):
         # step 4 - get URLs in tei_urls that do not match (exact/partial) any URL in annot_urls
         better_tei_urls = set()
         for url in tei_urls:
-            if not any(url == x or url.find(x) != -1 or x.find(url) != -1 for x in annot_urls):
+            if not any(url == x or url[8:].find(x[8:]) != -1 or x[8:].find(url[8:]) != -1 for x in annot_urls):
                 better_tei_urls.add(url)
         # step 5 - extract full text URLs from TEI-XML (error-prone)
         full_text = GROBID.get_full_text(tei_xml)
@@ -290,7 +295,8 @@ class ExtractorB(BaseExtractor):
         # step 6 - get URLs in full_text_urls that do not match (exact/partial) any URL in [annot_urls, better_tei_urls]
         better_full_text_urls = set()
         for url in full_text_urls:
-            if not any(url == x or url.find(x) or x.find(url) for x in annot_urls.union(better_tei_urls)):
+            if not any(url == x or url[8:].find(x[8:]) != -1 or x[8:].find(url[8:]) != -1 for x in
+                       annot_urls.union(better_tei_urls)):
                 better_full_text_urls.add(url)
         # step 7 - concatenate urls, sort, and return
         final_urls = annot_urls.union(better_tei_urls).union(better_full_text_urls)
@@ -310,7 +316,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Link Extractor')
     parser.add_argument('-e', required=True, help="extractor to use", choices=['A', 'B'])
-    parser.add_argument('-c', required=True, help="command to execute", choices=['TEXT', 'URL'])
+    parser.add_argument('-c', required=True, help="command to execute", choices=['TXT', 'URL'])
     parser.add_argument('-i', metavar='INPUT_PATH', required=True, help="path to input file")
     parser.add_argument('-o', metavar='OUTPUT_PATH', required=False, help="path to output file")
     args = parser.parse_args()
@@ -327,7 +333,7 @@ if __name__ == '__main__':
     # select command to execute
     if args.c == 'URL':
         fn = lambda x: '\n'.join(extractor.get_urls(x))
-    elif args.c == 'TEXT':
+    elif args.c == 'TXT':
         fn = extractor.get_text
     else:
         raise NotImplementedError('Requested Method Does Not Exist')
@@ -335,7 +341,7 @@ if __name__ == '__main__':
     # execute command
     result = fn(args.i)
     if args.o:
-        with open(args.o) as f_out:
+        with open(args.o, 'w') as f_out:
             f_out.write(result)
     else:
         print(result)
