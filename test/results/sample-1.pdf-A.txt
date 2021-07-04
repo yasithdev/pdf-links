@@ -1,0 +1,3423 @@
+MANUSCRIPT, APRIL 2021
+
+1
+
+Appearance-based Gaze Estimation With Deep
+Learning: A Review and Benchmark
+
+Yihua Cheng1, Haofei Wang2, Yiwei Bao1, Feng Lu1,2,*
+1State Key Laboratory of Virtual Reality Technology and Systems, SCSE, Beihang University, China.
+2Peng Cheng Laboratory, Shenzhen, China.
+{yihua c, baoyiwei, lufeng}@buaa.edu.cn, wanghf@pcl.ac.cn
+
+1
+2
+0
+2
+ 
+r
+p
+A
+ 
+6
+2
+ 
+ 
+]
+
+V
+C
+.
+s
+c
+[
+ 
+ 
+1
+v
+8
+6
+6
+2
+1
+.
+4
+0
+1
+2
+:
+v
+i
+X
+r
+a
+
+Abstract—Gaze estimation reveals where a person is looking.
+It is an important clue for understanding human intention. The
+recent development of deep learning has revolutionized many
+computer vision tasks, the appearance-based gaze estimation is no
+exception. However, it lacks a guideline for designing deep learn-
+ing algorithms for gaze estimation tasks. In this paper, we present
+a comprehensive review of the appearance-based gaze estimation
+methods with deep learning. We summarize the processing
+pipeline and discuss these methods from four perspectives: deep
+feature extraction, deep neural network architecture design,
+personal calibration as well as device and platform. Since the
+data pre-processing and post-processing methods are crucial for
+gaze estimation, we also survey face/eye detection method, data
+rectiﬁcation method, 2D/3D gaze conversion method, and gaze
+origin conversion method. To fairly compare the performance
+of various gaze estimation approaches, we characterize all the
+publicly available gaze estimation datasets and collect the code of
+typical gaze estimation algorithms. We implement these codes and
+set up a benchmark of converting the results of different methods
+into the same evaluation metrics. This paper not only serves
+as a reference to develop deep learning-based gaze estimation
+methods but also a guideline for future gaze estimation research.
+Implemented methods and data processing codes are available
+at http://phi-ai.org/GazeHub.
+
+Index Terms—gaze estimation, eye appearance, deep learning,
+
+review, benchmark.
+
+I. INTRODUCTION
+
+Eye gaze is one of the most important non-verbal commu-
+nication cues. It contains rich information of human intent that
+enables researchers to gain insights into human cognition [1],
+[2] and behavior [3], [4]. It is widely demanded by various
+applications, e.g., human-computer interaction [5], [6], [7]
+and head-mounted devices [8], [9], [10]. To enable such
+applications, accurate gaze estimation methods are critical.
+
+Over the last decades, a plethora of gaze estimation methods
+has been proposed. These methods usually fall
+into three
+categories: the 3D eye model recovery-based method, the 2D
+eye feature regression-based method and the appearance-based
+method. 3D eye model recovery-based methods construct a
+geometric 3D eye model and estimates gaze directions based
+on the model. The 3D eye model is usually person-speciﬁc
+due to the diversity of human eyes. Therefore, these methods
+usually require personal calibration to recover person-speciﬁc
+parameters such as iris radius and kappa angle. The 3D
+eye model recovery-based methods usually achieve reasonable
+
+* Feng Lu is the Corresponding Author.
+
+Fig. 1. Deep learning based gaze estimation relies on simple devices and
+complex deep learning algorithms to estimate human gaze. It usually uses
+off-the-shelf cameras to capture facial appearance, and employs deep learning
+algorithms to regress gaze from the appearance. According to this pipeline,
+we survey current deep learning based gaze estimation methods from four
+perspectives: deep feature extraction, deep neural network architecture design,
+personal calibration as well as device and platform.
+
+accuracy while they require dedicated devices such as in-
+frared cameras. The 2D eye feature regression-based methods
+usually keep the same requirement on devices as 3D eye
+model recovery-based methods. The methods directly use the
+detected geometric eye feature such as pupil center and glint to
+regress the point of gaze (PoG). They do not require geometric
+calibration for converting gaze directions into PoG.
+
+Appearance-based methods do not require dedicated de-
+vices, instead, it uses on-the-shelf web cameras to capture
+human eye appearance and regress gaze from the appearance.
+Although the setup is simple, it usually requires the following
+components: 1) An effective feature extractor to extract gaze
+features from high-dimensional raw image data. Some feature
+extractors such as histograms of oriented gradients are used in
+the conventional method [14]. However, it can not effectively
+extract high-level gaze features from images. 2) A robust
+regression function to learn the mappings from appearance
+to human gaze. It is non-trivial to map the high-dimensional
+eye appearance to the low-dimensional gaze. Many regression
+functions have been used to regress gaze from appearance, e.g.,
+local linear interpolation [15], adaptive linear regression [13]
+and gaussian process regression [16] , the regression perfor-
+mance is barely satisfactory. 3) A large number of training
+samples to learn the regression function. They usually collects
+personal samples with a time-consuming personal calibration,
+
+CalibrationFeaturePlatformModelChipDeep learning algorithms2
+
+MANUSCRIPT, APRIL 2021
+
+Fig. 2. (a) The change of devices in gaze estimation. From intrusive skin electrodes [11] to off-shelf web cameras, gaze estimation becomes more convenient.
+(b) Gaze estimation methods are also updated with the change of devices. We illustrate ﬁve kinds of gaze estimation methods. (1). Attached sensor based
+methods. The method samples the electrical signal of skin electrodes. The signal indicates the eye movement of subjects [12]. (2) 3D eye model recovery
+methods. The method usually builds a geometric eye model to calculate the visual axis, i.e., gaze directions. The eye model is ﬁtted based on the light
+reﬂection. (3) 2D eye feature regression methods. The method relies on IR cameras to detect geometric eye features such as pupil center, glints, and directly
+regress the PoG from these features. (4) Conventional appearance-based methods. The method use entire images as feature and directly regress human gaze
+from features. Some feature reduction methods are also used for extracting low-dimensional feature. For example, Lu et al. divide eye images into 15 subregion
+and sum the pixel intensities in each subregion as feature [13]. (5) Appearance-based gaze estimation with deep learning. Face or eye images are directly
+inputted into a designed neural network to estimate human gaze.
+
+and learns a person-speciﬁc gaze estimation model. Some
+studies seek to reduce the number of training samples. Lu et
+al. propose an adaptive linear regression method to select an
+optimal set of sparsest training sample for interpolation [13].
+However, this also limits the usage in real-world applications.
+Recently, deep learning-based gaze estimation approaches
+have become a research hotspot. Compared with conven-
+tional appearance based methods, deep learning based meth-
+ods demonstrate many advantages. 1) It can extract high-
+level abstract gaze features from high-dimensional images.
+2) It learns a highly non-linear mapping function from eye
+appearance to gaze. These advantages make deep learning-
+based methods are more robust and accurate than conven-
+tional methods. Conventional appearance-based methods of-
+ten have performance drop when meet head motion, while
+deep learning-based methods tolerate head movement to some
+extent. Deep learning-based methods also improve the cross-
+
+subject gaze estimation performance with a large margin.
+These improvements greatly expand the application range of
+appearance-based gaze estimation methods.
+
+In this paper, we provide a comprehensive review of
+appearance-based gaze estimation methods in deep learning.
+As shown in Fig. 1, we discuss these methods from four
+perspectives: 1) deep feature extraction, 2) deep neural net-
+work architecture design, 3) personal calibration, 4) device
+and platform. In the deep feature extraction perspective, we
+describe how to extract effective feature in the current meth-
+ods. We divide the raw feature into eye images, face images
+and videos. The algorithm for extracting high-level feature
+from the three raw features is respectively reviewed in this
+part. In the deep neural network architecture design perspec-
+tive, we review advanced CNN models. According to the
+supervision mechanism, we respective review supervised, self-
+supervised, semi-supervised and unsupervised gaze estimation
+
+IR camerasLightSkin electrodesDC AmplifierDC AmplifierHorizontalPositionVerticalPosition+-Electrical SignalEye movementDC AmplifierDC Amplifier+-(1) Attached sensor based methodsOptical AxisFovealEyeball CenterLensVisual AxisκGazedirection(2) 3D eye model recovery methodsPoGRegressionPupilGeometric featureGlintetc.(3) 2D feature regression methodsFeature vector elementsGaze directionorPoGRegressionVision featureFeature reduction(4) Conventional appearance based methods(a) Change of devices in gaze estimation.(b) Different gaze estimation methods.glintNeural networksImages(5) Appearance based methods with deep learning Gaze directionorPoGWeb camerasSkin electrodesIR camerasIR camerasWeb camerasWeb camerasCameraCHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+3
+
+methods. We also describe different CNN architectures in gaze
+estimation including multi-task CNNs and recurrent CNNs.
+In addition, some methods integrate CNN models and prior
+knowledges of gaze. These methods are also introduced in this
+part. In the personal calibration perspective, we describe how
+to use calibration samples to further improve the performance
+of CNNs. We also introduce the method integrating user-
+unaware calibration sample collection mechanism. Finally, in
+the device and platforms perspective, we consider different
+cameras, i.e., RGB cameras, IR cameras and depth cameras,
+and different platforms, i.e., computer, mobile devices and
+head-mount device. We review the advanced methods using
+these cameras and proposed for these platforms.
+
+Besides deep learning-based gaze estimation methods, we
+also focus on the practice of gaze estimation. We ﬁrst review
+the data pre-processing methods of gaze estimation including
+face and eye detection methods, and common data rectiﬁ-
+cation methods. Then, considering various forms of human
+gaze, e.g., gaze direction and PoG, we further provide data
+post-processing methods. The methods describe the geometric
+conversion between various human gaze. We also build gaze
+estimation benchmarks based on the data post-processing
+methods. We collect and implement the codes of typical gaze
+estimation methods, and evaluate them on various datasets. For
+the different kinds of gaze estimation methods, we convert
+their result for comparison with the data post-processing
+methods. The benchmark provides comprehensive and fair
+comparison between state-of-the-art gaze estimation methods.
+The paper is organized as follows. Section II introduces the
+background of gaze estimation. We introduce the development
+and category of gaze estimation methods. Section III reviews
+the state-of-the-art deep learning based method. In Section IV,
+we introduce the public datasets as well as data pre-processing
+and post-processing methods. We also build the benchmark in
+this section. In Section V, we conclude the development of
+current deep learning-based methods and recommend future
+research directions. This paper can not only serve as a refer-
+ence to develop deep learning based-gaze estimation methods,
+but also a guideline for future gaze estimation research.
+
+II. GAZE ESTIMATION BACKGROUND
+
+A. Categorization
+
+Gaze estimation research has a long history. Figure 2 illus-
+trates the development progress of gaze estimation methods.
+Early gaze estimation methods rely on detecting eye movement
+patterns such as ﬁxation, saccade and smooth pursuit [11].
+They attach the sensors around the eye and use potential
+differences to measure eye movement [17], [18]. With the
+development of computer vision technology, modern eye-
+tracking devices have emerged. These methods usually esti-
+mate gaze using the eye/face images captured by a camera.
+In general, there are two types of such devices, the remote
+eye tracker and the head-mounted eye tracker. The remote eye
+tracker usually keeps a certain distance from the user, typically
+∼60 cm. The head-mounted eye tracker usually mounts the
+cameras on a frame of glasses. Compared to the intrusive eye
+tracking devices, the modern eye tracker greatly enlarges the
+range of application with computer vision-based methods.
+
+Computer vision-based methods can be further divided into
+three types: the 2D eye feature regression method, the 3D eye
+model recovery method and the appearance-based method. The
+ﬁrst two types of methods estimate gaze based on detecting
+geometric features such as contours, reﬂection and eye corners.
+The geometric features can be accurately extracted with the
+assistance of dedicated devices, e.g., infrared cameras. De-
+tailly, the 2D eye feature regression method learns a mapping
+function from the geometric feature to the human gaze, e.g.,
+the polynomials [19], [20] and the neural networks [21]. The
+3D eye model recovery method builds a subject-speciﬁc geo-
+metric eye model to estimate the human gaze. The eye model
+is ﬁtted with geometric features, such as the infrared corneal
+reﬂections [22], [23], pupil center [24] and iris contours [25].
+In addition, the eye model contains subject-speciﬁc parameters
+such as cornea radius, kappa angles. Therefore, it usually
+requires time-consuming personal calibration to estimate these
+subject-speciﬁc parameters for each subject.
+
+Appearance-based methods directly learn a mapping func-
+tion from images to human gaze. Different from 2D eye feature
+regression methods, appearance-based methods do not require
+dedicated devices for detecting geometric features. They use
+image features such as image pixel [13] or deep features [26]
+to regress gaze. Various regression models have been used,
+e.g., the neural network [27], the Gaussian process regression
+model [16], the adaptive linear regression model [13] and
+the convolutional neural network [26]. However, this is still
+a challenging task due to the complex eye appearance.
+
+B. Appearance-based Gaze Estimation
+
+Appearance-based methods directly learn the mapping func-
+tion from eye appearance to human gaze. As early in 1994,
+Baluja et al. propose a neural network and collect 2,000
+samples for training [27]. Tan et al. use a linear function
+to interpolate unknown gaze position using 252 training
+samples [15]. Early appearance-based methods usually learn
+a subject-speciﬁc mapping function. They require a time-
+consuming calibration to collect the training samples of the
+speciﬁc subject. To reduce the number of training samples,
+Williams et al. introduce semi-supervised Gaussian process
+regression methods [16]. Sugano et al. propose a method that
+combines gaze estimation with saliency [28]. Lu et al. propose
+an adaptive linear regression method to select an optimal set of
+sparsest training sample for interpolation [13]. However, these
+methods only show reasonable performance in a constrained
+environment, i.e., ﬁxed head pose and the speciﬁc subject.
+Their performance signiﬁcantly degrades when tested on an
+unconstrained environment. This problem is always challeng-
+ing in appearance-based gaze estimation.
+
+To address the performance degradation problem across
+subjects, Funes et al. presented a cross-subject
+training
+method [29]. However, the reported mean error is larger than
+10 degrees. Sugano et al. introduce a learning-by-synthesis
+method [30]. They use the large number of synthetic cross-
+subject data to train their model. Lu et al. employ a sparse
+auto-encoder to learn a set of bases from eye image patches
+and reconstruct the eye image using these bases [31]. To
+
+4
+
+MANUSCRIPT, APRIL 2021
+
+III. DEEP GAZE ESTIMATION FROM APPEARANCE
+
+We survey current deep learning based gaze estimation
+methods in this section. We introduce these methods from
+fours perspectives, deep feature extraction, deep neural net-
+work architecture design, personal calibration as well as device
+and platform. Figure 3 gives an overview of this section.
+
+A. Deep Feature From Appearance
+
+Feature extraction is critical in most of the learning-based
+tasks. Effectively extracting features from eye appearance is
+challenging due to the complex eye appearance. The quality of
+the extracted features determines the gaze estimation accuracy.
+Here, we summarize the feature extraction method according
+to the types of input into the deep neural network: eye images,
+face images and videos.
+
+1) Feature from eye images: The gaze direction is highly
+correlated with the eye appearance. Any perturbation in gaze
+direction results in eye appearance changes. For example, the
+rotation of the eyeball changes the location of the iris and the
+shape of the eyelid, which leads to changes in gaze direction.
+This relationship makes it possible to estimate gaze from
+eye appearance. Conventional methods usually estimate gaze
+from high-dimensional raw image features. These features are
+directly generated from eye images by raster scanning all the
+pixels [15], [44]. The features are highly redundant and can
+not handle environmental changes.
+
+Deep learning-based methods automatically extract deep
+features from eye images. Zhang et al. proposed the ﬁrst deep
+learning-based gaze estimation method [26]. They employ a
+CNN to extract the features from grey-scale single eye images
+and concatenate these features with an estimated head pose.
+As with most deep learning tasks, the deeper network structure
+and larger receptive ﬁeld, the more informative features can
+be extracted. In [42], Zhang et al. further extend their previous
+work [26] and present a GazeNet which is a 13-convolutional-
+layer neural network inherited from a 16-layer VGG network
+[45] as shown in Fig. 4 (a). They demonstrate that
+the
+GazeNet outperforms the LeNet-based approach presented in
+[26]. Chen et al. [46] use dilated convolutions to extract high-
+level eye features, which efﬁciently increases the receptive
+ﬁeld size of the convolutional ﬁlters without reducing spatial
+resolution.
+
+Early deep learning-based methods estimate the gaze from
+single eye image. Recent studies found that concatenating the
+features of two eyes help to improve the gaze estimation
+accuracy [47], [48]. Fischer et al.
+[47] employ two VGG-
+16 networks [45] to extract the individual features from two
+eye images, and concatenate two eye features for regression.
+Cheng et al.
+[48] build a four-stream CNN network for
+extracting features from two eye images. Two streams of CNN
+are used for extracting individual features from left/right eye
+images, the other two streams are used for extracting joint
+features of two eye images. They claim that the two eyes are
+asymmetric. Thus, they propose an asymmetric regression and
+evaluation network to extract the different features from two
+eyes. However, the studies in [47], [48] simply concatenate the
+left and right eye features to form new feature vectors, more
+
+Fig. 3. The architecture of section 3. We introduce gaze estimation with deep
+learning from four perspectives.
+
+tackle the head motion problem, Sugano et al. cluster the
+training samples with similar head poses and interpolate the
+gaze in local manifold [32]. Lu et al. suggest that initiating the
+estimation with the original training images and compensating
+for the bias via regression [33]. Lu et al. further propose
+a novel gaze estimation method that handles the free head
+motion via eye image synthesis using a single camera [34].
+
+C. Deep Learning for Appearance-based Gaze Estimation
+
+Appearance-based gaze estimation suffers from many chal-
+lenges, such as head motion and subject differences, especially
+in the unconstrained environment. These factors have a large
+impact on the eye appearance and complicate the eye appear-
+ance. Conventional appearance-based methods cannot handle
+these challenges gracefully due to the weak ﬁtting ability.
+
+Convolutional neural networks (CNNs) have been used
+in many computer vision tasks and demonstrate outstand-
+ing performance. Zhang et al. propose the ﬁrst CNN-based
+gaze estimation method to regress gaze directions from eye
+images [26]. They use a simple CNN and the performance
+surpasses most of the conventional appearance-based ap-
+proaches. Following this study, an increasing number of im-
+provements and extensions on CNN-based gaze estimation
+methods emerged. Face images [35] and videos [36] are
+used as input to the CNN for gaze estimation. These inputs
+provide more valuable information than using eye images
+alone. Some methods are proposed for handling the challenges
+in an unconstrained environment. For example, Cheng et
+al. use asymmetric regression to handle the extreme head
+pose and illumination condition [37]. Park et al.
+learn a
+pictorial eye representation to alleviate the personal appear-
+ance difference [38]. The calibration-based methods are also
+proposed to learn a subject-speciﬁc CNN model [39], [40].
+The vulnerability of appearance-based gaze estimation is also
+learned in [41].
+
+Section 3. Deep Gaze Estimation From AppearanceA). Deep FeatureB). CNN ModelC). CalibrationD). Devices and platforms1. Feature from eye images2. Feature from face images3. Feature from videos1. Supervised CNN2. Semi-/self-/unsupervised CNN3. Multi-task CNN4. Recurrent CNN5. CNNs with other priors1. Calibration via domain adaption2. Calibration via user-unaware data collection1. Cameras2. PlatformsCHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+5
+
+Fig. 4. Some typical CNN based gaze estimation network. (a). Gaze estimation with eye images [42]. (b) Gaze estimation with face images [43]. (c). Gaze
+estimation with face and eye images [35].
+
+recent studies propose to use attention mechanism for fusing
+two eye features. Cheng et al.
+[49] argue that the weights
+of two eye features are determined by face images due to the
+speciﬁc task in [49], so they assign weights with the guidance
+of facial features. Bao et al.
+[50] propose a self-attention
+mechanism to fuse two eye features. They concatenate the
+feature maps of two eyes and use a convolution layer to
+generate the weights of the feature map.
+
+The above-mentioned methods extract the general features
+from eye images, some works explored extracting special
+features to handle the head motion and subject difference.
+Extracting subject-invariant gaze features has become a re-
+search hotspot. Eye appearance varies by much across differ-
+ent people. The ultimate solution is to collect training data
+that covers the whole data space, however, it is practically
+impossible. Several studies have attempted to extract subject-
+invariant features from eye images [38], [51], [40]. Park
+et al.
+[38] convert the original eye images into a uniﬁed
+gaze representation, which is a pictorial representation of the
+eyeball, the iris and the pupil. They regress the gaze direction
+from the pictorial representation. Wang et al. propose an
+adversarial learning approach to extract the domain/person-
+invariant feature [51]. They feed the features into an additional
+classiﬁer and design an adversarial loss function to handle
+the appearance variations. Park et al. use an autoencoder to
+learn the compact latent representation of gaze, head pose
+and appearance [40]. They introduce a geometric constraint
+on gaze representations, i.e., the rotation matrix between the
+two given images transforms the gaze representation of one
+image to another. In addition, some methods use GAN to
+pre-process eye images to handle some speciﬁc environment
+factors. Kim et al.
+[52] utilize a GAN to convert low-light
+eye images into bright eye images. Rangesh et al. [53] use a
+GAN to remove eyeglasses.
+
+Besides the supervised approaches for extracting gaze fea-
+tures, unannotated eye images have also been used for learning
+gaze representations. Yu et al. propose to use the difference
+
+of gaze representations from two eyes as input to a gaze
+redirection network[54]. They use the unannotated eye images
+to perform the unsupervised gaze representation learning.
+
+2) Feature from face images: Face images contain the head
+pose information that also contributes to gaze estimation. Con-
+ventional methods have explored extracting features using face
+images. They usually extract features such as head pose [34]
+and facial landmarks [55], [56], [57]. The early eye image-
+based method uses the estimated head pose as an additional
+input [26]. However, the feature is proved to be useless for
+the deep learning-based method [42]. Some studies directly
+use face images as input and employ a CNN to automatically
+extract deep facial features [43], [35] as shown in Fig. 4 (b).
+It demonstrates an improved performance than the approaches
+that only use eye images.
+
+Face images contain redundant information. Researchers
+have attempted to ﬁlter out the useless features in face im-
+age [43], [58]. Zhang et al.
+[43] propose a spatial weighting
+mechanism to efﬁciently encode the location of the face into a
+standard CNN architecture. The system learns spatial weights
+based on the activation maps of the convolutional layers. This
+helps to suppress the noise and enhance the contribution of
+the highly activated regions. Zhang et al.
+[59] propose a
+learning-based region selection method. They dynamically se-
+lect suitable sub-regions from facial region for gaze estimation.
+Cheng et al.
+[60] propose a plug-and-play self-adversarial
+network to purify facial feature. Their network simultaneously
+removes all image feature and preserves gaze-relevant feature.
+As a result, this optimization mechanism implicitly removes
+the gaze-irrelevant feature and improve the robustness of gaze
+estimation networks.
+
+Some studies crop the eye image out of the face images
+and directly feed it into the network. These works usually use
+a three-stream network to extract features from face images,
+left and right eye images, respectively as shown in Fig. 4
+(c) [35], [46], [61], [62], [63]. Besides, Deng et al.
+[64]
+decompose gaze directions into the head rotation and eyeball
+
+13 Conv layers…hGazeFully connected1x1 Conv 5 Conv layersGazeFully connected(a)Gaze estimation with eye images [42](b)Gaze estimation with face images [43]4 Conv layers4 Conv layers5 Conv layersLeft eyeFully connectedFully connectedGazeRight eyeFaceGridFaceEye(c)Gaze estimation with face and eye images [35]6
+
+MANUSCRIPT, APRIL 2021
+
+accuracy. The optical ﬂow provides the motion information
+between the frames. Wang et al.
+[71] use the optical ﬂow
+constraints with 2D facial features to reconstruct the 3D face
+structure based on the input video frames. Eye movement
+dynamics, such as ﬁxation, saccade and smooth pursuits, have
+also been used to improve gaze estimation accuracy. Wang
+et al.
+[72] propose to leverage eye movement to generalize
+eye tracking algorithm to new subjects. They use a dynamic
+gaze transition network to capture underlying eye movement
+dynamics and serve as prior knowledge. They also propose
+another static gaze estimation network, which estimates gaze
+based on the static frame. By combining these two networks,
+they achieve better estimation accuracy compared with only
+using a static gaze estimation network. The combination
+method of the two networks is solved as a standard inference
+problem of linear dynamic system or Kalman ﬁlter [73].
+
+B. CNN Models
+
+Convolutional neural networks have been widely used in
+many compute vision tasks, such as object recognition [74],
+[75] and image segmentation [76], [77], they also demonstrate
+superior performance in the ﬁeld of gaze estimation. In this
+section, we ﬁrst review the existing gaze estimation methods
+from the learning strategy perspective, i.e., the supervised
+CNNs and the semi-/self-/un-supervised CNNs. Then we
+introduce the different network architectures,i.e., multi-task
+CNNs and the recurrent CNNs for gaze estimation. In the last
+part of this section, we discuss the CNNs that integrate prior
+knowledge to improve performance.
+
+1) Supervised CNNs: Supervised CNNs are the most com-
+monly used network in appearance-based gaze estimation [26],
+[78], [79], [80]. Fig. 4 also shows the typical architecture of
+supervised gaze estimation CNN. The network is trained using
+image samples with ground truth gaze directions. The gaze
+estimation problem is essentially learning a mapping function
+from raw images to the human gaze. Therefore, similar to
+the computer vision tasks [81], the deeper CNN architecture
+usually achieves better performance. A number of CNN archi-
+tectures, which have been proposed for typical computer vision
+tasks, also show great success in gaze estimation task, e.g.,
+LeNet [26], AlexNet [43], VGG [42], ResNet18 [36] and
+ResNet50 [82]. Besides, some well-designed modules also
+help to improve the estimation accuracy [46], [49], [83],
+[84] , e.g., Chen et al. propose to use dilated convolution to
+extract features from eye images [46], Cheng et al. propose
+an attention module for fusing two eye features [49].
+
+it
+
+To supervise the CNN during training, the system requires
+the large-scale labeled dataset. Several large-scale datasets
+have been proposed, such as MPIIGaze [26] and GazeCap-
+ture [35]. However,
+is difﬁcult and time-consuming to
+collect enough gaze data in practical applications. Inspired by
+the physiological eye model [85], some researchers propose
+to synthesize labeled photo-realistic image [30], [86], [87].
+These methods usually build eye-region models and render
+new images from these models. One of such methods is
+proposed by Sugano et al. [30]. They synthesize dense multi-
+view eye images by recovering the 3D shape of eye regions,
+
+Fig. 5. Gaze estimation with videos. It ﬁrst extracts static features from each
+frame using a typical CNN, and feeds these static features into RNN for
+extracting temporal information.
+
+rotation. They use face images to estimate the head rotation
+and eye images to estimate the eyeball rotation. These two
+rotations are aggregated into a gaze vector through a gaze
+transformation layer. Cheng et al.
+[49] propose a coarse-to-
+ﬁne gaze estimation method. They ﬁrst use a CNN to extract
+facial features from face images and estimate a basic gaze
+direction, then they reﬁne the basic gaze direction using eye
+features. The whole process is generalized as a bi-gram model
+and they use GRU [65] to build the network.
+
+Facial landmarks have also been used as additional fea-
+tures to model the head pose and eye position. Palmero et
+al. directly combine individual streams (face, eyes region and
+face landmarks) in a CNN [66]. Dias et al. extract the facial
+landmarks and directly regress gaze from the landmarks [67].
+The network outputs the gaze direction as well as an estimation
+of its own prediction uncertainty. Jyoti et al. further extract
+geometric features from the facial landmark locations
+[68].
+The geometric feature includes the angles between the pupil
+center as the reference point and the facial landmarks of the
+eyes and the tip of the nose. The detected facial landmarks
+can also be used for unsupervised gaze representation learning.
+Dubey et al.
+[69] collect the face images from the web and
+annotate their gaze zone based on the detected landmarks.
+They perform gaze zone classiﬁcation tasks on the dataset
+for unsupervised gaze representation learning. In addition,
+since the cropped face image does not contain face position
+information, Krafka et al.
+[35] propose the iTracker system,
+which combines the information from left/right eye images,
+face images as well as face grid information. The face grid
+indicates the position of the face region in the captured image
+and it is usually used in PoG estimation.
+
+3) Feature from videos: Besides the static features obtained
+from the images, temporal information from the videos also
+contributes to better gaze estimates. Recurrent Neural Network
+(RNN) has been widely used in video processing, e.g., long
+short-term memory (LSTM) [36], [70]. As shown in Fig. 5,
+they usually use a CNN to extract the features from the face
+images at each frame, and then input these features into a
+RNN. The temporal information is automatically captured by
+the RNN for gaze estimation.
+
+Temporal features such as the optical ﬂow and eye move-
+ment dynamics have been used to improve gaze estimation
+
+StaticRNNRNNRNN……𝑡0𝑡1𝑡𝑛Temporalgaze…CHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+7
+
+Fig. 6. A semi-supervised CNN [51]. It uses both labeled images and
+unlabeled images for training. It designs an extra appearance classiﬁer and a
+head pose classiﬁer. The two classiﬁers align the feature of labeled images
+and unlabeled images.
+
+Fig. 8. A unsupervised CNN [54]. It uses a CNN to extract 2-D feature from
+eye images. The feature difference of two images and one of eye image are
+fed into a pretrained gaze redirection network to generate the other eye image.
+
+As shown in Fig. 6, it requires labeled images in the training
+set as well as unlabeled images of the target subject/dataset.
+Therefore, they annotate the source of unlabeled images as
+“target” and labeled images as “training set”. To be more spe-
+ciﬁc, they use the labeled data to supervise the gaze estimation
+network and design an adversarial module for semi-supervised
+learning. Given these features used for gaze estimation, the
+adversarial module tries to distinguish their source, the gaze
+estimation network aims to extract subject/dataset-invariant
+features to cheat the module.
+
+Self-supervised CNNs aim to formulate a pretext auxiliary
+learning task to improve the estimation performance. Cheng et
+al. propose a self-supervised asymmetry regression network
+for gaze estimation [48]. As shown in Fig. 7, the network
+contains a regression network to estimate the two eyes’ gaze
+directions, and an evaluation network to assess the reliability
+the result of the regression
+of two eyes. During training,
+network is used to supervise the evaluation network,
+the
+accuracy of the evaluation network determines the learning
+rate in the regression network. They simultaneously train
+the two networks and improve the regression performance
+without additional inference parameters. Xiong et al. introduce
+a random effect parameter to learn the person-speciﬁc infor-
+mation in gaze estimation [92]. During training, they utilize
+the variational expectation-maximization algorithm [93] and
+stochastic gradient descent [94] to estimate the parameters of
+the random effect network. After training, they use another
+network to predict the random effect based on the feature
+representation of eye images. The self-supervised strategy
+predicts the random effects to enhance the accuracy for
+unseen subjects. He et al. introduce a person-speciﬁc user
+embedding mechanism. They concatenate the user embedding
+with appearance features to estimate gaze. They also build a
+teacher-student network, where the teacher network optimizes
+the user embedding during training and the student network
+learns the user embedding from the teacher network.
+
+Unsupervised CNNs only require unlabeled data for train-
+ing, nevertheless, it is hard to optimize CNNs without the
+ground truth. Many speciﬁc tasks are designed for unsu-
+
+Fig. 7. A self-supervised CNN [48]. The network is consisted of two sub-
+networks. The regression network estimates gaze from two eye images and
+generates the ground truth of the other network for self-supervision.
+
+where they use a patch-based multi-view stereo algorithm [88]
+to reconstruct the 3D shape from eight multi-view images.
+However, they did not consider the environmental changes.
+Wood et al. propose to synthesize the close-up eye images for
+a wide range of head poses, gaze directions and illuminations
+to develop a robust gaze estimation algorithm [89]. Following
+this work, Wood et al. further propose another system named
+UnityEye to rapidly synthesize large amounts of eye images
+of various eye regions [90]. To make the synthesized images
+more realistic, Shrivastava et al. propose an unsupervised
+learning paradigm using generative adversarial networks to
+improve the realism of the synthetic images [91]. These
+methods serve as data augmentation tools to improve the
+performance of gaze estimation.
+
+2) Semi-/Self-/Un-supervised CNNs: Semi-supervised, self-
+supervised and unsupervised CNNs rely more on the unlabeled
+images to boost the gaze estimation performance. Collecting
+large-scale labeled images is expensive, however, it is cost-
+efﬁcient to collect unlabeled images, they can be easily cap-
+tured using web cameras.
+
+Semi-supervised CNNs require both labeled and unlabeled
+images for optimizing networks. Wang et al. propose an ad-
+versarial learning approach for semi-supervised learning to im-
+prove the model performance on the target subject/dataset [51].
+
+CNNGaze estimatorPerson classifierHead classifierFeature extractionLabeled imagesUnlabeled imagesRegression networkEvaluation networkTwo eye imagesGazeSelf-SuperviseReliabilityReliabilityDeduction𝐼𝑖𝐼𝑗FeaturePretrained gaze redirection networkCNNCNN𝐼𝑖FeaturesupervisionshareDesired8
+
+MANUSCRIPT, APRIL 2021
+
+Other works perform multiple gaze-related tasks simulta-
+neously. Recasens et al. present an approach for following
+gaze in video by predicting where a person (in the video) is
+looking, even when the object is in a different frame [101].
+They build a CNN to predict the gaze location in each frame
+and the probability containing the gazed object of each frame.
+Also, visual saliency shows strong correlation with human
+gaze in scene images [102], [103]. In [104], they estimate the
+general visual attention and human’s gaze directions in images
+at the same time. Kellnhofer et al. propose a dynamic 3D gaze
+network that includes temporal information [36]. They use bi-
+LSTM [105] to process a sequence of 7 frames. The extracted
+feature is used to estimate not only the gaze direction of the
+central frame but also the gaze uncertainty.
+
+4) Recurrent CNNs: Human eye gaze is continuous. This
+inspires researchers to improve gaze estimation performance
+by using temporal information. Recently, recurrent neural net-
+works have shown great capability in handling sequential data.
+Thus, some researchers employ recurrent CNNs to estimate the
+gaze in videos [66], [36], [70].
+
+Here, we give a typical example of the data processing
+workﬂow. Given a sequence of frames {X1, X2, ..., XN }, a
+united CNN fU is used to extract feature vectors from each
+frame, i.e., xt = fU (Xt). These feature vectors are fed into
+a recurrent neural network fR and the network outputs the
+gaze vector, i.e., gi = fR(x1, x2, ..., xN ), where the index i
+can be set according to speciﬁc tasks, e.g., i = N [66] or
+i = (N + 1)/2 [36]. An example is also shown in Fig. 5.
+
+Different
+
+types of input have been explored to extract
+features. Kellnhofer et al. directly extract features from facial
+images [36]. Zhou et al. combine the feature extracted from
+facial and eye images [70]. Palmero et al. use facial images,
+binocular images and facial landmarks to generate the feature
+vectors [66]. Different RNN structures have also been ex-
+plored, such as GRU [65] in [66], LSTM [106] in [70] and bi-
+LSTM [105] in [36]. Cheng et al. leverage the recurrent CNN
+to improve gaze estimation performance from static images
+rather than videos [49]. They generalize the gaze estimation
+as a sequential coarse-to-ﬁne process and use GRU to relate
+the basic gaze direction estimated from facial images and the
+gaze residual estimated from eye images.
+
+5) CNNs With Other Priors: Prior information also helps
+to improve gaze estimation accuracy, such as eye models, eye
+movement patterns, etc. [64], [48], [38], [72], [92], [107].
+
+Decomposition of Gaze Direction. The human gaze can be
+decomposed into the head pose and the eyeball orientation.
+Deng et al. use two CNNs to respectively estimate the head
+pose from facial images and the eyeball orientation from eye
+images. Then, they integrate the two results into ﬁnal gaze
+with geometric transformation [64].
+
+Anatomical Eye Model. The human eye is composed of the
+eye ball, the iris, and the pupil center, etc. Park et al. propose a
+pictorial gaze representation based on the eye model to predict
+the gaze direction [38]. They render the eye model to generate
+a pictorial image, where the pictorial image eliminates the
+appearance variance. They use a CNN to map the original
+images into the pictorial images and use another CNN to
+estimate gaze directions from the pictorial image.
+
+Fig. 9. A multitask CNN [95]. It estimates the coefﬁcients of a landmark-gaze
+model as well as the scale and translation parameters to align eye landmarks.
+The three results are used to calculate eye landmarks and estimated gaze.
+
+pervised CNNs. Dubey et al.
+[69] collect unlabeled facial
+images from webpages. They roughly annotate the gaze region
+based on the detected landmarks. Therefore, they can perform
+the classical supervised task for gaze representation learning.
+Yu et al. utilize a pre-trained gaze redirection network to
+perform unsupervised gaze representation learning [54]. As
+shown in Fig. 8, they use the gaze representation difference
+of the input and target images as the redirection variables.
+Given the input image and the gaze representation difference,
+the gaze network reconstructs the target image. Therefore,
+the reconstruction task supervises the optimization of the
+gaze representation network. Note that, these approaches learn
+the gaze representation, but they also require a few labeled
+samples to ﬁne-tune the ﬁnal gaze estimator.
+
+3) Multi-task CNNs: Multi-task learning usually contains
+multiple tasks that provide related domain information as
+inductive bias to improve model generalization [96], [97].
+Some auxiliary tasks are proposed for improving model gen-
+eralization in gaze estimation. Lian et al. propose a multi-task
+multi-view network for gaze estimation [98]. They estimate
+gaze directions based on single-view eye images and PoG
+from multi-view eye images. They also propose another multi-
+task CNN to estimate PoG using depth images[99]. They
+design an additional task to leverage facial features to reﬁne
+depth images. The network produces four features for gaze
+estimation, which are extracted from the facial images, the
+left/right eye images and the depth images.
+
+Some works seek to decompose the gaze into multiple
+related features and construct multi-task CNNs to estimate
+these feature. Yu et al. introduce a constrained landmark-
+gaze model for modeling the joint variation of eye landmark
+locations and gaze directions [95]. As shown in Fig. 9, they
+build a multi-task CNN to estimate the coefﬁcients of the
+landmark-gaze model as well as the scale and translation
+information to align eye landmarks. Finally, the landmark-
+gaze model serve as a decode to calculate gaze from estimated
+parameters.. Deng et al. decompose the gaze direction into
+eyeball movement and head pose [64]. They design a multi-
+tasks CNN to estimate the eyeball movement from eye images
+and the head pose from facial images. The gaze direction
+is computed from eyeball movement and head pose using
+geometric transformation. Wu et al. propose a multi-task CNN
+that simultaneously segments the eye part, detects the IR LED
+glints, and estimates the pupil and cornea center [100]. The
+gaze direction is covered from the reconstructed eye model.
+
+CNNDecoderLandmarkGazeFCHead PoseCoefficientsTranslationScaleCHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+9
+
+1) Calibration via Domain Adaptation: The calibration
+problem can be considered as domain adaption problems,
+where the training set is the source domain and the test set is
+the target domain. The test set usually contains unseen subjects
+(the cross-person problem), or unseen environment (the cross-
+dataset problem). Researchers aim to improve the performance
+in the target domain using the calibration samples.
+
+The common approach of domain adaption is to ﬁne-tune
+the model in the target domain [35], [108], [109]. This is
+simple but effective. Krafka et al. replace the fully-connected
+layer with an SVM and ﬁne-tune the SVM layer to predict
+the gaze location [35]. Zhang et al. split the CNN into three
+parts: the encoder, the feature extractor, and the decoder [108].
+They ﬁne-tune the encoder and decoder in each target domain.
+Zhang et al. also learn a third-order polynomial mapping
+function between the estimated and ground-truth of 2D gaze
+locations [5]. Some studies introduce person-speciﬁc feature
+for gaze estimation [110], [111]. They learn the person-
+speciﬁc feature during ﬁne-tuning. Linden et al. introduce
+user embedding for recording personal
+information. They
+obtain user embedding of the unseen subjects by ﬁne-tuning
+using calibration samples [110]. Chen et al.
+[107] observe
+the different gaze distributions of subjects. They use the
+calibration samples to estimate the bias between the estimated
+gaze and the ground-truth of different subjects. They use bias
+to reﬁne the estimates. In addition, Yu et al. generate additional
+calibration samples through the synthesis of gaze-redirected
+eye images from the existing calibration samples [39]. The
+generated samples are also directly used for training. These
+methods all need labeled samples for supervised calibration.
+Besides the supervised calibration methods, there are some
+unsupervised calibration methods. These methods use un-
+labeled calibration samples to improve performance. They
+usually seek to align the features in different domains. Wang et
+al. propose an adversarial method for aligning features. They
+build a discriminator to judge the source of images from the
+extracted feature. The feature extractor has to confuse the
+discriminator, i.e., the generated feature should be domain-
+invariant. The adversarial method is semi-supervised and does
+not require labeled calibration samples. Guo et al.
+[112]
+use source samples to form a locally linear representation
+of each target domain prediction in gaze space. The same
+linear relationships are applied in the feature space to generate
+the feature representation of target samples. Meanwhile, they
+minimize the difference between the generated feature and
+extracted feature of target sample for alignment. Cheng et
+al.
+[60] propose a domain generalization methods. They
+improve the corss-dataset performance without knowing the
+target dataset or touching any new samples. They propose
+a self-adversarial framework to remove the gaze-irrelevant
+feature in face images. Since the gaze pattern is invariant in
+different domains, they align the features in different domains.
+Cui et al. deﬁne a new adaption problem [113]: adaptation
+from adults to children. They use the conventional domain
+adaption method, geodesic ﬂow kernel [114], to transfer the
+feature in the adult domain into the children domain.
+
+Meta learning and metric learning also show great potentials
+in domain adaption-based gaze estimation. Park et al. propose
+
+Fig. 10. Personal calibration in deep learning. The method usually samples
+a few images from the target domain as calibration samples. The calibration
+samples and training set are jointly used to improve the performance in target
+domain.
+
+Eye Movement Pattern. Common eye movements, such
+as ﬁxation, saccade and smooth pursuits, are independent
+of viewing contents and subjects. Wang et al. propose to
+incorporate the generic eye movement pattern in dynamic gaze
+estimation [72]. They recover the eye movement pattern from
+videos and use a CNN to estimate gaze from static images.
+
+Two eye asymmetry Property. Cheng et al. discover the
+’two eye asymmetry’ property that the appearances of two
+eyes are different while the gaze directions of two eyes
+are approximately the same [37]. Based on this observation,
+Cheng et al. propose to treat the two eyes asymmetrically
+in the CNN. They design an asymmetry regression network
+for adaptive weighting two eyes based on their performance.
+They also design an evaluation network for evaluating the
+asymmetric state of the regression network.
+
+Gaze data distribution. The basic assumption of most re-
+gression model is independent identically distributed (i.i.d),
+however, gaze data is not i.i.d. Xiong et al. discuss the non-
+i.i.d problem in [92]. They design a mixed-effect model to
+take into account the person-speciﬁc information.
+
+Inter-subject bias. Chen et al. observe the inter-subject bias
+in most datasets [107]. They make the assumption that there
+exists a subject-dependent bias that cannot be estimated from
+images. Thus, they propose a gaze decomposition method.
+They decompose the gaze into the subject-dependent bias and
+the subject-independent gaze estimated from images. During
+test, they use some image samples to calibrate the subject-
+dependent bias.
+
+C. Personal Calibration
+
+It is non-trivial to learn an accurate and universal gaze
+estimation model. Conventional 3D eye model recovery meth-
+ods usually build a uniﬁed gaze model including subject-
+speciﬁc parameters such as eyeball radius [22]. They perform
+a personal calibration to estimate these subject-speciﬁc pa-
+rameters. In the ﬁeld of deep learning-based gaze estimation,
+personal calibration is also explored to improve person-speciﬁc
+performance. Fig. 10 shows a common pipeline of personal
+calibration in deep learning.
+
+Source domaintraintestcalibrateTarget domainCNNCalibration samplesTarget domainsample10
+
+MANUSCRIPT, APRIL 2021
+
+Fig. 11. Different cameras and their captured images.
+
+a meta learning-based calibration approach [40]. They train
+a highly adaptable gaze estimation network through meta
+learning. The network can be converted into a person-speciﬁc
+network once training with target person samples. Liu et
+al. propose a differential CNN based on metric learning [115].
+The network predicts the gaze difference between two eyes.
+For inference, they have a set of subject-speciﬁc calibration
+images. Given a new image, the network estimates the differ-
+ences between the given image and the calibration image, and
+takes the average of them as the ﬁnal estimated gaze.
+
+2) Calibration via User-unaware Data Collection: Most
+calibration-based methods require labeled samples. However,
+it is difﬁcult to acquire enough labeled samples in practical
+applications. Collecting calibration samples in a user-unaware
+manner is an alternative solution [116], [117], [118].
+
+Some researchers implicitly collect calibration data when
+users are using computers. Salvalaio et al. propose to collect
+data when the user is clicking a mouse, this is based on the
+assumption that users are gazing at the position of the cursor
+when clicking the mouse [118]. They use online learning to
+ﬁne-tune their model with the calibration samples.
+
+Other studies investigate the relation between the gaze
+points and the saliency maps [102], [103]. Chang et al. utilize
+saliency information to adapt the gaze cestimation algorithm to
+a new user without explicit calibration[116]. They transform
+the saliency map into a differentiable loss map that can be
+used to optimize the CNN models. Wang et al. introduce a
+stochastic calibration procedure. They minimize the difference
+between the probability distribution of the predicted gaze and
+the ground truth [117].
+
+D. Devices and Platforms
+
+1) Camera: The majority of gaze estimation systems use a
+single RGB camera to capture eye images, while some studies
+use different camera settings, e.g., using multiple cameras to
+capture multi-view images [98], [119], using infrared (IR)
+cameras to handle low illumination condition [100], [121],
+and using RGBD cameras to provide the depth informa-
+tion [99]. Different cameras and their captured images are
+shown in Fig. 11.
+
+Tonsen et al. embed multiple millimeter-sized RGB cameras
+into a normal glasses frame [119]. They use multi-layer
+
+Fig. 12. Different platforms and their characteristics.
+
+perceptrons to process the eye images captured by different
+cameras, and concatenate the extracted feature to estimate
+gaze. Lian et al. mount three cameras at the bottom of a
+screen [98]. They build a multi-branch network to extract
+the features of each view and concatenate them to estimate
+2D gaze position on the screen. Wu et al. collect gaze data
+using near-eye IR cameras [100]. They use CNN to detect the
+location of glints, pupil centers and corneas from IR images.
+Then, they build an eye model using the detected feature and
+estimate gaze from the gaze model. Kim et al. collect a large-
+scale dataset of near-eye IR eye images [121]. They synthesize
+additional IR eye images that cover large variations in face
+shape, gaze direction, pupil and iris etc.. Lian et al. use RGBD
+cameras to capture depth facial images [99]. They extract the
+depth information of eye regions and concatenate it with RGB
+image features to estimate gaze.
+
+2) Platform: Eye gaze can be used to estimate human
+in various applications, e.g., product design evalua-
+intent
+tion [126], marketing studies [127] and human-computer inter-
+action [128], [129], [7]. These applications can be categorized
+into three types of platforms: computers, mobile devices and
+head-mounted devices. We summarize the characteristics of
+these platforms in Fig. 12.
+
+The computer is the most common platform for appearance-
+based gaze estimation. The cameras are usually placed be-
+low/above the computer screen [26], [130], [48], [49], [38].
+Some works focus on using deeper neural networks [26],
+[43], [47] or extra modules [38], [48], [49] to improve gaze
+estimation performance, while the other studies seek to use
+custom devices for gaze estimation, such as multi-cameras and
+RGBD cameras [98], [99].
+
+The mobile device is another common platform for gaze
+estimation [35], [50], [124]. Such devices often contain front
+cameras, but the computational resources are limited. These
+systems usually estimate PoG instead of gaze directions due
+to the difﬁculty of geometric calibration. Krafka et al. pro-
+pose a PoG estimation method for mobile devices, named
+iTracker [35]. They combine the facial image, two eye images
+
+RGB CameraIR CameraDepth CameraComputerHMD deviceMobile deviceLarge gaze zone.Sufficient compute resources.Free camera setting.etc.IR Camera.Limited compute resources. Near-eye, low resolution camera.etc.Small gaze zone.Limited compute resources.Fixed camera.etc. CHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+11
+
+TABLE I
+SUMMARY OF GAZE ESTIMATION METHODS.
+
+Perspectives
+
+Methods
+
+2015
+
+2016
+
+2017
+
+2018
+
+2019
+
+2020
+
+2021
+
+Eye image
+
+[26]
+
+—
+
+[42], [119],
+[113]
+
+[47],
+[95],
+
+[38],
+[48],
+[120]
+
+[40],
+[98],
+[121]
+
+[46],
+[100],
+
+[51],
+[115],
+
+[49],
+[52],
+[54]
+
+[50],
+[53],
+
+[79],
+[80],
+
+—
+
+Feature
+
+Facial image
+
+—
+
+[35]
+
+[64],
+
+[43],
+[101]
+
+[68],
+
+[66],
+[104],
+[108]
+
+[5], [46], [69], [92],
+[99],
+[111],
+[110],
+[116], [118], [122]
+
+[50],
+[61],
+[123],
+[63],
+
+[49],
+[59],
+[62],
+[124],
+[82], [37], [107]
+
+[67],
+[83],
+[78],
+[112],
+
+[60]
+
+Video
+
+—
+
+—
+
+—
+
+[66]
+
+[36], [70], [71], [72]
+
+[125]
+
+Supervised CNN
+
+[26]
+
+[35]
+
+[43],
+[64],
+[42], [101],
+[113],
+[119]
+
+[47],
+[38],
+[66],
+[68],
+[95], [104],
+[108],
+[120]
+
+[50],
+[82],
+[59],
+[37],
+[62],
+[83],
+[79],
+[78],
+[52],
+[53],
+[63], [125], [107]
+
+[49],
+[61],
+[123],
+[124],
+[80],
+
+[5], [36], [40], [46],
+[72],
+[71],
+[70],
+[98],
+[100],
+[99],
+[115], [116], [118],
+[121], [122]
+
+[51],
+[69],
+[110], [111]
+
+[92],
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+Model
+
+Semi-/Self-/Un-Supervised CNN
+
+—
+
+[48]
+
+[54], [112], [37]
+
+[60]
+
+Multi-task CNN
+
+Recurrent CNN
+
+CNN with Other Priors
+
+— [101], [64]
+
+[95], [104]
+
+[36], [98], [99], [100]
+
+[125]
+
+—
+
+[64]
+
+[66]
+
+[38], [48]
+
+[36], [70]
+
+[72], [92]
+
+[49], [125]
+
+[107]
+
+Calibration
+
+Domain Adaption
+
+—
+
+[35]
+
+[113]
+
+[108]
+
+[5],
+[40],
+[39],
+[110], [111], [115]
+
+[107], [109], [112]
+
+User-unaware Data Collection
+
+— [117]
+
+—
+
+—
+
+[116], [118]
+
+—
+
+Single camera
+
+[26]
+
+[35]
+
+[43],
+[64],
+[42], [113]
+
+[47],
+[66],
+[95],
+
+[38],
+[48],
+[68],
+[104],
+[108],
+[120]
+
+[5], [36], [40], [46],
+[71],
+[70],
+[69],
+[72],
+[111],
+[100],
+[115], [116], [118],
+[121], [122]
+
+[49],
+[59],
+[83],
+[61],
+[78],
+[123],
+[52],
+[124],
+[80],
+[63],
+[82], [37], [107]
+
+[50],
+[62],
+[79],
+[53],
+[125],
+
+[60]
+
+Camera
+
+Platform
+
+Multi cameras
+
+IR Camera
+
+RGBD Camera
+
+Near-eye Camera
+
+[119]
+
+—
+
+—
+
+[119]
+
+—
+
+—
+
+—
+
+—
+
+[100], [121]
+
+[98]
+
+[99]
+
+[100], [121]
+
+—
+
+[53]
+
+—
+
+—
+
+Computer
+
+[26]
+
+—
+
+[43],
+[64],
+[42], [113]
+
+[47],
+[66],
+[95],
+
+[38],
+[48],
+[68],
+[104],
+[108]
+
+[5], [36], [40], [46],
+[71],
+[70],
+[69],
+[72],
+[99],
+[98],
+[115], [116], [118]
+
+[59],
+[62],
+[79],
+[80],
+[82],
+
+[61],
+[123],
+[52],
+[63],
+[37],
+
+[49],
+[83],
+[78],
+[53],
+[125],
+[107]
+
+Mobile Device
+
+Head-mounted device
+
+—
+
+—
+
+[35]
+
+—
+
+—
+
+[119]
+
+[108]
+
+[120]
+
+[111], [122]
+
+[100], [121]
+
+[50], [124]
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+—
+
+[60]
+
+—
+
+—
+
+and the face grid to estimate the gaze. The face grid encodes
+the position of the face in captured images and is proved to
+be effective for gaze estimation in mobile devices in many
+works [111], [50]. He et al. propose a more accurate and faster
+method based on iTracker [111]. They replace the face grid
+with a more sensitive eye corner landmark feature. Guo et
+al. propose a generalized gaze estimation method [122]. They
+propose a tolerant training scheme, the knowledge distillation
+framework. They observe the notable jittering problem in gaze
+point estimates and propose to use adversarial training to
+
+address this problem.
+
+The head-mounted device usually employs near-eye cameras
+to capture eye images. Tonsen et al. embed millimetre-sized
+RGB cameras into a normal glasses frame [119]. In order to
+compensate for the low-resolution captured images, they use
+multi-cameras to capture multi-view images and use a neural
+network to regress gaze from these images. IR cameras are
+also employed by head-mounted devices. Wu et al. collect
+the MagicEyes dataset using IR cameras [100]. They propose
+EyeNet, a neural network that solves multiple heterogeneous
+
+12
+
+MANUSCRIPT, APRIL 2021
+
+TABLE II
+SUMMARY OF FACE ALIGNMENT METHODS
+
+Names
+
+Years
+
+Pub.
+
+Links
+
+Dlib [131]
+
+2014
+
+CVPR
+
+https://pypi.org/project/dlib/19.6.0/
+
+MTCNN [132]
+
+2016
+
+SPL
+
+https://github.com/kpzhang93/M
+TCNN face detection alignment
+
+DAN [133]
+
+2017
+
+CVPRW https://github.com/MarekKowalski
+/DeepAlignmentNetwork
+
+OpenFace [134]
+
+2018
+
+FG
+
+https://github.com/TadasBaltrusait
+is/OpenFace
+
+PRN [135]
+
+2018
+
+ECCV
+
+https://github.com/YadiraF/PRNet
+
+3DDFA V2 [136] 2020
+
+ECCV
+
+https://github.com/cleardusk/3DD
+FA V2
+
+Fig. 13. A data rectiﬁcation method [30]. The virtual camera is rotated so
+that the z-axis points at the reference point and the x-axis is parallel with
+the x(cid:48)-axis of the head coordinate system (HCS). The bottom row illustrates
+the rectiﬁcation result on images. Overall, the reference point is moved to the
+center of images, the image is rotated to straighten face and scaled to align
+the size of face in different images.
+
+tasks related to eye gaze estimation for an off-axis camera
+setting. They use the CNN to model 3D cornea and 3D pupil
+and estimate the gaze from these two 3D models. Lemley et
+al. use the single near-eye image as input to the neural network
+and directly regress gaze [120]. Kim et al. follow a similar
+approach and collect the NVGaze dataset [121].
+
+E. Summarization
+
+We also summarizes and categorize the existing CNN-
+based gaze estimation methods in Tab. I. Note that, many
+methods do not specify a platform [26], [49]. We categorize
+these methods all into ”computer” in the row of platform. In
+summary, there is an increasing trend in developing supervised
+or semi-/self-/un-supervised CNN structures to estimate gaze.
+More recent research interests shift to different calibration
+approaches through domain adaptation or user-unaware data
+collection. The ﬁrst CNN-based gaze direction estimation
+method is proposed by Zhang et al. in 2015 [26], the ﬁrst
+CNN-based PoG estimation method is proposed by Krafka et
+al. in 2016 [35]. These two studies both provide large-scale
+gaze datasets, the MPIIGaze and the GazeCapture, which have
+been widely used for evaluating gaze estimation algorithms in
+later studies.
+
+IV. DATASETS AND BENCHMARKS
+
+A. Data Pre-processing
+
+1) Face and Eye Detection: Raw images often contain
+unnecessary information for gaze estimation, such as the
+background. Directly using raw images to regress gaze not
+only increases the computational resource but also brings
+nuisance factors such as changes in scenes. Therefore, face
+or eye detection is usually applied in raw images to prune
+unnecessary information. Generally, researchers ﬁrst perform
+
+face alignment in raw images to obtain facial landmarks and
+crop face/eye images using these landmarks. Several face
+alignment methods have been proposed recently [137], [138],
+[139]. We list some typical face alignment methods in Tab. II.
+After the facial landmarks are obtained, face or eye image
+are cropped accordingly. There is no protocol
+to regulate
+the cropping procedure. We provide a common cropping
+procedure here as an example. We let xi ∈ R2 be the x, y-
+coordinates of the ith facial landmark in an raw image I. The
+center point x is calculated as x = 1
+i=1 xi, where n is
+n
+the number of facial landmarks. The face image is deﬁned
+as a square region with the center x and an width w. The
+w is usually set empirically. For example,
+[43] set w as 1.5
+times of the maximum distance between the landmarks. The
+eye cropping is similar to face cropping, while the eye region
+is usually deﬁned as a rectangle with the center set as the
+centroid of eye landmarks. The width of the rectangle is set
+based the distance between eye corners, e.g., 1.2 times.
+
+(cid:80)n
+
+2) Data Rectiﬁcation: Gaze data is usually collected in
+the laboratory environment. Subjects are required to ﬁx their
+head on a chin rest [140]. Recent research gradually shifts
+the attention from the constrained gaze estimation to uncon-
+strained gaze estimation. The unconstrained gaze estimation
+introduces many environmental factors such as illumination
+and background. These factors increase the complexity of
+eye appearance and complicate the gaze estimation problem.
+Although the CNNs have a strong ﬁtting ability, it is still dif-
+ﬁcult to achieve accurate gaze estimation in an unconstrained
+environment. The goal of data rectiﬁcation is to eliminate the
+environmental factors by data pre-processing methods and to
+simplify the gaze regression problem. Current data rectiﬁcation
+methods mainly focus on head pose and illumination factors.
+The head pose can be decomposed into the rotation and
+translation of the head. The change of head pose degrades
+eye appearance and introduces ambiguity on eye appearance.
+To handle the head pose changes, Sugano et al. propose
+to rectify the eye image by rotating the virtual camera to
+point at the same reference point in the human face [30].
+They assume that the captured eye image is a plane in 3D
+space, the rotation of the virtual camera can be performed as
+a perspective transformation on the image. The whole data
+
+(a). The 𝑧-axis points out the reference point𝑧𝑥𝑦HCS𝑧𝑥∥𝑥′𝑦𝑥′(b). The𝑥-axis parallels to 𝑥′-axis of HCS. (c). Keep the same distance to the reference point Reference pointReference pointReference pointHCSHCSOrigin images Normalized imagesIllustrate the normalization result on imagesReference pointCHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+13
+
+TABLE III
+SYMBOL TABLE IN DATA POST-PROCESSING
+
+Symbol
+
+meaning
+
+p ∈ R2
+g ∈ R3
+o ∈ R3
+t ∈ R3
+Rs ∈ R3×3
+Ts ∈ R3
+
+n ∈ R3
+
+p = (u, v), gaze targets.
+
+g = (gx, gy, gz), gaze directions.
+
+o = (xo, yo, zo), origins of gaze directions.
+
+t = (xt, yt, zt), targets of gaze directions.
+
+The rotation matrix of SCS w.r.t. CCS.
+
+Ts = (tx, ty, tz), the translation matrix of
+SCS w.r.t. CCS.
+
+n = (nx, ny, nz), the normal vectors of x-y
+plane of SCS.
+
+rectiﬁcation process is shown in Figure 13. They compute
+the transformation matrix M = SR, where R is the rotation
+matrix and S is the scale matrix. R also indicates the rotated
+camera coordinate system. The z-axis zc of the rotated camera
+coordinate system is deﬁned as the line from cameras to
+reference points, where the reference point is usually set as the
+face center or eye center. It means that the rotated camera is
+pointing towards the reference point. The rotated x-axis xc is
+deﬁned as the x-axis of the head coordinate system so that the
+appearance captured by the rotated cameras is facing the front.
+The rotated y-axis yc can be computed by yc = zc × xc, the
+xc is recalculated by xc = yc × zc to maintain orthogonality.
+the rotation matrix R = [ xc
+||zc|| ].
+As a result,
+The S maintains the distance between the virtual camera
+and the reference point, which is deﬁned as diag(1, 1, dn
+),
+do
+where do is the original distance between the camera and the
+reference point, and dn is the new distance that can be adjusted
+manually. They apply a perspective transformation on images
+with W = CnM C−1
+, where Cr is the intrinsic matrix of
+the original camera and Cn is the intrinsic matrix of the new
+camera. Gaze directions can also be calculated in the rotated
+camera coordinate system as ˆg = M g. The method eliminates
+the ambiguity caused by different head positions and aligns the
+intrinsic matrix of cameras. It also rotates the captured image
+to cancel the degree of freedom of roll in head rotation. Zhang
+et al. further explore the method in [141]. They argue that
+scaling can not change the gaze direction vector. The gaze
+direction is computed by ˆg = Rg.
+
+||xc|| , yc
+
+||yc|| , zc
+
+r
+
+Illumination also inﬂuences the appearance of the human
+eye. To handle this, researchers usually take gray-scale im-
+ages rather than RGB images as input and apply histogram
+equalization in the gray-scale images to enhance the image.
+
+B. Data Post-processing
+
+Various applications demand different forms of gaze esti-
+mates. For example, in a real-world interaction task, it requires
+3D gaze directions to indicate the human intent [142], [10],
+while it requires 2D PoG for the screen-based interaction
+[7], [143]. In this section, we introduce how to convert
+different forms of gaze estimates by post-processing. We list
+the symbols in Tab. III and illustrate the symbols in Fig. 14.
+
+Fig. 14. We illustrate the relation between gaze directions and PoG. Gaze
+directions are originated from a origin o and intersect with the screen at the
+PoG. The PoG is usually denoted as a 2D coordinate p. It can be converted
+to 3D coordinate t in CCS with screen pose Rs and Ts. The gaze direction
+can also be computed with k(t − o), where k is a scale factor.
+
+We denote the PoG as 2D gaze and the gaze direction as 3D
+gaze in this section.
+
+1) 2D/3D Gaze Conversion: The 2D gaze estimation
+algorithm usually estimates gaze targets on a computer
+screen [122], [72], [35], [116], [144], while the 3D gaze esti-
+mation algorithm estimates gaze directions in 3D space [42],
+introduce how to convert
+[43], [36], [49], [92]. We ﬁrst
+between the 2D gaze and the 3D gaze.
+
+Given a 2D gaze target p = (u, v) on the screen, our
+goal
+is to compute the corresponding 3D gaze direction
+g = (gx, gy, gz). The processing pipeline is that we ﬁrst
+compute the 3D gaze target t and 3D gaze origin o in the
+camera coordinate system (CCS). The gaze direction can be
+computed as
+
+t − o
+||t − o||
+To derive the 3D gaze target t, we obtain the pose {Rs, Ts}
+of screen coordinate system (SCS) w.r.t. CCS by geometric
+calibration, where Rs is the rotation matrix and Ts is the
+translation matrix. The t is computed as t = Rs[u, v, 0]T +Ts,
+where the additional 0 is the z-axis coordinate of p in SCS.
+The 3D gaze origin o is usually deﬁned as the face center
+or the eye center. It can be estimated by landmark detection
+algorithms or stereo measurement methods.
+
+g =
+
+(1)
+
+.
+
+On the other hand, given a 3D gaze direction g, we aim to
+compute the corresponding 2D target point p on the screen.
+Note that, we also need to acquire the screen pose {Rs, Ts}
+as well as the origin point o as mentioned previously. We ﬁrst
+compute the intersection of gaze direction and screen, i.e., 3D
+gaze target t, in CCS, and then we convert the 3D gaze target
+to the 2D gaze target using the pose {Rs, Ts}.
+
+To deduce the equation of screen plane, we compute n =
+Rs[:, 2] = (nx, ny, nz), where n is the normal vector of
+screen plane. Ts = [tx, ty, tz]T also represents a point on the
+screen plane. Therefore, the equation of the screen plane is
+
+nxx + nyy + nzz = nxtx + nyty + nztz.
+
+(2)
+
+Given a gaze direction g and the origin point o, we can
+
+write the equation of the line of sight as
+x − xo
+gx
+
+y − yo
+gy
+
+z − zo
+gz
+
+=
+
+=
+
+.
+
+(3)
+
+Origin𝒐PoG𝒕=(𝑥,𝑦,𝑧)𝒑=(u,v)𝑆𝐶𝑆𝐶𝐶𝑆𝑅𝑠,𝑇𝑠𝑅𝑠,𝑇𝑠14
+
+MANUSCRIPT, APRIL 2021
+
+TABLE IV
+SUMMARY OF COMMON GAZE ESTIMATION DATASETS.
+
+Annotations
+2D
+Gaze
+
+3D
+Gaze
+
+Full
+face
+
+Datasets
+
+Subjects
+
+Total
+
+Brief Introduction
+
+Links
+
+Columbia [140], 2013, **
+(Columbia University)
+
+58
+
+6K images
+
+(cid:88)
+
+×
+
+50
+
+1.1M images
+
+×
+
+(cid:88)
+
+(cid:88) Collected in laboratory; 5 head
+pose and 21 gaze directions per
+head pose.
+
+(cid:88) Collected in laboratory; Fixed
+head pose; Multiview eye images;
+Synthesis eye images.
+
+UTMultiview [30], 2014,
+(The University of Tokyo;
+Microsoft Research Asia)
+
+EyeDiap [145], 2014, ***
+(Idiap Research Institute)
+
+MPIIGaze [42], 2015, ***
+(Max Planck Institute)
+
+GazeCapture [35], 2016,*
+(University of Georgia; MIT;
+Max Planck Institute)
+
+MPIIFaceGaze [43], ***
+2017,
+(Max Planck Insti-
+tute)
+
+InvisibleEye [119], 2017,
+(Max Planck Institute; Osaka
+University)
+
+TabletGaze [146], 2017,*
+(Rice University)
+
+16
+
+15
+
+94 videos
+
+(cid:88)
+
+(cid:88)
+
+(cid:88) Collected in laboratory; Free head
+
+poes; Additional depth videos.
+
+213K images
+
+×
+
+(cid:88)
+
+(cid:88) Collected by laptops in daily life;
+Free head pose and illumination.
+
+1, 474
+
+2.4M images
+
+(cid:88)
+
+(cid:88)
+
+×
+
+Collected by mobile devices in
+daily life; Variable lighting con-
+dition and head motion.
+
+15
+
+∼ 45K images (cid:88)
+
+(cid:88) Collected by laptops in daily life;
+Free head pose and illumination.
+
+footnote1
+
+(cid:88)
+
+(cid:88)
+
+17
+
+280K Images
+
+×
+
+51
+
+816 videos
+
+(cid:88)
+
+(cid:88)
+
+https://cs.col
+umbia.edu/CA
+VE/databases/c
+olumbia gaze
+
+https://ut-visio
+n.org/datasets
+
+https:
+//idiap.ch/d
+ataset/eyediap
+
+https:
+//mpi-inf.m
+pg.de/mpiigaze
+
+https:
+//gazecapture.
+csail.mit.edu
+
+RT-Gene [47], 2018,****
+(Imperial College London)
+
+15
+
+123K images
+
+(cid:88)
+
+×
+
+Gaze360 [36], 2019, ****
+(MIT; Toyota Research Insti-
+tute)
+
+NVGaze [121], 2019, ***
+(NVIDIA; UNC)
+
+ShanghaiTechGaze [98],*
+2019,
+(ShanghaiTech Uni-
+versity; UESTC)
+
+ETH-XGaze [82], 2020, *
+(ETH Zurich; Google)
+
+238
+
+172K images
+
+(cid:88)
+
+×
+
+30
+
+4.5M images
+
+×
+
+(cid:88)
+
+137
+
+224K images
+
+(cid:88)
+
+(cid:88)
+
+110
+
+1.1M images
+
+(cid:88)
+
+(cid:88)
+
+EVE [125], 2020,******
+(ETH Zurich)
+
+54
+
+∼ 4.2K videos (cid:88)
+
+(cid:88)
+
+×
+
+×
+
+×
+
+×
+
+Collected in laboratory; Multiple
+near-eye camera; Low resolution
+cameras .
+
+https:
+//mpi-inf.mpg
+.de/invisibleeye
+
+Collected by tablets in laboratory;
+Four postures to hold the tablets;
+Free head pose.
+
+(cid:88) Collected in laboratory; Free head
+pose; Annotated with mobile eye-
+tracker; Use GAN to remove the
+eye-tracker in face images.
+(cid:88) Collected in indoor and outdoor
+environments; A wide range of
+head poses and distances between
+subjects and cameras.
+
+Collected in laboratory; Near-eye
+Images; Infrared illumination.
+
+Collected in laboratory; Free head
+poes; Multiview gaze dataset.
+
+(cid:88) Collected in laboratory; High-
+resolution images; Extreme head
+pose; 16 illumination conditions.
+
+(cid:88) Collected in laboratory; Free head
+pose; Free view; Annotated with
+desktop eye tracker; Pupil size
+annotation.
+
+https://sh.rice.
+edu/cognitive-e
+ngagement/tabl
+etgaze
+
+https://github.c
+om/Tobias-Fis
+cher/rt gene
+
+https://gaze36
+0.csail.mit.edu
+
+https://sites.go
+ogle.com/nvidi
+a.com/nvgaze
+
+https:
+//github.com/d
+ongzelian/mult
+i-view-gaze
+
+https:
+//ait.ethz.c
+h/projects/202
+0/ETH-XGaze
+
+https://ait.ethz
+.ch/projects/2
+020/EVE/
+
+1 https://mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/research/gaze-based-human-computer-interaction/its-written-all-over-your-face-ful
+
+l-face-appearance-based-gaze-estimation
+
+CHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+15
+
+TABLE V
+BENCHMARK OF 3D GAZE ESTIMATION.
+
+Datasets
+
+Methods
+
+Task A: Estimate gaze directions
+originating from eye center
+
+Task B: Estimate gaze directions
+originating from face center
+
+MPIIGaze
+[42]
+
+EyeDiap
+[145]
+
+UT
+[30]
+
+MPIIFaceGaze
+[43]
+
+EyeDiap
+[145]
+
+Gaze360
+[36]
+
+ETH-XGaze
+[82]
+
+Proposed for task A
+
+Direct results of task A
+
+Converted results from task A
+
+Proposed for task B
+
+Converted results from task B
+
+Direct results of task B
+
+Mnist [26]
+
+GazeNet [42]
+
+Dilated-Net [46]
+
+Gaze360 [36]
+
+RT-Gene [47]
+
+FullFace [43]
+
+CA-Net [49]
+
+6.27◦
+5.70◦
+
+4.39◦
+4.07◦
+4.61◦
+4.96◦
+4.27◦
+
+7.60◦
+7.13◦
+
+6.57◦
+5.58◦
+6.30◦
+6.76◦
+5.63◦
+
+6.34◦
+6.44◦
+
+N/A
+
+N/A
+
+N/A
+
+N/A
+
+N/A
+
+Proposed for task C
+(In Tab. VI)
+
+Itracker [147]
+
+AFF-Net [50]
+
+Converted results from task C
+(In Tab. VI)
+7.50◦
+6.75◦
+
+7.25◦
+3.69◦
+
+N/A
+
+N/A
+
+6.39◦
+5.76◦
+
+4.42◦
+4.06◦
+4.66◦
+4.93◦
+4.27◦
+
+7.33◦
+3.73◦
+
+7.37◦
+6.79◦
+
+6.19◦
+5.36◦
+6.02◦
+6.53◦
+5.27◦
+
+7.13◦
+6.41◦
+
+N/A
+
+N/A
+
+13.73◦
+11.04◦
+12.26◦
+14.99◦
+11.20◦
+
+N/A
+
+N/A
+
+N/A
+
+N/A
+
+N/A
+4.46◦
+
+N/A
+7.38◦
+
+N/A
+
+N/A
+
+N/A
+
+Converted results from task C
+(In Tab. VI)
+
+* We will continue to add new methods and datasets. Please keep track of our website for the latest progress.
+
+By solving Eq. (2) and Eq. (3), we obtain the intersection
+−1(t − Ts), where z usually equals to 0
+t, and (u, v, z) = Rs
+and p = (u, v) is the coordinate of 2D target point in metre.
+2) Gaze Origin Conversion: Conventional gaze estimation
+methods usually estimate gaze directions w.r.t. each eye. They
+deﬁne the origin of gaze directions as each eye center [42],
+[38], [51], [115]. Recently, more attention has been paid
+to gaze estimation using face images, they usually estimate
+one gaze direction w.r.t.the whole face. They deﬁne the gaze
+direction as the vector starting from the face center to the gaze
+target [49], [40], [43], [47]. Here, we introduce a gaze origin
+conversion method to bridge the gap between these two types
+of gaze estimates.
+
+We ﬁrst compute the pose {Rs, Ts} of SCS and the origin
+o of the predicted gaze direction g through calibration. Then
+we can write Eq. (2) and Eq. (3) based on these parameters.
+The 3D gaze target point t can be calculated by solving the
+equation of Eq. (2) and Eq. (3). Next, we obtain the new origin
+on of the gaze direction through 3D landmark detection. The
+new gaze direction can be computed by
+
+gnew =
+
+t − on
+||t − on||
+
+.
+
+(4)
+
+C. Evaluation Metrics
+
+Two types of metric are used for performance evaluation:
+the angular error and the Euclidean distance. Two kinds
+
+of evaluation protocols are commonly used: within-dataset
+evaluation and cross-dataset evaluation.
+
+The angular error is usually used for measuring the accuracy
+of 3D gaze estimation method [49], [40], [42]. Assuming
+the actual gaze direction is g ∈ R3 and the estimated gaze
+direction is ˆg ∈ R3, the angular error can be computed as:
+
+Langular =
+
+g · ˆg
+||g||||ˆg||
+
+.
+
+(5)
+
+The Euclidean distance has been used for measuring the
+accuracy of 2D gaze estimation methods in [35], [116], [144].
+We denote the actual gaze position as p ∈ R2 and the
+estimated gaze position as ˆp ∈ R2. We can compute the
+Euclidean distance as
+
+LEuclidean = ||p − ˆp||,
+
+(6)
+
+The within-dataset evaluation assesses the model perfor-
+mance on the unseen subjects from the same dataset. The
+dataset is divided into the training set and the test set according
+to the subjects. There is no intersection of subjects between the
+training set and test set. Note that, most of the gaze datasets
+provide within-dataset evaluation protocol. They divide the
+data into training set and test set in advance.
+
+The cross-dataset evaluation assesses the model perfor-
+mance on the unseen environment. The model is trained on
+one dataset and tested on another dataset.
+
+16
+
+MANUSCRIPT, APRIL 2021
+
+TABLE VI
+BENCHMARK OF 2D GAZE ESTIMATION.
+
+Datasets
+
+Task C: Estimate 2D PoG.
+
+Methods
+
+MPIIFaceGaze [43]
+
+EyeDiap [145]
+
+Proposed for task C
+
+Direct results of task C
+
+Proposed for task A
+
+Converted results from task A (In Tab. V)
+
+Proposed for task B
+
+Converted results from task B (In Tab. V)
+
+Itracker [35]
+AFF-Net [50]
+SAGE [111]
+TAT [122]
+
+Mnist [26]
+GazeNet [42]
+
+Dilated-Net [46]
+Gaze360 [36]
+RT-Gene [47]
+FullFace [43]
+CA-Net [49]
+
+7.67 cm
+4.21 cm
+N/A
+N/A
+
+7.29 cm
+6.62 cm
+
+5.07 cm
+4.66 cm
+5.36 cm
+5.65 cm
+4.90 cm
+
+GazeCapture [35]
+
+Tablet
+
+Phone
+
+2.81 cm
+2.30 cm
+2.72 cm
+2.66 cm
+
+1.86 cm
+1.62 cm
+1.78 cm
+1.77 cm
+
+N/A
+N/A
+
+N/A
+N/A
+N/A
+N/A
+N/A
+
+N/A
+N/A
+
+N/A
+N/A
+N/A
+N/A
+N/A
+
+10.13 cm
+9.25 cm
+N/A
+N/A
+
+9.06 cm
+8.51 cm
+
+7.36 cm
+6.37 cm
+7.19 cm
+7.70 cm
+6.30 cm
+
+* We will continue to add new methods and datasets. Please keep track of our website for the latest progress.
+
+Fig. 15. Distribution of head psoe and gaze in different datasets. The ﬁrst row is the distribution of gaze and the second row is the distribution of head.
+
+D. Public Datasets
+
+Many large-scale gaze datasets have been proposed. In this
+survey, we try our best to summarize all the public datasets
+on gaze estimation, as shown in Tab. IV. The gaze direction
+distribution and head pose distribution of these datasets are
+shown in Fig. 15. Note that, the Gaze360 dataset do not
+provide the head information. We also discuss three typical
+datasets that are widely used in gaze estimation studies.
+
+1) MPIIGaze: Zhang et al. proposed the MPIIGaze [26]
+dataset. It is the most popular dataset for appearance-based
+gaze estimation methods. The MPIIGaze dataset contains a
+total of 213,659 images collected from 15 subjects. They are
+collected in daily life over several months and there is no
+
+constraint for the head pose. As a result, the images are of
+different illumination and head poses. The MPIIGaze dataset
+provides both 2D and 3D gaze annotation. It also provides a
+standard evaluation set. The evaluation set contains 15 subjects
+and 3,000 images for each subject. The images are consisted
+of 1,500 left-eye images and 1,500 right-eye images from
+15 subjects. The author further extends the original datasets
+in [43], [42]. The original MPIIGaze dataset only provides
+binocular eye images, while they supply the corresponding
+face images in [43] and manual landmark annotations in [42].
+
+2) EyeDiap: EyeDiap [145] dataset consists of 94 video
+the
+clips from 16 participants. Different from MPIIGaze,
+EyeDiap dataset is collected in a laboratory environment. It
+
+ETH-XGazeEyeDiapMPIIGazeRT-GENEUT-MultiviewGaze360EVECHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+17
+
+has three visual target sessions: the continuous moving target,
+the discrete moving target, and the ﬂoating ball. For each
+subject, they recorded a total of six sessions containing two
+head movements: static head pose and free head movement.
+Two cameras are used for data collection: an RGBD camera
+and an HD camera. The disadvantage of this dataset is that it
+lacks variation in illumination.
+
+3) GazeCapture: The GazeCapture [35] dataset is collected
+through crowdsourcing. It contains a total of 2,445,504 images
+from 1,474 participants. All images are collected using mobile
+is required to gaze at
+phones or tablets. Each participant
+a circle shown on the devices without any constraint on
+their head movement. As a result, the GazeCapture dataset
+covers various lighting conditions and head motions. The
+GazeCapture dataset does not provide 3D coordinates of the
+targets. It is usually used for the evaluation of unconstrained
+2D gaze point estimation methods.
+
+In addition to the dataset mentioned above, there are sev-
+eral datasets being proposed recently. In 2018, Fischer et
+al. proposed RT-Gene dataset [47]. This dataset provides
+accurate 3D gaze data since they collect gaze with a dedicated
+eye tracking device. In 2019, Kellnhofe et al. proposed the
+Gaze360 dataset [36]. The dataset consists of 238 subjects
+of indoor and outdoor environments with 3D gaze across a
+wide range of head poses and distances. In 2020, Zhang et
+al. propose the ETH-XGaze dataset [82]. This dataset provides
+high-resolution images that cover extreme head poses. It also
+contains 16 illumination conditions for exploring the effects
+of illumination.
+
+E. Benchmarks
+
+The system setups of the gaze estimation models are dif-
+ferent. 2D PoG estimation and 3D gaze direction estimation
+are two popular gaze estimation tasks. In addition, with regard
+to 3D gaze direction estimation, some methods are designed
+for estimating gaze from eye images. They deﬁne the origin
+of gaze directions as eye centers. However, this deﬁnition is
+not suitable for methods estimating gaze from face images.
+Therefore, these methods slightly change the deﬁnition of
+gaze directions and deﬁne the origin of gaze direction as face
+centers. These different task deﬁnitions become a barrier to
+compare gaze estimation methods. In this section, we break
+through the barrier with the data post-processing method, and
+build a comprehensive benchmark.
+
+We conduct benchmarks in three common gaze estimation
+tasks: a) estimate gaze directions originating from eye centers.
+b) estimate gaze directions originating from face centers. c)
+estimate 2D PoG. The results are shown in Figure V and
+Figure VI. We implement the typical gaze estimation methods
+of the three tasks. We use the gaze origin conversion method to
+convert the results of task a and task b, and use the 2D/3D gaze
+conversion method to convert the results of task c and task a/b.
+The two conversion methods are introduced in Section IV-B.
+The data pre-processing of each datasets and implemented
+method are available at http://phi-ai.org/GazeHub.
+
+V. CONCLUSIONS AND FUTURE DIRECTIONS
+
+In this survey, we present a comprehensive overview of
+deep learning-based gaze estimation methods. Unlike the
+conventional gaze estimation methods that requires dedicated
+devices, the deep learning-based approaches regress the gaze
+from the eye appearance captured by web cameras. This
+the algorithm in real world
+makes it easy to implement
+applications. We introduce the gaze estimation method from
+four perspectives: deep feature extraction, deep neural network
+architecture design, personal calibration as well as device and
+platform. We summarize the public datasets on appearance-
+based gaze estimation and provide benchmarks to compare
+of the state-of-the-art algorithms. This survey can serve as a
+guideline for future gaze estimation research.
+
+Here, we further suggest several future directions of deep
+learning-based gaze estimation. 1) Extracting more robust gaze
+features. The perfect gaze estimation method should be accu-
+rate under all different subjects, head poses, and environments.
+Therefore, a environment-invariant gaze feature is critical. 2)
+Improve performance with fast and simple calibration. There
+is a trade-off between the system performance and calibration
+time. The longer calibration time leads to more accurate
+estimates. How to achieve satisfactory performance with fast
+calibration procedure is a promising direction. 3) Interpretation
+of the learned features. Deep learning approach often serves
+as a black box in gaze estimation problem. Interpretation of
+the learned features in these methods brings insight for the
+deep learning-based gaze estimation.
+
+REFERENCES
+
+[1] M. K. Eckstein, B. Guerra-Carrillo, A. T. Miller Singley, and S. A.
+Bunge, “Beyond eye gaze: What else can eyetracking reveal about
+cognition and cognitive development?” Developmental Cognitive
+Neuroscience, vol. 25, pp. 69 – 91, 2017, sensitive periods across
+development. [Online]. Available: http://www.sciencedirect.com/scienc
+e/article/pii/S1878929316300846
+
+[2] G. E. Raptis, C. Katsini, M. Belk, C. Fidas, G. Samaras,
+and N. Avouris, “Using eye gaze data and visual activities to
+infer human cognitive styles: Method and feasibility studies,” in
+Proceedings of the 25th Conference on User Modeling, Adaptation and
+Personalization, ser. UMAP ’17. New York, NY, USA: Association
+for Computing Machinery, 2017, p. 164–173. [Online]. Available:
+https://doi.org/10.1145/3079628.3079690
+
+[3] M. Meißner and J. Oll, “The promise of eye-tracking methodology
+in organizational research: A taxonomy, review, and future avenues,”
+Organizational Research Methods, vol. 22, no. 2, pp. 590–617, 2019.
+[4] J. Kerr-Gaffney, A. Harrison, and K. Tchanturia, “Eye-tracking research
+in eating disorders: A systematic review,” International Journal of
+Eating Disorders, vol. 52, no. 1, pp. 3–27, 2019.
+
+[5] X. Zhang, Y. Sugano, and A. Bulling, “Evaluation of appearance-
+based methods and implications for gaze-based applications,” in
+the 2019 CHI Conference on Human Factors
+Proceedings of
+in Computing Systems, ser. CHI
+’19. New York, NY, USA:
+Association for Computing Machinery, 2019. [Online]. Available:
+https://doi.org/10.1145/3290605.3300646
+
+[6] P. Li, X. Hou, X. Duan, H. Yip, G. Song, and Y. Liu, “Appearance-
+based gaze estimator for natural interaction control of surgical robots,”
+IEEE Access, vol. 7, pp. 25 095–25 110, 2019.
+
+[7] H. Wang, X. Dong, Z. Chen, and B. E. Shi, “Hybrid gaze/eeg brain
+computer interface for robot arm control on a pick and place task,” in
+2015 37th Annual International Conference of the IEEE Engineering in
+Medicine and Biology Society (EMBC).
+IEEE, 2015, pp. 1476–1479.
+[8] A. Palazzi, D. Abati, s. Calderara, F. Solera, and R. Cucchiara,
+“Predicting the driver’s focus of attention: The dr(eye)ve project,” IEEE
+Transactions on Pattern Analysis and Machine Intelligence, vol. 41,
+no. 7, pp. 1720–1733, July 2019.
+
+18
+
+MANUSCRIPT, APRIL 2021
+
+[9] V. Sitzmann, A. Serrano, A. Pavel, M. Agrawala, D. Gutierrez, B. Ma-
+sia, and G. Wetzstein, “Saliency in vr: How do people explore virtual
+environments?” IEEE Transactions on Visualization and Computer
+Graphics, vol. 24, no. 4, pp. 1633–1642, April 2018.
+
+[10] H. Wang, J. Pi, T. Qin, S. Shen, and B. E. Shi, “Slam-based localization
+of 3d gaze using a mobile eye tracker,” in Proceedings of the 2018 ACM
+Symposium on Eye Tracking Research & Applications, 2018, pp. 1–5.
+[11] L. R. Young and D. Sheena, “Survey of eye movement recording
+methods,” Behavior research methods & instrumentation, vol. 7, no. 5,
+pp. 397–429, 1975.
+Eggert,
+
+recordings: methods,” Neuro-
+
+“Eye movement
+
+[12] T.
+
+Ophthalmology, vol. 40, pp. 15–34, 2007.
+
+[13] F. Lu, Y. Sugano, T. Okabe, and Y. Sato, “Adaptive linear regression
+for appearance-based gaze estimation,” IEEE Transactions on Pattern
+Analysis and Machine Intelligence, vol. 36, no. 10, pp. 2033–2046,
+2014.
+
+[14] F. Martinez, A. Carbone, and E. Pissaloux, “Gaze estimation using local
+features and non-linear regression,” in IEEE International Conference
+on Image Processing.
+
+IEEE, 2012, pp. 1961–1964.
+
+[15] Kar-Han Tan, D. J. Kriegman, and N. Ahuja, “Appearance-based eye
+gaze estimation,” in IEEE Workshop on Applications of Computer
+Vision (WACV), 2002, pp. 191–195.
+
+[16] O. Williams, A. Blake, and R. Cipolla, “Sparse and semi-supervised
+visual mapping with the s3gp,” in IEEE on Computer Vision and
+Pattern Recognition (CVPR), 2006.
+
+[17] O. Mowrer, T. C. Ruch, and N. Miller, “The corneo-retinal potential
+difference as the basis of the galvanometric method of recording eye
+movements,” American Journal of Physiology-Legacy Content, vol.
+114, no. 2, pp. 423–428, 1936.
+
+[18] E. Schott, “Uber die registrierung des nystagmus und anderer augen-
+bewegungen verm itteles des saitengalvanometers,” Deut Arch fur klin
+Med, vol. 140, pp. 79–90, 1922.
+
+[19] C. Morimoto and M. Mimica, “Eye gaze tracking techniques for
+interactive applications,” Computer Vision and Image Understanding,
+vol. 98, no. 1, pp. 4–24, 2005.
+
+[20] D. M. Stampe, “Heuristic ﬁltering and reliable calibration methods
+for video-based pupil-tracking systems,” Behavior Research Methods,
+Instruments, & Computers, vol. 25, no. 2, pp. 137–142, 1993.
+[21] J. Qiang and X. Yang, “Real-time eye, gaze, and face pose tracking
+for monitoring driver vigilance,” Real-Time Imaging, vol. 8, no. 5, pp.
+357–377, 2002.
+
+[22] E. D. Guestrin and M. Eizenman, “General theory of remote gaze
+estimation using the pupil center and corneal reﬂections,” IEEE Trans-
+actions on Biomedical Engineering, vol. 53, no. 6, pp. 1124–1133,
+2006.
+
+[23] Z. Zhu and Q. Ji, “Novel eye gaze tracking techniques under natu-
+ral head movement,” IEEE Transactions on Biomedical Engineering,
+vol. 54, no. 12, pp. 2246–2260, 2007.
+
+[24] R. Valenti, N. Sebe, and T. Gevers, “Combining head pose and eye
+location information for gaze estimation,” IEEE Transactions on Image
+Processing, vol. 21, no. 2, pp. p.802–815, 2012.
+
+[25] K. A. Funes Mora and J. Odobez, “Geometric generative gaze estima-
+tion (g3e) for remote rgb-d cameras,” in IEEE Conference on Computer
+Vision and Pattern Recognition (CVPR), 2014, pp. 1773–1780.
+[26] X. Zhang, Y. Sugano, M. Fritz, and A. Bulling, “Appearance-based
+gaze estimation in the wild,” in The IEEE Conference on Computer
+Vision and Pattern Recognition (CVPR), June 2015.
+
+[27] S. Baluja and D. Pomerleau, “Non-intrusive gaze tracking using
+
+artiﬁcial neural networks,” USA, Tech. Rep., 1994.
+
+[28] Y. Sugano, Y. Matsushita, and Y. Sato, “Appearance-based gaze esti-
+mation using visual saliency,” IEEE Transactions on Pattern Analysis
+and Machine Intelligence, vol. 35, no. 2, pp. 329–341, 2013.
+
+[29] K. A. Funes Mora and J. Odobez, “Person independent 3d gaze esti-
+mation from remote rgb-d cameras,” in IEEE International Conference
+on Image Processing, 2013, pp. 2787–2791.
+
+[30] Y. Sugano, Y. Matsushita, and Y. Sato, “Learning-by-synthesis for
+appearance-based 3d gaze estimation,” in The IEEE Conference on
+Computer Vision and Pattern Recognition (CVPR), June 2014.
+[31] F. Lu and X. Chen, “Person-independent eye gaze prediction from
+eye images using patch-based features,” Neurocomputing, vol. 182,
+pp. 10 – 17, 2016. [Online]. Available: http://www.sciencedirect.com/
+science/article/pii/S092523121501783X
+
+[32] Y. Sugano, Y. Matsushita, Y. Sato, and H. Koike, “An incremental
+learning method for unconstrained gaze estimation,” in European
+Conference on Computer Vision, ser. ECCV ’08. Berlin, Heidelberg:
+[Online]. Available: https:
+Springer-Verlag, 2008, p. 656–667.
+//doi.org/10.1007/978-3-540-88690-7 49
+
+[33] F. Lu, T. Okabe, Y. Sugano, and Y. Sato, “Learning gaze biases with
+head motion for head pose-free gaze estimation,” Image and Vision
+Computing, vol. 32, no. 3, pp. 169 – 179, 2014. [Online]. Available:
+http://www.sciencedirect.com/science/article/pii/S0262885614000171
+
+[34] F. Lu, Y. Sugano, T. Okabe, and Y. Sato, “Gaze estimation from eye
+appearance: A head pose-free method via eye image synthesis,” IEEE
+Transactions on Image Processing, vol. 24, no. 11, pp. 3680–3693,
+Nov 2015.
+
+[35] K. Krafka, A. Khosla, P. Kellnhofer, H. Kannan, S. Bhandarkar,
+W. Matusik, and A. Torralba, “Eye tracking for everyone,” in The IEEE
+Conference on Computer Vision and Pattern Recognition (CVPR), June
+2016.
+
+[36] P. Kellnhofer, A. Recasens, S. Stent, W. Matusik, and A. Torralba,
+“Gaze360: Physically unconstrained gaze estimation in the wild,”
+in The IEEE International Conference on Computer Vision (ICCV),
+October 2019.
+
+[37] Y. Cheng, X. Zhang, F. Lu, and Y. Sato, “Gaze estimation by exploring
+two-eye asymmetry,” IEEE Transactions on Image Processing, vol. 29,
+pp. 5259–5272, 2020.
+
+[38] S. Park, A. Spurr, and O. Hilliges, “Deep pictorial gaze estimation,”
+in The European Conference on Computer Vision (ECCV), September
+2018.
+
+[39] Y. Yu, G. Liu, and J.-M. Odobez, “Improving few-shot user-speciﬁc
+gaze adaptation via gaze redirection synthesis,” in The IEEE Confer-
+ence on Computer Vision and Pattern Recognition (CVPR), June 2019.
+[40] S. Park, S. D. Mello, P. Molchanov, U. Iqbal, O. Hilliges, and J. Kautz,
+“Few-shot adaptive gaze estimation,” in The IEEE International Con-
+ference on Computer Vision (ICCV), October 2019.
+
+[41] M. Xu, H. Wang, Y. Liu, and F. Lu, “Vulnerability of appearance-based
+
+gaze estimation,” arXiv preprint arXiv:2103.13134, 2021.
+
+[42] X. Zhang, Y. Sugano, M. Fritz, and A. Bulling, “Mpiigaze: Real-
+world dataset and deep appearance-based gaze estimation,” IEEE
+Transactions on Pattern Analysis and Machine Intelligence, vol. 41,
+no. 1, pp. 162–175, Jan 2019.
+
+[43] X. Zhang, Y. Sugano, M. Fritz, and A. Bulling, “It’s written all over
+your face: Full-face appearance-based gaze estimation,” in The IEEE
+Conference on Computer Vision and Pattern Recognition Workshops
+(CVPRW).
+
+IEEE, July 2017, pp. 2299–2308.
+
+[44] L. Q. Xu, D. Machin, and P. Sheppard, “A novel approach to real-time
+
+non-intrusive gaze ﬁnding,” in BMVC, 1998, pp. 428–437.
+
+[45] K. Simonyan and A. Zisserman, “Very deep convolutional networks for
+large-scale image recognition,” arXiv preprint arXiv:1409.1556, 2014.
+[46] Z. Chen and B. E. Shi, “Appearance-based gaze estimation using
+dilated-convolutions,” in Computer Vision – ACCV 2018, C. Jawahar,
+H. Li, G. Mori, and K. Schindler, Eds. Cham: Springer International
+Publishing, 2019, pp. 309–324.
+
+[47] T. Fischer, H. Jin Chang, and Y. Demiris, “Rt-gene: Real-time eye gaze
+estimation in natural environments,” in The European Conference on
+Computer Vision (ECCV), September 2018.
+
+[48] Y. Cheng, F. Lu, and X. Zhang, “Appearance-based gaze estimation via
+evaluation-guided asymmetric regression,” in The European Conference
+on Computer Vision (ECCV), September 2018.
+
+[49] Y. Cheng, S. Huang, F. Wang, C. Qian, and F. Lu, “A coarse-
+to-ﬁne adaptive network for appearance-based gaze estimation,” in
+Proceedings of the AAAI Conference on Artiﬁcial Intelligence (AAAI),
+2020.
+
+[50] Y. Bao, Y. Cheng, Y. Liu, and F. Lu, “Adaptive feature fusion network
+for gaze tracking in mobile tablets,” in The International Conference
+on Pattern Recognition (ICPR), 2020.
+
+[51] K. Wang, R. Zhao, H. Su, and Q. Ji, “Generalizing eye tracking with
+bayesian adversarial learning,” in The IEEE Conference on Computer
+Vision and Pattern Recognition (CVPR), June 2019.
+
+[52] J.-H. Kim and J.-W. Jeong, “Gaze estimation in the dark with generative
+adversarial networks,” in Proceedings of the 2020 ACM Symposium on
+Eye Tracking Research & Applications, 2020, pp. 1–3.
+
+[53] A. Rangesh, B. Zhang, and M. M. Trivedi, “Driver gaze estimation
+in the real world: Overcoming the eyeglass challenge,” in The IEEE
+Intelligent Vehicles Symposium (IV).
+
+IEEE, 2020, pp. 1054–1059.
+
+[54] Y. Yu and J.-M. Odobez, “Unsupervised representation learning for
+gaze estimation,” in The IEEE Conference on Computer Vision and
+Pattern Recognition (CVPR), June 2020.
+
+[55] H. Yamazoe, A. Utsumi, T. Yonezawa, and S. Abe, “Remote gaze
+estimation with a single camera based on facial-feature tracking
+without special calibration actions,” in Proceedings of the 2008 ACM
+Symposium on Eye Tracking Research & Applications, ser. ETRA ’08.
+New York, NY, USA: Association for Computing Machinery, 2008, p.
+
+CHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+19
+
+245–250. [Online]. Available: https://doi.org/10.1145/1344471.134452
+7
+
+[56] J. Chen and Q. Ji, “3d gaze estimation with a single camera without
+ir illumination,” in International Conference on Pattern Recognition
+(ICPR).
+
+IEEE, 2008, pp. 1–4.
+
+[57] L. A. Jeni and J. F. Cohn, “Person-independent 3d gaze estimation
+using face frontalization,” in The IEEE Conference on Computer Vision
+and Pattern Recognition Workshop (CVPRW), 2016, pp. 87–95.
+[58] R. Ogusu and T. Yamanaka, “Lpm: Learnable pooling module for
+efﬁcient full-face gaze estimation,” in 2019 14th IEEE International
+Conference on Automatic Face Gesture Recognition (FG 2019), May
+2019, pp. 1–5.
+
+[59] X. Zhang, Y. Sugano, A. Bulling, and O. Hilliges, “Learning-based re-
+gion selection for end-to-end gaze estimation,” in The British Machine
+Vision Conference (BMVC), 2020.
+
+[60] Y. Cheng, Y. Bao, and F. Lu, “Puregaze: Purifying gaze feature for
+generalizable gaze estimation,” arXiv preprint arXiv:2103.13173, 2021.
+[61] Z. Yu, X. Huang, X. Zhang, H. Shen, Q. Li, W. Deng, J. Tang, Y. Yang,
+and J. Ye, “A multi-modal approach for driver gaze prediction to
+remove identity bias,” in The International Conference on Multimodal
+Interaction, 2020, pp. 768–776.
+
+[62] Y. Zhang, X. Yang, and Z. Ma, “Driver’s gaze zone estimation method:
+A four-channel convolutional neural network model,” in The Interna-
+tional Conference on Big-data Service and Intelligent Computation,
+2020, pp. 20–24.
+
+[63] Z. Wang, J. Zhao, C. Lu, F. Yang, H. Huang, Y. Guo et al., “Learning
+to detect head movement in unconstrained remote gaze estimation in
+the wild,” in The IEEE Winter Conference on Applications of Computer
+Vision, 2020, pp. 3443–3452.
+
+[64] H. Deng and W. Zhu, “Monocular free-head 3d gaze tracking with
+deep learning and geometry constraints,” in The IEEE International
+Conference on Computer Vision (ICCV), Oct 2017.
+
+[65] K. Cho, B. Van Merri¨enboer, D. Bahdanau, and Y. Bengio, “On the
+properties of neural machine translation: Encoder-decoder approaches,”
+arXiv preprint, 2014.
+
+[66] C. Palmero, J. Selva, M. A. Bagheri, and S. Escalera, “Recurrent cnn
+for 3d gaze estimation using appearance and shape cues,” in The British
+Machine Vision Conference (BMVC), 2018.
+
+[67] P. A. Dias, D. Malafronte, H. Medeiros, and F. Odone, “Gaze estimation
+for assisted living environments,” in The IEEE Winter Conference on
+Applications of Computer Vision (WACV), March 2020.
+
+[68] S. Jyoti and A. Dhall, “Automatic eye gaze estimation using geometric
+& texture-based networks,” in 2018 24th International Conference on
+Pattern Recognition (ICPR), Aug 2018, pp. 2474–2479.
+
+[69] N. Dubey, S. Ghosh, and A. Dhall, “Unsupervised learning of eye gaze
+representation from the web,” in 2019 International Joint Conference
+on Neural Networks (IJCNN), July 2019, pp. 1–7.
+
+[70] X. Zhou, J. Lin, J. Jiang, and S. Chen, “Learning a 3d gaze estimator
+with improved itracker combined with bidirectional lstm,” in 2019
+IEEE International Conference on Multimedia and Expo (ICME), July
+2019, pp. 850–855.
+
+[71] Z. Wang, J. Chai, and S. Xia, “Realtime and accurate 3d eye gaze cap-
+ture with dcnn-based iris and pupil segmentation,” IEEE Transactions
+on Visualization and Computer Graphics, pp. 1–1, 2019.
+
+[72] K. Wang, H. Su, and Q. Ji, “Neuro-inspired eye tracking with eye
+movement dynamics,” in The IEEE Conference on Computer Vision
+and Pattern Recognition (CVPR), June 2019.
+
+[73] K. P. Murphy and S. Russell, “Dynamic bayesian networks: represen-
+
+tation, inference and learning,” 2002.
+
+[74] A. Krizhevsky, I. Sutskever, and G. E. Hinton, “Imagenet classiﬁcation
+with deep convolutional neural networks,” in Advances in neural
+information processing systems, 2012, pp. 1097–1105.
+
+[75] C. Farabet, C. Couprie, L. Najman, and Y. LeCun, “Learning hierarchi-
+cal features for scene labeling,” IEEE Transactions on Pattern Analysis
+and Machine Intelligence, vol. 35, no. 8, pp. 1915–1929, 2012.
+[76] J. Long, E. Shelhamer, and T. Darrell, “Fully convolutional networks
+for semantic segmentation,” in The IEEE Conference on Computer
+Vision and Pattern Recognition (CVPR), 2015, pp. 3431–3440.
+[77] O. Ronneberger, P. Fischer, and T. Brox, “U-net: Convolutional net-
+works for biomedical image segmentation,” in International Conference
+on Medical Image Computing and Computer-assisted Intervention.
+Springer, 2015, pp. 234–241.
+
+[78] S. Liu, D. Liu, and H. Wu, “Gaze estimation with multi-scale channel
+and spatial attention,” in The International Conference on Computing
+and Pattern Recognition, 2020, pp. 303–309.
+
+[79] B. Mahanama, Y.
+
+Jayarathna, “Gaze-net:
+appearance-based gaze estimation using capsule networks,” in The
+Augmented Human International Conference, 2020, pp. 1–4.
+
+Jayawardana, and S.
+
+[80] J. Lemley, A. Kar, A. Drimbarean, and P. Corcoran, “Convolutional
+neural network implementation for eye-gaze estimation on low-quality
+consumer imaging systems,” IEEE Transactions on Consumer Elec-
+tronics, vol. 65, no. 2, pp. 179–187, 2019.
+
+[81] K. He, X. Zhang, S. Ren, and J. Sun, “Deep residual learning for image
+recognition,” in The IEEE Conference on Computer Vision and Pattern
+Recognition (CVPR), 2016, pp. 770–778.
+
+[82] X. Zhang, S. Park, T. Beeler, D. Bradley, S. Tang, and O. Hilliges, “Eth-
+xgaze: A large scale dataset for gaze estimation under extreme head
+pose and gaze variation,” in The European Conference on Computer
+Vision (ECCV), 2020.
+
+[83] Y. Zhuang, Y. Zhang, and H. Zhao, “Appearance-based gaze estimation
+using separable convolution neural networks,” in The IEEE Advanced
+Information Technology, Electronic and Automation Control Confer-
+ence (IAEAC), vol. 5.
+
+IEEE, 2021, pp. 609–612.
+
+[84] A. Bublea and C. D. C˘aleanu, “Deep learning based eye gaze tracking
+for automotive applications: An auto-keras approach,” in The Inter-
+national Symposium on Electronics and Telecommunications (ISETC).
+IEEE, 2020, pp. 1–4.
+
+[85] K. Ruhland, S. Andrist, J. Badler, C. Peters, N. Badler, M. Gleicher,
+B. Mutlu, and R. Mcdonnell, “Look me in the eyes: A survey of
+eye and gaze animation for virtual agents and artiﬁcial systems,” in
+Eurographics, Apr. 2014, pp. 69–91.
+
+[86] L. Swirski and N. Dodgson, “Rendering synthetic ground truth images
+for eye tracker evaluation,” in Proceedings of the 2014 ACM Sympo-
+sium on Eye Tracking Research & Applications, ser. ETRA ’14, 2014,
+p. 219–222.
+
+[87] S. Porta, B. Bossavit, R. Cabeza, A. Larumbe-Bergera, G. Garde, and
+A. Villanueva, “U2eyes: A binocular dataset for eye tracking and gaze
+estimation,” in 2019 IEEE/CVF International Conference on Computer
+Vision Workshop (ICCVW), Oct 2019, pp. 3660–3664.
+
+[88] Y. Furukawa and J. Ponce, “Accurate, dense, and robust multiview
+stereopsis,” IEEE Transactions on Pattern Analysis and Machine Intel-
+ligence, vol. 32, no. 8, pp. 1362–1376, 2009.
+
+[89] E. Wood, T. Baltrusaitis, X. Zhang, Y. Sugano, P. Robinson, and
+A. Bulling, “Rendering of eyes for eye-shape registration and gaze
+estimation,” in The IEEE International Conference on Computer Vision
+(ICCV), December 2015.
+
+[90] E. Wood, T. Baltruˇsaitis, L.-P. Morency, P. Robinson, and A. Bulling,
+“Learning an appearance-based gaze estimator
+from one million
+synthesised images,” in Proceedings of the 2016 ACM Symposium on
+Eye Tracking Research & Applications, ser. ETRA ’16. New York,
+NY, USA: Association for Computing Machinery, 2016, p. 131–138.
+[Online]. Available: https://doi.org/10.1145/2857491.2857492
+
+[91] A. Shrivastava, T. Pﬁster, O. Tuzel, J. Susskind, W. Wang, and R. Webb,
+“Learning from simulated and unsupervised images through adversarial
+training,” in The IEEE Conference on Computer Vision and Pattern
+Recognition (CVPR), July 2017.
+
+[92] Y. Xiong, H. J. Kim, and V. Singh, “Mixed effects neural networks
+(menets) with applications to gaze estimation,” in The IEEE Conference
+on Computer Vision and Pattern Recognition (CVPR), June 2019.
+[93] M. J. Beal, “Variational algorithms for approximate bayesian infer-
+
+ence,” Ph.D. dissertation, UCL (University College London), 2003.
+
+[94] H. Robbins and S. Monro, “A stochastic approximation method,” The
+
+annals of mathematical statistics, pp. 400–407, 1951.
+
+[95] Y. Yu, G. Liu, and J.-M. Odobez, “Deep multitask gaze estimation with
+a constrained landmark-gaze model,” in The European Conference on
+Computer Vision Workshop (ECCVW), September 2018.
+
+[96] R. Caruana, “Multitask learning,” Machine learning, vol. 28, no. 1, pp.
+
+[97] S. Ruder, “An overview of multi-task learning in deep neural networks,”
+
+41–75, 1997.
+
+arXiv preprint, 2017.
+
+[98] D. Lian, L. Hu, W. Luo, Y. Xu, L. Duan, J. Yu, and S. Gao, “Multiview
+multitask gaze estimation with deep convolutional neural networks,”
+IEEE Transactions on Neural Networks and Learning Systems, vol. 30,
+no. 10, pp. 3010–3023, Oct 2019.
+
+[99] D. Lian, Z. Zhang, W. Luo, L. Hu, M. Wu, Z. Li, J. Yu, and S. Gao,
+“Rgbd based gaze estimation via multi-task cnn,” in Proceedings of the
+AAAI Conference on Artiﬁcial Intelligence, vol. 33, 2019, pp. 2488–
+2495.
+
+[100] Z. Wu, S. Rajendran, T. Van As, V. Badrinarayanan, and A. Rabinovich,
+“Eyenet: A multi-task deep network for off-axis eye gaze estimation,”
+in 2019 IEEE/CVF International Conference on Computer Vision
+Workshop (ICCVW), Oct 2019, pp. 3683–3687.
+
+20
+
+MANUSCRIPT, APRIL 2021
+
+[101] A. Recasens, C. Vondrick, A. Khosla, and A. Torralba, “Following gaze
+in video,” in The IEEE International Conference on Computer Vision
+(ICCV), Oct 2017.
+
+[102] S. S. Kruthiventi, V. Gudisa, J. H. Dholakiya, and R. Venkatesh Babu,
+“Saliency uniﬁed: A deep architecture for simultaneous eye ﬁxation
+prediction and salient object segmentation,” in The IEEE Conference
+on Computer Vision and Pattern Recognition, 2016, pp. 5781–5790.
+
+[103] W. Wang, J. Shen, X. Dong, A. Borji, and R. Yang, “Inferring salient
+objects from human ﬁxations,” IEEE Transactions on Pattern Analysis
+and Machine Intelligence, vol. 42, no. 8, pp. 1913–1927, 2020.
+[104] E. Chong, N. Ruiz, Y. Wang, Y. Zhang, A. Rozga, and J. M. Rehg,
+“Connecting gaze, scene, and attention: Generalized attention estima-
+tion via joint modeling of gaze and scene saliency,” in The European
+Conference on Computer Vision (ECCV), September 2018.
+[105] A. Graves, S. Fern´andez, and J. Schmidhuber, “Bidirectional
+
+lstm
+networks for improved phoneme classiﬁcation and recognition,” in
+Proceedings of International Conference on Artiﬁcial Neural Networks,
+ser. ICANN’05. Springer-Verlag, 2005, p. 799–804.
+
+[106] S. Hochreiter and J. Schmidhuber, “Long short-term memory,” Neural
+
+computation, vol. 9, no. 8, pp. 1735–1780, 1997.
+
+[107] Z. Chen and B. Shi, “Offset calibration for appearance-based gaze
+estimation via gaze decomposition,” in The IEEE Winter Conference
+on Applications of Computer Vision (WACV), March 2020.
+
+[108] X. Zhang, M. X. Huang, Y. Sugano, and A. Bulling, “Training
+person-speciﬁc gaze estimators from user interactions with multiple
+the 2018 CHI Conference on Human
+devices,” in Proceedings of
+Factors in Computing Systems, ser. CHI ’18. New York, NY, USA:
+Association for Computing Machinery, 2018. [Online]. Available:
+https://doi.org/10.1145/3173574.3174198
+
+[109] Y. Li, Y. Zhan, and Z. Yang, “Evaluation of appearance-based eye
+tracking calibration data selection,” in The IEEE International Confer-
+ence on Artiﬁcial Intelligence and Computer Applications (ICAICA).
+IEEE, 2020, pp. 222–224.
+
+[110] E. Lind´en, J. Sj¨ostrand, and A. Proutiere, “Learning to personalize
+in appearance-based gaze tracking,” in 2019 IEEE/CVF International
+Conference on Computer Vision Workshop (ICCVW), Oct 2019, pp.
+1140–1148.
+
+[111] J. He, K. Pham, N. Valliappan, P. Xu, C. Roberts, D. Lagun, and
+V. Navalpakkam, “On-device few-shot personalization for real-time
+gaze estimation,” in 2019 IEEE/CVF International Conference on
+Computer Vision Workshop (ICCVW), Oct 2019, pp. 1149–1158.
+[112] Z. Guo, Z. Yuan, C. Zhang, W. Chi, Y. Ling, and S. Zhang, “Domain
+adaptation gaze estimation by embedding with prediction consistency,”
+in The Asian Conference on Computer Vision, 2020.
+
+[113] W. Cui, J. Cui, and H. Zha, “Specialized gaze estimation for children
+by convolutional neural network and domain adaptation,” in 2017 IEEE
+International Conference on Image Processing (ICIP), Sep. 2017, pp.
+3305–3309.
+
+[114] B. Gong, Y. Shi, F. Sha, and K. Grauman, “Geodesic ﬂow kernel
+for unsupervised domain adaptation,” in 2012 IEEE Conference on
+Computer Vision and Pattern Recognition, 2012, pp. 2066–2073.
+[115] G. Liu, Y. Yu, K. A. Funes Mora, and J. Odobez, “A differential
+approach for gaze estimation,” IEEE Transactions on Pattern Analysis
+and Machine Intelligence, pp. 1–1, 2019.
+
+[116] Z. Chang, J. M. Di Martino, Q. Qiu, S. Espinosa, and G. Sapiro,
+“Salgaze: Personalizing gaze estimation using visual saliency,” in 2019
+IEEE/CVF International Conference on Computer Vision Workshop
+(ICCVW), Oct 2019, pp. 1169–1178.
+
+[117] K. Wang, S. Wang, and Q. Ji, “Deep eye ﬁxation map learning for
+calibration-free eye gaze tracking,” in Proceedings of the 2016 ACM
+Symposium on Eye Tracking Research & Applications, ser. ETRA ’16.
+New York, NY, USA: Association for Computing Machinery, 2016, p.
+47–55. [Online]. Available: https://doi.org/10.1145/2857491.2857515
+
+[118] B. Klein Salvalaio and G. de Oliveira Ramos, “Self-adaptive
+appearance-based eye-tracking with online transfer learning,” in 2019
+8th Brazilian Conference on Intelligent Systems (BRACIS), Oct 2019,
+pp. 383–388.
+
+[119] M. Tonsen, J. Steil, Y. Sugano, and A. Bulling, “Invisibleeye:
+Mobile eye tracking using multiple low-resolution cameras and
+learning-based gaze estimation,” Proc. ACM Interact. Mob. Wearable
+Ubiquitous Technol., vol. 1, no. 3, Sep. 2017. [Online]. Available:
+https://doi.org/10.1145/3130971
+
+[120] J. Lemley, A. Kar, and P. Corcoran, “Eye tracking in augmented spaces:
+A deep learning approach,” in 2018 IEEE Games, Entertainment,
+Media Conference (GEM), Aug 2018, pp. 1–6.
+
+[121] J. Kim, M. Stengel, A. Majercik, S. De Mello, D. Dunn, S. Laine,
+M. McGuire, and D. Luebke, “Nvgaze: An anatomically-informed
+
+dataset for low-latency, near-eye gaze estimation,” in Proceedings of the
+2019 CHI Conference on Human Factors in Computing Systems, ser.
+CHI ’19. New York, NY, USA: Association for Computing Machinery,
+2019. [Online]. Available: https://doi.org/10.1145/3290605.3300780
+
+[122] T. Guo, Y. Liu, H. Zhang, X. Liu, Y. Kwak, B. I. Yoo, J. Han,
+and C. Choi, “A generalized and robust method towards practical
+gaze estimation on smart phone,” in 2019 IEEE/CVF International
+Conference on Computer Vision Workshop (ICCVW), Oct 2019, pp.
+1131–1139.
+
+[123] Z. Zhao, S. Li, and T. Kosaki, “Estimating a driver’s gaze point by
+a remote spherical camera,” in The IEEE International Conference on
+Mechatronics and Automation (ICMA).
+
+IEEE, 2020, pp. 599–604.
+
+[124] Y. Xia and B. Liang, “Gaze estimation based on deep learning method,”
+in The International Conference on Computer Science and Application
+Engineering, 2020, pp. 1–6.
+
+[125] S. Park, E. Aksan, X. Zhang, and O. Hilliges, “Towards end-to-end
+video-based eye-tracking,” in The European Conference on Computer
+Vision (ECCV). Springer, 2020, pp. 747–763.
+
+[126] S. Khalighy, G. Green, C. Scheepers, and C. Whittet, “Quantifying
+the qualities of aesthetics in product design using eye-tracking
+technology,” International Journal of Industrial Ergonomics, vol. 49,
+pp. 31 – 43, 2015. [Online]. Available: http://www.sciencedirect.com/
+science/article/pii/S0169814115000761
+
+[127] R. d. O. J. dos Santos, J. H. C. de Oliveira, J. B. Rocha, and J. d.
+M. E. Giraldi, “Eye tracking in neuromarketing: a research agenda
+for marketing studies,” International journal of psychological studies,
+vol. 7, no. 1, p. 32, 2015.
+
+[128] X. Zhang, Y. Sugano, and A. Bulling, “Everyday eye contact
+detection using unsupervised gaze target discovery,” in Proceedings
+of
+the 30th Annual ACM Symposium on User Interface Software
+and Technology, ser. UIST ’17. New York, NY, USA: Association
+for Computing Machinery, 2017, p. 193–203. [Online]. Available:
+https://doi.org/10.1145/3126594.3126614
+
+[129] Y. Sugano, X. Zhang, and A. Bulling, “Aggregaze: Collective
+estimation of audience attention on public displays,” in Proceedings
+of
+the 29th Annual ACM Symposium on User Interface Software
+and Technology, ser. UIST ’16. New York, NY, USA: Association
+for Computing Machinery, 2016, p. 821–831. [Online]. Available:
+https://doi.org/10.1145/2984511.2984536
+
+[130] J. Zhang and S. Sclaroff, “Exploiting surroundedness for saliency
+detection: A boolean map approach,” IEEE Transactions on Pattern
+Analysis and Machine Intelligence, vol. 38, no. 5, pp. 889–902, May
+2016.
+
+[131] V. Kazemi and J. Sullivan, “One millisecond face alignment with an
+ensemble of regression trees,” in IEEE Conference on Computer Vision
+and Pattern Recognition, 2014, pp. 1867–1874.
+
+[132] K. Zhang, Z. Zhang, Z. Li, and Y. Qiao, “Joint face detection and
+alignment using multitask cascaded convolutional networks,” IEEE
+Signal Processing Letters, vol. 23, no. 10, pp. 1499–1503, 2016.
+[133] M. Kowalski, J. Naruniec, and T. Trzcinski, “Deep alignment network:
+A convolutional neural network for robust face alignment,” in The
+IEEE Conference on Computer Vision and Pattern Recognition (CVPR)
+Workshops, July 2017.
+
+[134] T. Baltrusaitis, A. Zadeh, Y. C. Lim, and L. Morency, “Openface
+2.0: Facial behavior analysis toolkit,” in 2018 13th IEEE International
+Conference on Automatic Face Gesture Recognition (FG 2018), 2018,
+pp. 59–66.
+
+[135] Y. Feng, F. Wu, X. Shao, Y. Wang, and X. Zhou, “Joint 3d face
+reconstruction and dense alignment with position map regression
+network,” in The European Conference on Computer Vision (ECCV),
+2018.
+
+[136] J. Guo, X. Zhu, Y. Yang, F. Yang, Z. Lei, and S. Z. Li, “Towards
+fast, accurate and stable 3d dense face alignment,” in The European
+Conference on Computer Vision (ECCV), 2020.
+
+[137] J. Zhang, H. Hu, and S. Feng, “Robust facial landmark detection via
+heatmap-offset regression,” IEEE Transactions on Image Processing,
+vol. 29, pp. 5050–5064, 2020.
+
+[138] P. Chandran, D. Bradley, M. Gross, and T. Beeler, “Attention-driven
+cropping for very high resolution facial
+landmark detection,” in
+The IEEE Conference on Computer Vision and Pattern Recognition
+(CVPR), June 2020.
+
+[139] P. Gao, K. Lu, J. Xue, L. Shao, and J. Lyu, “A coarse-to-ﬁne facial
+landmark detection method based on self-attention mechanism,” IEEE
+Transactions on Multimedia, pp. 1–1, 2020.
+
+[140] B. A. Smith, Q. Yin, S. K. Feiner, and S. K. Nayar, “Gaze
+locking: Passive eye contact detection for human-object interaction,”
+in Proceedings of the 26th Annual ACM Symposium on User Interface
+
+CHENG et al.: APPEARANCE-BASED GAZE ESTIMATION WITH DEEP LEARNING: A REVIEW AND BENCHMARK
+
+21
+
+Software and Technology, ser. UIST ’13. New York, NY, USA:
+Association for Computing Machinery, 2013, p. 271–280. [Online].
+Available: https://doi.org/10.1145/2501988.2501994
+
+[141] X. Zhang, Y. Sugano, and A. Bulling, “Revisiting data normalization
+for appearance-based gaze estimation,” in Proceedings of the 2018
+ACM Symposium on Eye Tracking Research & Applications, ser. ETRA
+’18. New York, NY, USA: Association for Computing Machinery,
+2018. [Online]. Available: https://doi.org/10.1145/3204493.3204548
+
+[142] H. Wang and B. E. Shi, “Gaze awareness improves collaboration
+efﬁciency in a collaborative assembly task,” in Proceedings of the 11th
+ACM Symposium on Eye Tracking Research & Applications, 2019, pp.
+1–5.
+
+[143] X. Dong, H. Wang, Z. Chen, and B. E. Shi, “Hybrid brain computer
+interface via bayesian integration of eeg and eye gaze,” in 2015 7th
+International IEEE/EMBS Conference on Neural Engineering (NER).
+IEEE, 2015, pp. 150–153.
+
+[144] E. T. Wong, S. Yean, Q. Hu, B. S. Lee, J. Liu, and R. Deepu, “Gaze
+estimation using residual neural network,” in 2019 IEEE International
+Conference on Pervasive Computing and Communications Workshops
+(PerCom Workshops), 2019, pp. 411–414.
+
+[145] K. A. Funes Mora, F. Monay, and J.-M. Odobez, “Eyediap: A database
+for the development and evaluation of gaze estimation algorithms from
+rgb and rgb-d cameras,” in Proceedings of the 2014 ACM Symposium
+on Eye Tracking Research & Applications. ACM, Mar. 2014.
+[146] Q. Huang, A. Veeraraghavan, and A. Sabharwal, “Tabletgaze: dataset
+and analysis for unconstrained appearance-based gaze estimation in
+mobile tablets,” Machine Vision and Applications, vol. 28, no. 5-6, pp.
+445–461, 2017.
+
+[147] K. Krafka, A. Khosla, P. Kellnhofer, H. Kannan, S. Bhandarkar, W. Ma-
+tusik, and A. Torralba, “Eye tracking for everyone,” in Proceedings of
+the IEEE conference on computer vision and pattern recognition, 2016,
+pp. 2176–2184.
+
+
