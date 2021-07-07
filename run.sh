@@ -14,3 +14,6 @@ for filename in test/samples/*.pdf; do
   ./main.py -i "$filename" -e A -c URL -o "test/results/$(basename "$filename")-A-R2.txt" -r 2
   ./main.py -i "$filename" -e B -c URL -o "test/results/$(basename "$filename")-B-R2.txt" -r 2
 done
+
+# evaluation metrics
+./evaluate.py test/results > test/summary.txt
