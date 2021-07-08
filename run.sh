@@ -16,4 +16,4 @@ for filename in test/samples/*.pdf; do
 done
 
 # evaluation metrics
-./evaluate.py test/results > test/summary.txt
+./evaluate.py test/results >test/summary.txt
