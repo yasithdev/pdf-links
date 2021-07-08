@@ -29,14 +29,13 @@ class Config:
         re.compile(r'(www\.([^\s@/?#]+\.)*[a-z]{2,}(/[^\s?#]+)?(\?[^\s#]+)?(#\S)?)', re.I)
     ]
 
-    RE_NEWLINES = re.compile(r"\n+")
-    RE_URL_BLACKLIST = re.compile(r'.*(doi|arxiv)\.org/.*')
-    RE_URL_FULL = None
-    RE_URL_PART = None
-
     def __init__(self, alternative: int, safe=True):
         self.RE_URL_FULL = self.__FULL_RE_SET[alternative - 1]
         self.RE_URL_PART = (self.__SAFE_RE_SET if safe else self.__PART_RE_SET)[alternative - 1]
+        self.RE_NEWLINES = re.compile(r"\n+")
+        with open('blacklist.txt', 'r', encoding='utf-8') as f:
+            re_url_blacklist = r".*(" + r"|".join(map(lambda x: f'{x.strip()}', f.readlines())) + r").*"
+            self.RE_URL_BLACKLIST = re.compile(re_url_blacklist, re.I)
 
 
 # ======================================================================================================================
