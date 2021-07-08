@@ -12,14 +12,14 @@ B-R2          23   2   2   0
 sample-2.pdf                
 A-R1           1   2   1   0
 A-R2           1   2   1   0
-B-R1           1   1   1   0
+B-R1           1   2   1   0
 B-R2           1   2   1   0
               tp  fn  fp  tn
 sample-3.pdf                
 A-R1           1   2   5   0
 A-R2           2   2   4   0
-B-R1           5   4   1   0
-B-R2           5   4   1   0
+B-R1           5   3   1   0
+B-R2           5   3   1   0
               tp  fn  fp  tn
 sample-4.pdf                
 A-R1          10   1   1   0
@@ -36,7 +36,7 @@ B-R2           6   3   4   0
 sample-6.pdf                
 A-R1           4   4   1   0
 A-R2           4   4   1   0
-B-R1           5   1   0   0
+B-R1           4   1   1   0
 B-R2           4   1   1   0
               tp  fn  fp  tn
 sample-7.pdf                
@@ -57,5 +57,5 @@ aggregate metrics
       tp  fn  fp  tn       tpr  fpr
 A-R1  52  18  15   0  0.742857  1.0
 A-R2  47  22  20   0  0.681159  1.0
-B-R1  55  15  12   0  0.785714  1.0
-B-R2  54  16  13   0  0.771429  1.0
+B-R1  54  15  13   0  0.782609  1.0
+B-R2  54  15  13   0  0.782609  1.0
