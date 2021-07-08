@@ -22,22 +22,17 @@ def calculate_metrics(target: Set[str], got: Set[str]) -> dict:
 
 
 def calculate_agg_metrics(metrics: dict) -> dict:
-  agg_metrics = {
-    'A-R1': {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0, 'tpr': 0., 'fpr': 0.},
-    'A-R2': {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0, 'tpr': 0., 'fpr': 0.},
-    'B-R1': {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0, 'tpr': 0., 'fpr': 0.},
-    'B-R2': {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0, 'tpr': 0., 'fpr': 0.}
-  }
-  for sample in metrics:
-    for exc in ['A-R1', 'A-R2', 'B-R1', 'B-R2']:
-      for measure in ['tp', 'fn', 'fp', 'tn']:
-        agg_metrics[exc][measure] += metrics[sample][exc][measure]
-
-  for exc in agg_metrics:
-    r = agg_metrics[exc]
-    r['tpr'] = r['tp'] / (r['tp'] + r['fn'])
-    r['fpr'] = r['fp'] / (r['fp'] + r['tn'])
-
+  agg_metrics = {}
+  for method in ['A', 'B']:
+    for regex_mode in ['R1', 'R2']:
+      exc = f"{method}-{regex_mode}"
+      r = {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0}
+      for sample in metrics:
+        for measure in r:
+          r[measure] += metrics[sample][exc][measure]
+      r['tpr'] = r['tp'] / (r['tp'] + r['fn'])
+      r['fpr'] = r['fp'] / (r['fp'] + r['tn'])
+      agg_metrics[exc] = r
   return agg_metrics
 
 

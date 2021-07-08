@@ -1,3 +1,2 @@
 https://nlp.stanford.edu/projects/glove
-https://nlp.stanford.edu/projects/glove/acknowledgmentsthe
 https://www.aaai.org
