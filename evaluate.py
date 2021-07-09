@@ -57,7 +57,7 @@ def run(results_dir: str):
     all_metrics[base_name] = metrics
     # print metric
     df = pd.DataFrame.from_dict(metrics, orient='index').sort_index()
-    df.index.name = base_name
+    df.index.name = f"{base_name} ({len(true_urls)} URLs)"
     print(df)
 
   # calculate and print aggregate metrics

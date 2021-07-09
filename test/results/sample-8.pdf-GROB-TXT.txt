@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="fr">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main"></title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.6.2" ident="GROBID" when="2021-07-09T04:28+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis congue laoreet blandit. Donec pellentesque rutrum molestie. Curabitur in mollis orci. Maecenas finibus, urna sed luctus ullamcorper, lorem est tristique ipsum, non laoreet arcu nisl vitae turpis. Duis vel felis rhoncus, semper magna sit amet, ultricies dui. Pellentesque posuere nec sapien at facilisis. Vestibulum placerat porta risus, ac consectetur risus tempor at. Vivamus imperdiet leo libero, ut convallis ex vehicula euismod. In sem tellus, ullamcorper gravida ornare at, scelerisque sed purus. Etiam non nisi rutrum magna dapibus fermentum. Proin vestibulum et libero a placerat. Nullam elit lectus, molestie quis scelerisque non, facilisis porttitor tortor. https://www.cs.odu.edu/~yasith Nam ac tellus eget erat malesuada tempor sit amet ut mauris. Curabitur malesuada eros urna, non facilisis diam posuere quis. Nullam bibendum nisi diam, eget condimentum nibh molestie at. Mauris nisl ante, malesuada eget enim in, dictum dictum purus. Nulla venenatis iaculis tincidunt. Proin id tellus ligula. In eleifend urna eget elit posuere, eu volutpat dui tristique. Duis rhoncus neque nisl, quis euismod nisl iaculis ut. Ut suscipit ex a varius pulvinar. Donec ipsum justo, dapibus non nisl in, ultricies dignissim enim. Curabitur id ultricies nulla, sit amet condimentum lectus. Donec feugiat ultricies nibh, quis tempor orci vestibulum vel. Suspendisse velit dui, suscipit quis molestie nec, https://www.cs.odu.edu/~sampath cursus a libero. Nunc sem erat, consequat vel imperdiet non, fringilla vel urna. Morbi fermentum dolor eu justo tempus, at cursus ipsum ultrices. In condimentum odio ut purus mattis egestas. Integer sodales, nisi nec hendrerit eleifend, dolor eros pharetra nisi, id interdum dui erat nec turpis. Integer rhoncus ligula leo. Maecenas a lorem dui. Nullam et odio faucibus felis rhoncus lacinia. In in dictum felis. https://github.com/nirdslab/streaminghub-dfs Proin pulvinar quis mauris quis porttitor. Nulla id massa diam. Praesent feugiat, mi ut tincidunt porta, lectus odio fringilla eros, convallis facilisis dui velit sit amet velit. Curabitur consectetur arcu augue, sed euismod justo sodales at. Ut vitae fermentum enim. Cras ac pellentesque odio. Sed congue at tortor et mattis. Donec vehicula at leo nec aliquam. Sed fermentum enim vitae nisl maximus ornare. Nulla ut ligula eros. https://github.com/nirdslab/streaminghub-conduit Integer semper elit id velit consequat, in fermentum neque volutpat. Aenean sagittis, lectus elementum dictum lacinia, neque ligula euismod ipsum, et interdum nulla enim eu arcu. Nam at mi mi. Suspendisse tincidunt fringilla sagittis. Praesent vitae ante sapien. Donec tincidunt pulvinar malesuada. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras laoreet enim vitae dui finibus finibus. Donec turpis turpis, rutrum vitae rhoncus at, ullamcorper quis sapien. Pellentesque sed lobortis ligula. Curabitur at augue vestibulum, feugiat augue nec, ultricies lacus. Curabitur non elit eu ligula convallis aliquet non eget sapien. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aliquam aliquet quis eros vitae tempor. Aenean molestie diam est. Nullam interdum lacinia lorem, in auctor dui tincidunt id. Fusce volutpat justo at sapien placerat, a posuere purus sagittis. Nunc malesuada nunc sapien, ac vulputate metus tempor in. Ut tellus eros, aliquam ut venenatis eget, condimentum sed eros. Integer sem neque, dictum ultrices ultricies sed, facilisis et augue. Vivamus sit amet porttitor mauris. Etiam consequat, tellus et porttitor dictum, justo libero pharetra tortor, non eleifend nibh sapien non tellus. Fusce laoreet eu ex sed ultricies. Phasellus non odio nec elit cursus luctus sed ac leo. Donec a rhoncus nulla. Praesent vitae velit elementum, ultrices purus quis, placerat justo. Morbi tincidunt urna quis lectus mattis condimentum. Nulla et viverra ex, a sodales risus. Proin at</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="fr">
+		<body/>
+		<back>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Sed varius eros ac diam pulvinar faucibus. Nam nec nunc libero. Nullam cursus quis ante at maximus. In in orci fermentum odio accumsan feugiat. Nulla vitae viverra dolor, sit amet accumsan leo. Vivamus et egestas purus. In tellus libero, faucibus et dignissim ut, luctus nec lectus. Vivamus blandit justo purus, at tempus nunc imperdiet aliquam. Curabitur posuere, diam at feugiat lacinia, arcu nulla accumsan justo, non rutrum leo turpis in felis. Pellentesque congue orci id augue tincidunt tincidunt. Donec interdum neque felis, eu congue nisl egestas laoreet. Proin sit amet mollis turpis. Cras laoreet consequat metus a ornare</title>
+	</analytic>
+	<monogr>
+		<title level="m">Nulla vel turpis eu nibh condimentum ornare</title>
+				<imprint/>
+	</monogr>
+	<note>Sed non diam sed metus molestie viverra ac vel orci. Ut vel dolor iaculis, egestas elit at, malesuada nisl. Ut dapibus semper lacus non cursus</note>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title level="a" type="main">Sed consequat aliquam lectus at tempor. Curabitur cursus malesuada viverra. Cras ac lacus vel magna dignissim lobortis nec dapibus ligula. In luctus ante auctor aliquam consequat</title>
+	</analytic>
+	<monogr>
+		<title level="m">Aliquam in posuere nunc, eu tempus mi. Interdum et malesuada fames ac ante ipsum primis in faucibus</title>
+				<imprint/>
+	</monogr>
+	<note>Pellentesque nisi dui, tincidunt tempus nunc vel, venenatis dictum orci. In ut turpis eget purus imperdiet condimentum. Quisque et neque arcu</note>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<analytic>
+		<title level="a" type="main">Etiam luctus ligula in felis aliquet viverra. Duis justo augue, sodales iaculis erat at, tincidunt volutpat purus. Curabitur augue nibh, lacinia non libero id, ultricies interdum nisl</title>
+		<author>
+			<persName><surname>Sed Eleifend Id Purus Nec</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Semper</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Donec porta velit quis ultricies aliquam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae</title>
+				<imprint/>
+	</monogr>
+	<note>Cras molestie pellentesque leo quis rutrum</note>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<monogr>
+		<title level="m" type="main">Integer faucibus ullamcorper elit, ac fringilla tellus sollicitudin sed. Nam auctor est at magna congue feugiat. Phasellus sem lorem, porttitor ut fermentum sed, faucibus non erat</title>
+		<imprint/>
+	</monogr>
+	<note>Ut sagittis dui odio, aliquam vulputate lacus rhoncus et. Morbi dolor nunc, interdum ac massa non, ultricies malesuada risus. Nullam laoreet odio ac metus lacinia scelerisque. Duis eget molestie magna</note>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Sed scelerisque lacus dolor, eget tristique odio maximus nec. Aliquam erat volutpat. Aenean nec risus lectus. Aenean eu lorem faucibus, varius justo id, placerat mi. Vivamus in ex nec massa fermentum eleifend</title>
+	</analytic>
+	<monogr>
+		<title level="m">et enim non velit mollis ultrices at pellentesque justo. Nulla at tellus at orci pretium auctor id ac eros</title>
+				<imprint/>
+	</monogr>
+	<note>Ut eleifend gravida sem sed commodo. Donec id mauris ex. Sed ante dui, ultrices a tristique in, pellentesque et ligula. Vestibulum convallis odio nisi. at sollicitudin velit egestas id</note>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

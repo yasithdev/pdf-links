@@ -2,92 +2,92 @@
 ===============
 metrics by file
 ===============
-               tp  fn  fp  tn
-sample-1.pdf                 
-A-URLS_ANN-R1  24   1   1   0
-A-URLS_ALL-R1  24   1   1   0
-A-URLS_ANN-R2  24   1   1   0
-A-URLS_ALL-R2  24   1   1   0
-B-URLS_ANN-R1  24   1   1   0
-B-URLS_ALL-R1  24   1   1   0
-B-URLS_ANN-R2  24   1   1   0
-B-URLS_ALL-R2  24   1   1   0
-               tp  fn  fp  tn
-sample-2.pdf                 
-A-URLS_ANN-R1   0   0   2   0
-A-URLS_ALL-R1   2   0   0   0
-A-URLS_ANN-R2   0   0   2   0
-A-URLS_ALL-R2   2   0   0   0
-B-URLS_ANN-R1   0   0   2   0
-B-URLS_ALL-R1   2   0   0   0
-B-URLS_ANN-R2   0   0   2   0
-B-URLS_ALL-R2   2   0   0   0
-               tp  fn  fp  tn
-sample-3.pdf                 
-A-URLS_ANN-R1   0   0   6   0
-A-URLS_ALL-R1   1   2   5   0
-A-URLS_ANN-R2   0   0   6   0
-A-URLS_ALL-R2   2   2   4   0
-B-URLS_ANN-R1   0   0   6   0
-B-URLS_ALL-R1   5   0   1   0
-B-URLS_ANN-R2   0   0   6   0
-B-URLS_ALL-R2   4   0   2   0
-               tp  fn  fp  tn
-sample-4.pdf                 
-A-URLS_ANN-R1  11   0   0   0
-A-URLS_ALL-R1  11   0   0   0
-A-URLS_ANN-R2  11   0   0   0
-A-URLS_ALL-R2  11   0   0   0
-B-URLS_ANN-R1  11   0   0   0
-B-URLS_ALL-R1  11   0   0   0
-B-URLS_ANN-R2  11   0   0   0
-B-URLS_ALL-R2  11   0   0   0
-               tp  fn  fp  tn
-sample-5.pdf                 
-A-URLS_ANN-R1   0   0  10   0
-A-URLS_ALL-R1   7   3   3   0
-A-URLS_ANN-R2   0   0  10   0
-A-URLS_ALL-R2   1   9   9   0
-B-URLS_ANN-R1   0   0  10   0
-B-URLS_ALL-R1   6   3   4   0
-B-URLS_ANN-R2   0   0  10   0
-B-URLS_ALL-R2   6   3   4   0
-               tp  fn  fp  tn
-sample-6.pdf                 
-A-URLS_ANN-R1   0   0   5   0
-A-URLS_ALL-R1   5   0   0   0
-A-URLS_ANN-R2   0   0   5   0
-A-URLS_ALL-R2   5   0   0   0
-B-URLS_ANN-R1   0   0   5   0
-B-URLS_ALL-R1   5   0   0   0
-B-URLS_ANN-R2   0   0   5   0
-B-URLS_ALL-R2   5   0   0   0
-               tp  fn  fp  tn
-sample-7.pdf                 
-A-URLS_ANN-R1   0   0   4   0
-A-URLS_ALL-R1   4   0   0   0
-A-URLS_ANN-R2   0   0   4   0
-A-URLS_ALL-R2   4   0   0   0
-B-URLS_ANN-R1   0   0   4   0
-B-URLS_ALL-R1   3   1   1   0
-B-URLS_ANN-R2   0   0   4   0
-B-URLS_ALL-R2   3   1   1   0
-               tp  fn  fp  tn
-sample-8.pdf                 
-A-URLS_ANN-R1   2   0   2   0
-A-URLS_ALL-R1   4   0   0   0
-A-URLS_ANN-R2   2   0   2   0
-A-URLS_ALL-R2   4   0   0   0
-B-URLS_ANN-R1   2   0   2   0
-B-URLS_ALL-R1   4   0   0   0
-B-URLS_ANN-R2   2   0   2   0
-B-URLS_ALL-R2   4   0   0   0
+                        tp  fn  fp  tn
+sample-1.pdf (25 URLs)                
+GROB-R1-URLS_ALL        24   1   1   0
+GROB-R1-URLS_ANN        24   1   1   0
+GROB-R2-URLS_ALL        24   1   1   0
+GROB-R2-URLS_ANN        24   1   1   0
+PDFM-R1-URLS_ALL        24   1   1   0
+PDFM-R1-URLS_ANN        24   1   1   0
+PDFM-R2-URLS_ALL        24   1   1   0
+PDFM-R2-URLS_ANN        24   1   1   0
+                       tp  fn  fp  tn
+sample-2.pdf (2 URLs)                
+GROB-R1-URLS_ALL        2   0   0   0
+GROB-R1-URLS_ANN        0   0   2   0
+GROB-R2-URLS_ALL        2   0   0   0
+GROB-R2-URLS_ANN        0   0   2   0
+PDFM-R1-URLS_ALL        2   0   0   0
+PDFM-R1-URLS_ANN        0   0   2   0
+PDFM-R2-URLS_ALL        2   0   0   0
+PDFM-R2-URLS_ANN        0   0   2   0
+                       tp  fn  fp  tn
+sample-3.pdf (6 URLs)                
+GROB-R1-URLS_ALL        5   0   1   0
+GROB-R1-URLS_ANN        0   0   6   0
+GROB-R2-URLS_ALL        5   0   1   0
+GROB-R2-URLS_ANN        0   0   6   0
+PDFM-R1-URLS_ALL        1   2   5   0
+PDFM-R1-URLS_ANN        0   0   6   0
+PDFM-R2-URLS_ALL        2   2   4   0
+PDFM-R2-URLS_ANN        0   0   6   0
+                        tp  fn  fp  tn
+sample-4.pdf (11 URLs)                
+GROB-R1-URLS_ALL        11   0   0   0
+GROB-R1-URLS_ANN        11   0   0   0
+GROB-R2-URLS_ALL        11   0   0   0
+GROB-R2-URLS_ANN        11   0   0   0
+PDFM-R1-URLS_ALL        11   0   0   0
+PDFM-R1-URLS_ANN        11   0   0   0
+PDFM-R2-URLS_ALL        11   0   0   0
+PDFM-R2-URLS_ANN        11   0   0   0
+                        tp  fn  fp  tn
+sample-5.pdf (10 URLs)                
+GROB-R1-URLS_ALL         6   3   4   0
+GROB-R1-URLS_ANN         0   0  10   0
+GROB-R2-URLS_ALL         6   3   4   0
+GROB-R2-URLS_ANN         0   0  10   0
+PDFM-R1-URLS_ALL         7   3   3   0
+PDFM-R1-URLS_ANN         0   0  10   0
+PDFM-R2-URLS_ALL         1   9   9   0
+PDFM-R2-URLS_ANN         0   0  10   0
+                       tp  fn  fp  tn
+sample-6.pdf (5 URLs)                
+GROB-R1-URLS_ALL        5   0   0   0
+GROB-R1-URLS_ANN        0   0   5   0
+GROB-R2-URLS_ALL        5   0   0   0
+GROB-R2-URLS_ANN        0   0   5   0
+PDFM-R1-URLS_ALL        5   0   0   0
+PDFM-R1-URLS_ANN        0   0   5   0
+PDFM-R2-URLS_ALL        5   0   0   0
+PDFM-R2-URLS_ANN        0   0   5   0
+                       tp  fn  fp  tn
+sample-7.pdf (4 URLs)                
+GROB-R1-URLS_ALL        3   1   1   0
+GROB-R1-URLS_ANN        0   0   4   0
+GROB-R2-URLS_ALL        3   1   1   0
+GROB-R2-URLS_ANN        0   0   4   0
+PDFM-R1-URLS_ALL        4   0   0   0
+PDFM-R1-URLS_ANN        0   0   4   0
+PDFM-R2-URLS_ALL        4   0   0   0
+PDFM-R2-URLS_ANN        0   0   4   0
+                       tp  fn  fp  tn
+sample-8.pdf (4 URLs)                
+GROB-R1-URLS_ALL        4   0   0   0
+GROB-R1-URLS_ANN        2   0   2   0
+GROB-R2-URLS_ALL        4   0   0   0
+GROB-R2-URLS_ANN        2   0   2   0
+PDFM-R1-URLS_ALL        4   0   0   0
+PDFM-R1-URLS_ANN        2   0   2   0
+PDFM-R2-URLS_ALL        4   0   0   0
+PDFM-R2-URLS_ANN        2   0   2   0
 
 =================
 aggregate metrics
 =================
-               tp  fn  fp  tn       tpr  fpr
-A-URLS_ALL-R1  58   6   9   0  0.906250  1.0
-A-URLS_ALL-R2  53  12  14   0  0.815385  1.0
-B-URLS_ALL-R1  60   5   7   0  0.923077  1.0
-B-URLS_ALL-R2  59   5   8   0  0.921875  1.0
+                  tp  fn  fp  tn       tpr  fpr
+GROB-R1-URLS_ALL  60   5   7   0  0.923077  1.0
+GROB-R2-URLS_ALL  60   5   7   0  0.923077  1.0
+PDFM-R1-URLS_ALL  58   6   9   0  0.906250  1.0
+PDFM-R2-URLS_ALL  53  12  14   0  0.815385  1.0

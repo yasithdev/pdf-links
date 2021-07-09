@@ -1,0 +1,964 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">mTrack: High-Precision Passive Tracking Using Millimeter Wave Radios</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Teng</forename><surname>Wei</surname></persName>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Electrical and Computer Engineering</orgName>
+								<orgName type="institution">University of Wisconsin -Madison</orgName>
+							</affiliation>
+						</author>
+						<author role="corresp">
+							<persName><forename type="first">Xinyu</forename><surname>Zhang</surname></persName>
+							<email>xyzhang@ece.wisc.edu</email>
+							<affiliation key="aff0">
+								<orgName type="department">Department of Electrical and Computer Engineering</orgName>
+								<orgName type="institution">University of Wisconsin -Madison</orgName>
+							</affiliation>
+						</author>
+						<title level="a" type="main">mTrack: High-Precision Passive Tracking Using Millimeter Wave Radios</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date/>
+						</imprint>
+					</monogr>
+					<idno type="DOI">10.1145/2789168.2790113</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.6.2" ident="GROBID" when="2021-07-09T04:27+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<textClass>
+				<keywords>
+					<term>C.3 [Special-Purpose and Application-Based Systems]: Signal processing systems; H.5.2 [Information Interfaces and Presentation]: User Interfaces-Input devices and strategies 60 GHz</term>
+					<term>Millimeter-wave</term>
+					<term>Tracking</term>
+					<term>Phase Shift</term>
+					<term>Background cancellation</term>
+				</keywords>
+			</textClass>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Radio-based passive-object sensing can enable a new form of pervasive user-computer interface. Prior work has employed various wireless signal features to sense objects under a set of predefined, coarse motion patterns. But an operational UI, like a trackpad, often needs to identify fine-grained, arbitrary motion. This paper explores the feasibility of tracking a passive writing object (e.g., pen) at subcentimeter precision. We approach this goal through a practical design, mTrack, which uses highly-directional 60 GHz millimeterwave radios as key enabling technology. mTrack runs a discrete beam scanning mechanism to pinpoint the object's initial location, and tracks its trajectory using a signal-phase based model. In addition, mTrack incorporates novel mechanisms to suppress interference from background reflections, taking advantage of the short wavelength of 60 GHz signals. We prototype mTrack and evaluate its performance on a 60 GHz reconfigurable radio platform. Experimental results demonstrate that mTrack can locate/track a pen with 90-percentile error below 8 mm, enabling new applications such as wireless transcription and virtual trackpad.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="1.">INTRODUCTION</head><p>Radio-based passive object sensing is a rapidly developing technology that detects the motion of human body parts or associated objects through wireless signals. Compared with conventional visionbased approaches <ref type="bibr" target="#b0">[1]</ref>, e.g., LeapMotion <ref type="bibr" target="#b1">[2]</ref> and Kinect <ref type="bibr" target="#b2">[3]</ref>, it is less intrusive and unaffected by ambient light conditions or the sunlight interference. Catalyzed by the proliferation of mobile devices, this technology holds potential to enable new ubiquitous user-mobile in-terfaces and spur a wide range of applications. The lastest passive sensing technology can already accurately distinguish a prescribed set of body/limb movement <ref type="bibr" target="#b3">[4]</ref> based on Doppler patterns or signal strength variation. Hand gesture sensing <ref type="bibr" target="#b4">[5]</ref> is also achievable by training a pattern-matching model. To satisfy a broader range of applications, however, two design challenges remain open: fine resolution and unsupervised motion tracking.</p><p>We envision one such application scenario: tracking a writing object (e.g., a stylus pen or marker) wirelessly. Conceptually, empowered by multiple wireless devices, we can create an interactive trackpad on any conventional surface, e.g., whiteboard or desktop. This way, we can deploy large touch screens in a more flexible and ecomonic way than traditional graphic tablets. This vision entails tracking a small writing object with at least sub-centimeter precision. Such precision has proven feasible in certain active RF sensing systems like Tagoram <ref type="bibr" target="#b5">[6]</ref>. However, they are applicable only to objects instrumented with an RFID tag or radio receiver.</p><p>In this paper, we design mTrack, which leverages 60 GHz millimeter wave (mmWave) radios to track the trajectory of a writing object at high precision. 60 GHz radios are standardized in IEEE 802.11ad <ref type="bibr" target="#b6">[7]</ref>, and anticipated to penetrate one third of wireless links by 2018 <ref type="bibr" target="#b7">[8]</ref>. Commercial 802.11ad-capable smartphones have already been demonstrated <ref type="bibr" target="#b8">[9]</ref>. Adopting mmWave instead of conventional microwave band (2.4 GHz or 5 GHz) brings multifold advantages. A shorter wavelength can create stronger reflections from small objects (e.g., a pen), since wireless signals cannot easily bypass objects larger than wavelength. More importantly, mmWave devices like 802.11ad allow for miniaturized phase-array with dozens of antenna elements, which together create highlydirectional "pencil-beams". Such directional beams are electronically steerable, thereby creating a new dimension for object localization/tracking. mTrack's design harnesses these unique advantages of mmWave. It uses one transmitter (Tx) to emit 60 GHz signals and illuminate a handhold object that roams on a trackpad area. Part of the signals are diffused by the object's surface and captured by two directional receivers (Rx). mTrack leverages the received signal strength (RSS) and phase (relative to Tx) to localize and track the object. Simply put, by measuring the arriving direction of reflected signals, each Rx can estimate the object's relative angle, and pinpoint its initial location on the trackpad. We refer to this as anchor point acquisition (APA). When the object moves, the reflected signals' path length varies, which alters the phase, providing salient hints for tracking the object with sub-wavelength resolution. Our feasibility study using a 60 GHz software-radio (Section 3) verifies these principles, and unveils the unique advantage of mmWave passive tracking over its microwave counterpart, in terms of potential precision, sensitivity to target size, etc. Yet in practical environ-Properties Tagoram <ref type="bibr" target="#b5">[6]</ref> RF-IDraw <ref type="bibr" target="#b9">[10]</ref> Tomography <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b11">12]</ref> WiVi <ref type="bibr" target="#b12">[13]</ref> WiTrack <ref type="bibr" target="#b13">[14]</ref> mTrack  ment, these principles entail unique challenges, which we propose to solve in mTrack. First, reflected signals from irrelevant background objects can severely distort the target-reflected signal and affect phase-tracking accuracy. Prior passive tracking techniques use ultra-wideband <ref type="bibr" target="#b13">[14]</ref>, or measure and subtract static background reflection directly <ref type="bibr" target="#b14">[15]</ref>. In contrast, mTrack's mmWave uses single-carrier phase-tracking, and needs to handle background dynamics. To meet this challenge, we develop two algorithms: dual-differential background removal, and phase counting and regeneration, to recover the legitimate phase change induced by target movement only. These two techniques take unique advantage of short wavelength of mmWave signals, and stay at different vantage points when considering a tradeoff between tracking precision and resilience to the inherent phase noise in 60 GHz radios.</p><p>Second, although 60 GHz signals are commonly simplified as pseudo-optical <ref type="bibr" target="#b15">[16]</ref>, our measurement shows that they can be widely diffused after hitting a small object. Thus, one cannot migrate the specular reflection effect in laser/infrared tracking systems <ref type="bibr">[17]</ref> for 60 GHz tracking. In mTrack, we observe that 60 GHz antenna response bears a roll-off response pattern, and reflected RSS is strongest when the object direction matches the peak response. mTrack's APA mechanism thus leverages steerable 60 GHz Rx antenna to find the matching point, and identify the object's relative angle. Since practical 60 GHz phase-array antennas can only switch between a discrete set of directions, mTrack reconstructs the ideal continuous scanning results from discrete sampling. Consequently, it can work even if the switching angle is much larger than beamwidth.</p><p>We have implemented mTrack on a custom-built 60 GHz softwareradio platform. We evaluate mTrack's APA and phase-tracking performance when user is navigating a pen over a 50cm ×50cm virtual trackpad region. Experimental results show that mTrack can localize the pen's angular position with error less than 1 • , and track its motion trajectory with only 6 mm of median error and 8 mm of 90-percentile error. We also found that mTrack can be readily used to enable touch event detection (i.e., pen clicking/leaving the trackpad), owing to the constrained beam pattern of mmWave antennas. Using a simple feature-based detection algorithm, it achieves a detection accuracy of around 94%.</p><p>The main contributions of mTrack include the following: (i) A feasibility study of fine-grained, sub-centimeter scale object localization/tracking using mmWave radios with steerable antennas, in contrast to microwave radios (Sec. 3).</p><p>(ii) A phase-based approach to track small objects like pens to high precision, thus realizing trackpad applications. The tracking scheme builds on two novel algorithms to counteract the impact of background interference (Sec. 5).</p><p>(iii) A localization mechanism that leverages 60 GHz antennas to pinpoint the object's initial location and complement phase-tracking via opportunistic calibration (Sec. 6).</p><p>(iv) Implementing mTrack on a reconfigurable 60 GHz radio testbed, and validating its localization/tracking performance in a practical wireless trackpad setup (Sec. 8).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="2.">RELATED WORK</head><p>RF-based Active Tracking. Localization of radio-equipped objects has been explored extensively. RSS alone <ref type="bibr" target="#b16">[18]</ref>, or combined with phase <ref type="bibr" target="#b17">[19]</ref>, can serve as location signatures. But mapping channel information to location usually requires site survey and the accuracy is time and environment dependent <ref type="bibr" target="#b18">[20]</ref>. In shortrange, static environment, it is possible to locate a radio using a path-loss model (4cm error in an 1m 2 area) <ref type="bibr" target="#b19">[21]</ref>. However, for passive tracking, RSS-model becomes inaccurate due to multipath effects. Thus, mTrack only resorts to the variation of phase to realize passive tracking, which does not rely on any RSS-distance model.</p><p>Centimeter-scale RFID localization was achieved recently in RF-IDraw <ref type="bibr" target="#b9">[10]</ref>, which uses an interferometry technique to measure the relative phase between multiple RFID readers. Tagoram <ref type="bibr" target="#b5">[6]</ref> generates a phase hologram that statistically maps measured phase to a potential position, and computes moving trajectory through phase shifting. These tracking schemes require an RFID tag on the object, which is not readily available for writing objects in daily use. To enable high precision passive tracking, mTrack faces two new technical challenges unseen in <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b9">10]</ref>. First, reflected signal from irrelevant background objects can severely distort the targetreflected signal and affect phase-tracking accuracy (more details in Section 5.2.2). Second, current 60 GHz radio hardware still has non-negligible phase noise, which contaminates the phase shifting. To meet these challenges, mTrack incorporates two novel processing techniques that recover legitimate phase change (Section 5). In addition, mTrack leverages the unique feature of beam steerability in 60 GHz radios to realize precise localization.</p><p>RF-based Passive Tracking. Passive object tracking is reminiscent of the vast literature in radar systems <ref type="bibr" target="#b13">[14,</ref><ref type="bibr" target="#b20">22]</ref>. Conventional radar, however, mainly focused on tracking large moving objects using Doppler methods, and pushing the granularity using wideband radios with GHz of sampling rate. mTrack, in contrast, leverages single-carrier phased-based approach, taking advantage of electronically steerable 60 GHz antennas to track small objects with sub-centimeter precision, thus enabling near-field interactive applications like a trackpad. On the other hand, typical ranging radars require dedicated hardware, which is not readily available in 60 GHz communication system. Pulse radar <ref type="bibr" target="#b21">[23]</ref> needs high-speed pulse generator while frequency-modulation continuous wave (FMCW) radar <ref type="bibr" target="#b13">[14]</ref> requires a swiping carrier frequency controlled by VCO. On the contrary, mTrack's single-carrier design can be easily realized using 60 GHz communication hardware. Radar object tracking also faces interferences from background reflection. However, mTrack's mmWave phase-tracking method en-     counters unique challenges that have not been addressed in existing radar tracking algorithms <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b13">14,</ref><ref type="bibr" target="#b14">15,</ref><ref type="bibr" target="#b22">24]</ref> (more details in Sec.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>5.2.2).</head><p>Radio tomography and imaging techniques <ref type="bibr" target="#b10">[11,</ref><ref type="bibr" target="#b23">25]</ref> deploy a mesh of sensors around sensing area and locate a person by identifying shadowed area that shows weak RSS or outstanding variation. mTrack is based on object reflection instead of blockage effect, and achieves a fine-grained tracking with much fewer sensing nodes. WiFi imaging (e.g., <ref type="bibr" target="#b24">[26]</ref>) creates an image of sensing area through an antenna array, though with a low resolution. WiFi RSS and Doppler metric have also been leveraged in gesture recognition <ref type="bibr" target="#b3">[4,</ref><ref type="bibr" target="#b4">5]</ref>, but the identification algorithm needs to be trained with known patterns. Besides tracking, millimeter wave has been used to infer object's surface curvature and material <ref type="bibr" target="#b25">[27]</ref>, which can be applied to identify the target of interest.</p><p>To our knowledge, mTrack represents the first work that achieves sub-centimeter scale passive object tracking, taking advantage of the small wavelength and steerable antennas of mmWave radios. Table <ref type="table" target="#tab_1">1</ref> compares mTrack with other recent RF-based active and passive tracking systems.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.">UNDERSTANDING MMWAVE PASSIVE TRACKING</head><p>We first use our 60 GHz testbed to explore mmWave characteristics pertaining to high-precision passive object localization/tracking. Our experiments examine whether small writing objects can effectively reflect mmWave signals, and whether the reflected RSS/phase can serve as subtle location/motion hints. The experiments also reveal unique advantages of mmWave over 2.4 GHz microwave-band signals.</p><p>For a feasibility test, we create a simplified setup illustrated in Figure <ref type="figure" target="#fig_4">4</ref>. Our testbed implementation is detailed in Section 8. By default, the receiver antenna is placed at view angle 0 • co-located with the transmitter. Irrelevant reflections from background objects are reduced by placing RF absorbers <ref type="bibr" target="#b26">[28]</ref> (with approximately 35 dB attenuation) near the boundary of testing region.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.1">Reflection/Diffusion of Signals by Objects</head><p>To enable mmWave passive tracking, receiver must receive reflection signal from the target despite the view angle w.r.t. target. However, 60 GHz signals are often deemed to possess a pseudooptical property. So, will they create mirror-like specular reflections when hitting glossy objects? We examine the reflective property by rotating the receiver's view angle around the location of the target -a stylus pen (0.4 cm radius) with a metal surface.</p><p>Figure <ref type="figure" target="#fig_1">1</ref> plots the average RSS of 100 measured values at each view angle (with and without are abbreviated as w and w/). In the presence of the pen, the RSS remains consistently high from view angle 0 • to 150 • , indicating that when reflecting 60 GHz signals, the target acts like a quasi-omni-directional antenna, rather than a mirror. Thus, even a highly directional 60 GHz receiver can capture the reflection from a wide range of view angles, as long as the target is illuminated by the transmitter.</p><p>We also make two other observations. First, the transmitter's beamwidth determines the illumination coverage. 90 • to 180 • beamwidth can ensure the target is illuminated as it moves across a wide region in front of the transmitter. Second, even without target, the RSS varies, partly due to residual reflections from background, and partly due to leakage signal from the transmitter especially at a wide view angle.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.2">Phase Variation Enables Fine-Grained Motion Tracking</head><p>Moving distance. Under ideal propagation/reflection, the phase offset between transmitter and receiver should only depend on the signal path length (illumination plus reflection). Figure <ref type="figure" target="#fig_2">2(a)</ref> shows the phase variation as the target moves at 24 mm/second away from the transmitter/receiver. Owing to extremely short wavelength, i.e., around 5 mm, even a small change of total signal path length can vary the phase significantly. By unwrapping <ref type="bibr" target="#b27">[29]</ref> the phase value, we observe an increasing trend, indicating increasing path length, a consequence of the target's actual movement pattern. In addition, we see that the unwrapped phase value increases by 230 radians, translating to a distance 230 2π ×0.25cm ≈ 9.15cm, roughly matching the actual moving distance of 10 cm (Note that each phase cycle corresponds to both illuminating and reflecting paths). In effect, when zooming in one phase cycle, we can see that even sub-wavelength movement resolution is feasible.</p><p>These two observations hint that phase change of reflected signals can indicate whether the target is moving towards/against the Tx/Rx, and the relative moving distance. Small wavelength of 60 GHz signals enables fine-grained distance resolution. However, two challenges remain open: (i) A single receiver cannot resolve the target's moving angle within a 2D plane. (ii) Phase has an inherent aliasing effect, and cannot indicate the absolute location of target. This can be clearly observed from Figure <ref type="figure" target="#fig_2">2</ref>(a), where phase exhibits cyclic behavior, with many locations sharing the same phase value.</p><p>It is worthy to note that the phase value experiences a jump between 520ms and 540ms in Figure <ref type="figure" target="#fig_2">2</ref>(a). This is caused by the signals from background reflection -the RF absorber in our feasibility test is not large enough to isolate all background objects. Our phase processing techniques (Section 5) will remove such abnormality and guarantee the correctness of accumulated phase.</p><p>Target size. Electromagnetic waves can easily bypass around obstacles whose size is smaller than the wavelength, and will be blocked/reflected otherwise. Thus, we hypothesize that passive tracking of small targets is a unique advantage of mmWave signals over microwave. To verify the hypothesis, we place a pair of 2.4 GHz software radios following the same setup as above. Figure <ref type="figure" target="#fig_2">2</ref>(b) plots the resulting phase variation as the target moves. For the stylus pen, the signal phase can hardly reach a full cycle of −π to π, and shows no clear correlation with wavelength. This is because the majority of the microwave signals bypass around the pen, with a radius much smaller than the wavelength (12.5 cm). Hence, background reflections from afar tend to dominate and distort the phase. Only when the target (e.g., a can) size is sufficiently large can the reflected signals dominate and manifest full cyclic behavior as in the mmWave case. This result confirms our hypothesis.</p><p>It is worth noting that mmWave signals may still suffer from distortion under strong background reflection. This is a unique challenge in comparison to tracking active objects (e.g., those instrumented with RFID tags <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b9">10]</ref>), and will be investigated in mTrack.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="3.3">Beam Steering Enables Localizing Absolute Position</head><p>Despite the wide diffusion angle of the object (Figure <ref type="figure" target="#fig_1">1</ref>), a 60 GHz receiver can have highly narrow beamwidth and will be able to capture the diffused signals only when it is pointing to the target. Figure <ref type="figure" target="#fig_3">3</ref> verifies this property. We steer the receiver's pointing angle between −20 • to 20 • , at 1 • granularity. The measured RSS peaks at around 0 • when the receiver points towards the target. This indicates that we can take advantage of 60 GHz beams' steerability to fix the target's absolute angle relative to the Tx/Rx.</p><p>In practice, a 60 GHz antenna may not be steered continuously as in our experiment. In addition, the RSS may also suffer from background reflection effect, which causes multipath effect and RSS variation as shown in Figure <ref type="figure" target="#fig_1">1</ref>. mTrack is designed to meet these challenges.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="4.">AN OVERVIEW OF mTrack</head><p>mTrack builds on the foregoing measurement observations to realize a high-precision mmWave trackpad. Figure <ref type="figure">5</ref> shows a typical mTrack setup. One quasi-omni Tx and two directional Rx antennas are placed to form a right angle, and track an object within a rectangular trackpad region (0 &lt; x &lt; 2a, 0 &lt; y &lt; 2b). a and b are set to 50 cm by default.</p><p>Both the quasi-omni and directional beam patterns can be readily generated via 802.11ad devices' phased-array antennas <ref type="bibr" target="#b6">[7,</ref><ref type="bibr" target="#b28">30]</ref>. The quasi-omni transmitter beam in mTrack is used to illuminate the trackpad area. Typical quasi-omni beamwidth in 60 GHz ranges from 20 • to 180 • . The transmit signal is able to cover the tracking region, without the need to adjust the transmitter's beam direction for scanning target. On the other hand, the Rx adopts highly direc-  tional antennas, for two reasons. First, with a high antenna gain, it can substantially boost signal quality, enabling mTrack to capture the weak reflections from target. Second, a directional receiver can help isolate the leakage interference from the Tx, which may otherwise overwhelm the target-reflected signals. Using highly directional antennas reduces the beams' intersecting area. The receiver keeps track of the target by adaptively steering the beam direction. The system detects target's entrance and exit through the touch detection module (detailed in <ref type="bibr">Section 7)</ref>. It also knows when the target starts to move and the moving tendency by measuring the trend and amount of phase shifting (detailed in Section 5).</p><p>Figure <ref type="figure">6</ref> illustrates mTrack's design components and their interaction. The phase tracking module continuously tracks the target's location by measuring and manipulating phase incremental at each Rx. It resolves the grand challenge from background reflections and achieves mm-scale tracking accuracy. The anchor point acquisition (APA) module estimates the target's initial position through beam searching, leveraging our observation in Section 3.3. APA has lower location resolution than phase-tracking. Hence, it is only opportunistically called on to provide absolute location value for phase tracking and prevent its error accumulation. The touch detection module detects user lifting the writing object or reposition it on the trackpad. Finally, the tracking/locating/touching output can serve a variety of applications, including not only trackpad, but also handwriting transcription, gesture recording, etc.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.">PHASE TRACKING IN mTrack</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.1">Basic Successive Tracking Algorithm</head><p>Translating phase change into path-length change. We first model the relation between target's moving distance and relative phase change between a pair of transmitter and receiver. The model formalizes our empirical observations in Section 3.2 and builds the foundation for phase-tracking.</p><p>Suppose the transmitter sends a single-tone signal of frequency fc, represented as: T b (t) = Ae j(2πfct) , where A is the transmit signal magnitude. After target reflection and propagation, the receiver-captured signal becomes:</p><formula xml:id="formula_0">R b (t) = ηAe j[2πfc(t−τ )+Φ 1 ] ,</formula><p>where η is the attenuation factor. Signal propagation time τ =</p><formula xml:id="formula_1">D T t +D R t c</formula><p>, where c is the light velocity, and D T t and D R t are the distance from target to the transmitter and receiver, respectively. Φ1 denotes the phase change caused by the reflection on the target's surface, which is a constant for the same material. Then the phase shift, defined as the received signal's phase change from time t − 1 to t, and labeled as ∆ arg(R b ) t t−1 , is proportional to the change of total path length due to movement:</p><formula xml:id="formula_2">∆ arg(R) t t−1 = 2π(D T t + D R t − D T t−1 − D R t−1 ) λc ,<label>(1)</label></formula><p>Algorithm 1 Basic Phase Tracking Algorithm 1: Input: phase shift ∆ arg(R1) t t−1 and ∆ arg(R2</p><formula xml:id="formula_3">) t t−1 , 2: Output: new location o (xt, yt) 3: if isempty(D T t−1 , D R1 t−1 , D R2 t−1 ) 4: o (xt, yt) ← APA() /*Locating module*/ 5: {D T t−1 , D R1 t−1 , D R2 t−1 } ← {| − → o − − −− → o(T x)|, | − → o − − −−− → o(Rx1)|, | − → o − − −−− → o(Rx2)</formula><p>|} /*Acquire initial path length*/ 6: else /*Successive tracking*/ 7: </p><formula xml:id="formula_4">{D T t , D R1 t , D R2 t } ← path(D T t−1 .D R1 t−1 , D R2 t−1 , ∆ arg(R1) t t−1 , ∆ arg(R2) t t−1 ) /*</formula><formula xml:id="formula_5">D R1 t 2 −D T t 2 +3a 2 2a , D R2 t 2 −D T t 2 +3b 2 2b ) 10: {D T t−1 , D R1 t−1 , D R2 t−1 } ← {D T t , D R1 t , D R2 t } 11: return o (xt, yt) Tx Ant Rx Ant I Q bg target</formula></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Background Reflection Target Reflection</head><p>Objects in the background where λc is the wavelength corresponding to carrier frequency fc.</p><p>From distance tracking to 2D tracking. Consider two consecutive signal samples t − 1 and t, while the target is moving. Based on Eq. (1), we have:</p><formula xml:id="formula_6">(D T t + D R1 t ) = (D T t−1 + D R1 t−1 ) + λc∆ arg(R1) t t−1 2π (D T t + D R2 t ) = (D T t−1 + D R2 t−1 ) + λc∆ arg(R2) t t−1 2π .</formula><p>In addition with an inherent geometrical constraint of those signal path lengths (Figure <ref type="figure">5</ref>), we can solve for three unknown path lengths D T t , D R1 t and D R2 t with three sets of equations, given that the corresponding path-lengths at t − 1 have already been obtained. This computation runs in a successive manner, with initial values D T 0 , D R1 0 and D R2 0 given by mTrack's anchor point acquisition (APA) module (to be discussed in Section 6). Finally, the target's absolute coordinate at time t is computed using the triangulation method, given the path length to the transmitter and both receivers' locations. Algorithm 1 summarizes the successive phase-tracking in mTrack.</p><p>This successive tracking is promising for real-time tracking because the solutions of path length and new location can be expressed in closed-form formulas and computed efficiently by single-step operations.</p><p>Notably, using highly directional receive antennas may result in a relatively small detection region. For example, with two Rx antennas of beamwidth 4.5 • and 0.5m away from the tracking region, the intersection area of two beams is only 5cm × 5cm. mTrack expands the detection region by adaptively steering the beam, whenever it gauges that the target may fall out of the Rx's beam coverage in the next 0.5 second, assuming its speed is consistent within this short period.  </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2">Tracking under Background Reflection</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.1">Impact of background reflection on phase shift</head><p>Though directional antennas can alleviate multipath effect, antenna beamwidth still needs to be broad enough to cover a reasonably large detection region. Thus, background reflection is unavoidable. We model how background reflection affects mTrack's successive tracking and derive insights that help disentangle target reflection from background reflection. We use vector form on the I-Q plane to represent a signal sample (Figure <ref type="figure" target="#fig_7">7</ref>). Since baseband signal is a single-carrier, background reflections can aggregate into a single signal sample − → S bg. Similarly, target-reflected signal sample is modeled as − → S trg. The demodulated signal at the receiver − → S rec at any time is the sum of two reflected components:</p><formula xml:id="formula_7">− → S rec = − → S trg + − → S bg.<label>(2)</label></formula><p>Phase shift of − → S trg carriers information about the moving distance of target, but the receiver can only measure the mixed signal − → S rec. So, can this mixed signal's phase still translate into target's moving distance? We answer the question by analyzing how the phase of − → S rec cycles as the target moves over half-wavelength (i.e., the phase of − → S trg cycles from 0 to 2π). The phase cycling pattern in turn depends on the magnitude of target reflection | − → S trg|, which we classify into three ranges, as shown in Figure <ref type="figure" target="#fig_10">8</ref>.</p><p>(a) Target dominating (TD): Suppose background reflection is stationary as the target moves across half-wavelength. Accordingly, as − → S trg rotates its phase through one cycle, − → S rec crosses the I-plane once, resulting in phase shift of 2π. Thus, phase shift can still reveal the moving distance when target travels integer multiples of halfwavelength λ0.5.</p><p>(b) Background dominating (BD): As the phase of − → S trg goes through a 2π cycle, the measured phase of − → S rec does not cross the I-plane, and phase shift is smaller than 2π. The stronger the background reflection, the smaller it will be. Accordingly, the moving distance estimated from the phase shift of − → S rec is always shorter than actual value. − → S rec crosses the I-plane twice, causing phase jump at each crossing point. Due to phase ambiguity of measured signal − → S rec, the measured phase shift also will not reveal the correct moving distance.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.2.2">Dealing with Background Reflection</head><p>Why is it challenging? Multipath reflection from background is a unique challenge for mTrack which aims to track small passive objects at high precision. Unlike radar-like systems that track large targets (e.g., human body <ref type="bibr" target="#b11">[12,</ref><ref type="bibr" target="#b13">14]</ref>), reflections from small objects tend to be weaker or comparable to background reflections. Due to the high sensitivity of mmWave, background reflection can disturb the signal phase even as the target moves over a short distance. Radar systems can use ultra-wideband signals to resolve the timeof-arrival of reflected signal paths, thus separating the foreground and background <ref type="bibr" target="#b29">[31]</ref>. In contrast, mTrack relies on a narrow-band (single-tone) continuous wave that mixes background and target reflection.</p><p>Unlike active tracking systems <ref type="bibr" target="#b5">[6,</ref><ref type="bibr" target="#b9">10]</ref> where reflected paths originate coherently from the same radio transmitter, in passive tracking, only parts of the reflected signals contain desired information and need to be extrapolated. Background suppression in active tracking systems is much simpler, since the signal phase changes are caused by baseband modulation, which operates at much higher rate (e.g., multiple kHz in RFID <ref type="bibr" target="#b5">[6]</ref> ) than background variation. Hence, any background reflection can be considered as relatively static and filtered out by a DC filter <ref type="bibr" target="#b30">[32]</ref>. This approach is not applicable to passive tracking systems where phase changes at slow rate due to target movement.</p><p>Dual-differential Background Removal. Since the phase shift directly from the received signal − → S rec is contaminated by background reflection, mTrack employs a Dual-differential Background Removal (DDBR) algorithm to remove such impact, thus limiting the tracking error.</p><p>Underlying background removal are two assumptions: (i) Background reflection remains stationary across at least 3 consecutive signal samples. This holds in general because 60 GHz radios take RSS/phase samples (assuming one sample per packet) much more frequently than the change of background. (ii) Target reflection has the same decreasing or increasing trend of phase shift, and approximate RSS, across 3 consecutive samples. This holds again because of the high sampling rate relative to the writing object's slow motion.</p><p>Under these assumptions, the idea behind background cancellation is intuitive -we leverage the invariant behind signal differential:</p><formula xml:id="formula_8">− → S t rec − − → S t−1 rec = ( − → S t trg + − → S t bg ) − ( − → S t−1 trg + − → S t−1 bg ) − → S t trg − − → S t−1 trg .<label>(3)</label></formula><p>The average phase shift among three consecutive samples can be computed as:  </p><formula xml:id="formula_9">[∆ arg( − → S trg) t t−1 + ∆ arg( − → S trg) t+1 t ] = arg( − → S t+1 trg − − → S t trg ) − arg( − → S t trg − − → S t−1 trg ).<label>(4)</label></formula><p>The proof for the above equation directly follows the geometrical relation shown in Figure <ref type="figure" target="#fig_11">9</ref>, which is detailed in Appendix A.</p><p>From Eqs. ( <ref type="formula" target="#formula_8">3</ref>) and ( <ref type="formula" target="#formula_9">4</ref>), we get the phase shift with background reflection canceled by differentiating the phase of differential received signal:</p><formula xml:id="formula_10">∆ arg( − → S trg) t+1 t−1 = ∆ arg( − → S trg) t t−1 + ∆ arg( − → S trg) t+1 t ≈ 2[arg( − → S t+1 rec − − → S t rec ) − arg( − → S t rec − − → S t−1 rec )]. (5)</formula><p>The resulting ∆ arg( − → S trg) t+1 t−1 is deemed as a single phase shift sample (with background canceled) to replace the one in the basic successive tracking Algorithm 1 to improve tracking accuracy.</p><p>Millimeter-wave radios typically have non-negligible phase noise which is inherent to its ultra-high frequency synthesizer. To prevent phase noise from contaminating the phase shift measurement, mTrack adapts its phase sampling rate (by dropping intermediate samples), to ensure the phase shift between consecutive samples is not dominated by phase noise. We retain a phase sample only if its shift (relative to the previous sample) is above variance of the phase noise (available from hardware specifications).</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="5.3">Phase Counting and Regeneration</head><p>One limitation of the above DDBR algorithm is that it attempts to average out phase noise at the cost of lowering sampling rate. Consequently, between 3 consecutive sampling period, the background reflection may have already changed, thus violating DDBR's assumption.</p><p>To overcome this limitation, we design a complementary algorithm called phase counting and regeneration (PCR). PCR maintains a high sampling rate, but collects a sufficient number of samples (instead of 3) to recover the target-reflected signal from noise and background reflection. Under background reflection, although the absolute phase change of measured signal is no longer linear w.r.t. target's moving distance, its phase still exhibits a periodic pattern (Section 5.2.1). PCR harnesses this phenomenon to identify/count the phase cycles of measured signal, based on which it regenerates the phase change caused purely by target reflection. Then, it can simply run the basic phase-tracking Algorithm 1 to translate phase change into moving distance.</p><p>The three different patterns of background contamination (Section 5.2.1) impose significant challenges to this approach. First, the three cases may be mixed together, and the ITM case has severe phase aliasing effects. Second, we need to identify the periodicity based only on a few phase cycles to maintain the timeliness of   tracking. Both challenges deter simple periodicity identification algorithms like Fast Fourier Transform. PCR addresses these challenges through three key steps (Figure <ref type="figure" target="#fig_1">10</ref> shows an example).</p><p>Reducing ITM to BD. We address the first issue by detecting the ITM case, and convert it to the BD case which has no phase aliasing effect. For detection, PCR leverages the unique phase "jumps" in the ITM case caused by aliasing, i.e., neighboring two jumps are in opposite directions (Figure <ref type="figure" target="#fig_10">8</ref>). Formally, given a time series of N phase samples</p><formula xml:id="formula_11">x[1], x[2], • • • , x[N ]</formula><p>, it sequentially searches for a point mi with phase jump:</p><formula xml:id="formula_12">mi = arg min 2≤i≤N find(|x[i] − x[i − 1]| &gt; π).<label>(6)</label></formula><p>It then checks if there exists a follow-on point that together constitutes the feature in ITM:</p><formula xml:id="formula_13">mj = arg min m i ≤j≤N find(|x[j] − x[j − 1]| &gt; π)<label>(7)</label></formula><formula xml:id="formula_14">s.t. mj − mi &lt; T h (8) |x[mi] − x[mj]| &gt; π,<label>(9)</label></formula><p>where T h is the largest periodicity that PCR can detect. Eq. ( <ref type="formula" target="#formula_14">9</ref>) ensures the phase jumps at mi and mj are opposite.</p><p>Once an ITM case is detected, we can reduce it to the BD case by compensating the difference between discontinuous series:</p><formula xml:id="formula_15">x[i] = x[i] − (x[mi] − x[mi − 1]), ∀i ∈ [mi, mj).<label>(10)</label></formula><p>Periodicity Counting.</p><p>To reliably detect the periodicity T of the time series of samples after alias removal, we adopt the phase coherence analysis in <ref type="bibr" target="#b31">[33]</ref></p><formula xml:id="formula_16">. Let sequence L[i, d] = {x[i + jd] | ∀ 0 ≤ j &lt; N/d },</formula><p>where {} denotes concatenation of samples. Since L[i, d] are samples that are separated by d points in the given time series, by the periodicity definition, variance of L[i, d] will be minimized, i.e. 0, when d = T . Hence, we find the periodicity T by iterating possible values in range [T l , T h ] for all sequence i:</p><formula xml:id="formula_17">T = arg min t var({L[i, t] | ∀1 ≤ i ≤ t}), ∀t ∈ [T l , T h ],</formula><p>where L[i, t] is L[i, t] with its mean value subtracted.</p><p>Regeneration. PCR will generate the counting sequence (red curve in Figure <ref type="figure" target="#fig_1">10</ref>) based on the periodicity detected in the time series samples. The correct phase pattern is regenerated by creating 2π phase shift between any two neighboring counts. The trend of phase shift, either increasing or decreasing, is available from the basic successive tracking or DDBR algorithm.</p><p>We emphasize that PCR is uniquely designed for passive tracking using small-wavelength mmWave signals. It assumes the background reflection does not change as the target moves over λ0.5, which may not hold when using microwave signals. In addition, its resolution is around λ0.5, hence PCR's precision worsens to multiple centimeters when using microwave signals.</p><p>Table <ref type="table" target="#tab_4">2</ref> summarizes and compares three processing algorithms. Since PCR algorithm works on time-series of samples spanning multiple phase cycles, it incurs proportionally higher complexity and tracking latency than Basic (successive tracking) and DDBR, which work on 2 and 3 samples, respectively. However, it is more resilient to the phase noise, as will be verified in experiments.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="6.">ANCHOR POINT ACQUISITION</head><p>APA complements phase tracking in two aspects: (i) estimating initial location, which serves as an anchor point to bootstrap the successive tracking; (ii) opportunistically calibrating the tracking results to prevent error accumulation.</p><p>Locating through discrete beam steering. Our feasibility study in Section 3 reveals a key challenge in locating the target: practical 60 GHz antennas can only be steered at discrete angles. We resolve this challenge by leveraging the roll-off pattern of the antenna gain. The gain of a 60 GHz directional Rx antenna (either horn antenna or phased-array <ref type="bibr" target="#b28">[30]</ref>) decreases continuously near its beam edge. Accordingly, as a signal source moves from the beam center towards beam edge RSS falls off smoothly. The fall-off trend is preserved even if Rx steers itself in discrete steps.</p><p>Built on this observation, mTrack realizes discrete spatial sampling of the target's direction, thereby relaxing the beam resolution requirement. In analog-to-digital signal conversion, a continuous signal can be preserved by interpolating it across discrete samples, using sinc as the basis function. Similarly for mTrack, the continuous spatial RSS variation can be reconstructed by interpolating the discrete samples, using antenna gain pattern (over angles) as basis function. Yet, since the exact gain pattern is unavailable, we choose to use spline interpolation instead. Spline interpolation performs piecewise polynomial approximation to the discrete samples with an objective that minimizes curve bending. It can thus recover the peak RSS position. To perfectly reconstruct continuous variation, angle of beam-steering for each step is required to be smaller than 2× the beamwidth.  Figure <ref type="figure" target="#fig_1">11</ref> shows one example test result, with discrete RSS samples (blue dots) at 8 • beam-steering steps, along with the interpolated curve. We can see that the interpolated maximum RSS position is very close to the ground truth.</p><p>Following mTrack's setup (Figure <ref type="figure">5</ref>), the target's angle relative to each Rx antenna can be translated into its absolute location via simple geometrical manipulation. We omit the details for the sake of space.</p><p>Background RSS Subtraction. Similar to the successive phase tracking, the RSS values captured during APA may be contaminated by background reflection. However, RSS is much less sensitive than phase because the locating result will be affected only if the background change alters the peak in the RSS scanning. Thus, mTrack employs a simple iterative background RSS subtraction method in APA. Before use, each Rx collects the RSS of background reflection for each steering angle. When a new APA is invoked, the background RSS at each steering direction is subtracted from the measured RSS. During the writing process, it knows the precise angular location of the target by combining phase tracking and initial APA. Hence, it periodically rescans the background RSS by steering off the target position.</p><p>During APA, the tracking module has to be temporarily blocked. However, since mmWave phase-array antenna can instantaneously switch its beam (at ns level latency as specified in 802.11ad <ref type="bibr" target="#b32">[34]</ref>), the impact on tracking is negligible.</p><p>Figure <ref type="figure" target="#fig_1">12</ref> illustrates one test experiment, where a metal-surface cup is placed 25cm behind the detection region and a pen is used as tracking target. When there is only pen (blue curve) or only background (yellow curve) in the environment, mTrack can locate the direction of target accurately (in 40 • and 30 • respectively). When the tracking target is mixed with background object, the system is misled to take the later as locating result (in green curve) due to its stronger reflected signal strength. In the red curve, background subtraction cancels the background reflection from cup, and thus the target position can be accurately located.</p><p>Opportunistic Calibration. To curtail the error accumulation from successive phase tracking, APA is invoked opportunistically to recalibrate the absolute target position.</p><p>mTrack adopts a k/θ test to determine when to invoke a calibration. APA module periodically estimates anchor points. If past k anchor points all fall in a sector of angle θ originating from current position, the deviation of tracking trajectory can be considered as sufficiently large. In this case, the calibration will be applied by updating current position to the latest anchor point. In practice, mTrack empirically chooses k = 3 and θ = 120 • .</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="7.">TOUCH EVENT DETECTION</head><p>Besides tracking, mTrack detects touch-related gestures including: (i) "touch" -pen landing on writing region, (ii) "lift" -pen lifting above the region, and (iii) "click" -essentially a sequential combination of "touch" and "lift" event. The touch gestures can serve as commands, e.g., start/pause of tracking and segmentation of writing trajectory.</p><p>The key principle in mTrack's gesture detection algorithm is to identify signal features that discriminate each gesture, and distinguish them from normal writing. Given the ultra-narrow beam, one may consider the touch gestures as "beam cutting" events, and use RSS variation patterns to detect them <ref type="bibr" target="#b4">[5]</ref>. However, we find that RSS fluctuates significantly during writing, which incurs frequent false alarms. To address this problem, we resort to the phase variance as an additional feature along with RSS. Since phase shift reveals the target's movement, its variance will characterize the abruptness of change in the pen's moving speed, which is suitable for gesture detection.</p><p>Figure <ref type="figure" target="#fig_1">13</ref> illustrates a snapshot of signal features for the three types of gestures. A sliding window of duration 0.1s is used to smooth the phase variance. We can see that all gestures will create large phase variance, which is amenable for flagging a valid gesture event. To discriminate different types of gestures, we can resort to the RSS pattern, which tends to have higher value when the pen is in the tracking region. Based on above observations, mTrack identifies and classifies the gesture using a simple decision tree (Alg. 2). return "Touch" /*Touch increases RSS*/ 8: else 9:</p><p>return "Lift" /*Lift decreases RSS*/ 10: return "NULL" /*Event not detected*/ In Algorithm 2, there are two parameters. s is the number of samples that are used to compute average RSS, which is empirically chosen as 0.1s. H denotes the threshold for a valid peak of phase variance. Since different users' gesture styles (e.g., touching speed) may differ, mTrack requests the user to provide a 10-sample training set before using the gesture detector. It then selects an H that  minimizes the difference (computed using standardized Euclidean distance <ref type="bibr" target="#b34">[35]</ref>) between the widths of the 10 peaks.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.">IMPLEMENTATION AND EVALUATION</head><p>We use a custom-built 60 GHz software-radio testbed (Figure <ref type="figure" target="#fig_1">14</ref>) to evaluate the viability and performance of mTrack. The testbed uses WARP <ref type="bibr" target="#b35">[36]</ref> as baseband processing unit, but extends its carrier frequency to 60 GHz. Baseband digital waveforms are generated in a host PC, forwarded to WARP, and converted to analog using a high-speed DAC. Resulting analog signals are carriermodulated and transmitted by the Vubiq 60 GHz RF front-end <ref type="bibr" target="#b36">[37]</ref>. Two receivers are synchronized by a 308.6 MHz external clock signal sourcing from transmitter oscillator. Received signals will be decoded following reverse path, and eventually reach the PC host which runs mTrack's algorithms.</p><p>Tx and Rx RF front-end each has a waveguide module as interface to 60 GHz antennas (Figure <ref type="figure" target="#fig_1">15</ref>). Transmitter uses its original waveguide module PEM-001 as antenna, which is quasi-omnidirectional (180 • beamwidth). Tx sends 5 MHz single-carrier baseband signals modulated by 60 GHz carrier waves. Regarding receiver, we are unaware of any programmable 60 GHz phased-array antenna. Thus, in our prototype, signals are captured by a directional receiver with horn antenna PE9881-34 of 3.4 • beamwidth. To emulate the effect of beam steering, the Rx antenna is mounted on a motion control system <ref type="bibr" target="#b37">[38]</ref> that is connected to the PC host and allows programmable azimuth rotation at 1 • granularity.</p><p>We also implement the RSS/phase extraction module on the 60 GHz testbed. It generates and sends single-tone frames (3000 samples each) through Tx, and estimates a pair of RSS and phase values from each received frame. To avoid phase ambiguity, the change between any two phase values cannot exceed π. By default, the extraction module samples RSS/phase at 300 Hz. Thus, the highest tracking speed that our prototype can support is 2.5mm×300 Hz/2 = 37.5cm/s. The speed is sufficiently fast to capture normal hand writing. Note that 300 Hz phase sampling rate is far below our hardware limit. With 40 MHz bandwidth, the phase sampling rate can be up to 40 MHz/3000 = 13 KHz, equivalently translated to a tracking speed of 26 m/s. On top of the RSS/phase extraction, we implement mTrack's major modules, i.e., tracking, locating and touch detection. Core processing algorithms DDBR, PCR and APA are designed as middleware plugins that work transparently between RSS/phase extraction and these modules. Algorithms operate on samples that are loaded sequentially into a data buffer.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1">Micro Benchmark</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1.1">Passive Tracking Performance</head><p>The experiments are conducted in an office environment with natural background: one Rx antenna faces a human and a metal cabinet 1.5 m away; the other one faces a drywall 2 m away. For a micro-benchmark test, a pen is first attached to the motion track and moves linearly under the control of the PC host. This setup allows us to obtain the pen's location over time, and use it as ground truth to evaluate mTrack. Unless noted otherwise, we use the PCR algorithm in mTrack (Section 5.3) to combat background reflection.</p><p>Combating background reflection. We compare mTrack with the ground-truth (Oracle) and two alternative techniques: (i) Basic, which directly employs the phase-tracking algorithm in Section 5 without handling background reflection. (ii) Static subtraction (SSub), which surveys the background reflection offline when the target is out of tracking region. Then, it subtracts the measured background directly from baseband signals, assuming the background is static and remains the same w/ or w/o target present. This is typically used in scenario where background signals have long coherent time, e.g., radar-based object identification <ref type="bibr" target="#b12">[13,</ref><ref type="bibr" target="#b29">31]</ref>.</p><p>Figure <ref type="figure" target="#fig_1">16</ref> and 17 depict example trajectory outputs of these schemes when the pen moves linearly across 10 cm w/ and w/o background reflection. Figure <ref type="figure" target="#fig_1">18</ref> plots the CDF of tracking errors across the trajectory and over 10 trials. When there is no background, all methods have little deviation. When background is present, the basic method exhibits large deviation (median error of 30 mm and 90-percentile 5 mm). Static subtraction leads to even larger error (median 40 mm and 90-percentile 70 mm), because mmWave's phase is highly sensitive to environment. The background signals hardly remain static and subtracting an incorrect estimation incurs  large penalty because of equivalently introducing an artificial background.</p><p>In contrast, mTrack's DDBR and PCR algorithms both demonstrate mm-scale precision, with median (90-percentile) error of 11 <ref type="bibr" target="#b16">(18)</ref> mm and 6.5 (9) mm, respectively. PCR achieves higher accuracy than DDBR mainly because our 60 GHz software defined radio platform has relatively high phase noise (-80dBc at 5Mhz offset from carrier according to our measurement). It can lead to maximum deviation of up to 0.2 radian within one phase cycle. COTS GHz radios have much lower phase noise (typically &lt;110dBc at 5Mhz) <ref type="bibr" target="#b38">[39]</ref>. Our trace-based simulation shows that DDBR can outperform PCR significantly under such noise level.</p><p>Impact of phase noise on DDBR performance. We evaluate DDBR's performance under different levels of phase noise through trace-based simulation. The phase shift of target reflection is generated by simulating the target moving along a triangle of size 5cm×5cm following the setup in Figure <ref type="figure">5</ref>. Meanwhile, there is background reflection from a static reflector, whose reflectivity is 1/3 of the target. The simulated phase shift is contaminated by the trace of phase noise collected from our platform.</p><p>Figure <ref type="figure" target="#fig_2">20</ref> shows the impact of phase noise. DDBR's tracking error decreases by more than 80% when the phase noise is reduced from -80dBc to -86dBc, and after background removal, the trajectory is close to the oracle shape (triangle). Further reducing the phase noise (to &lt;-86dBc) will not significantly improve tracking performance since phase noise is sufficiently small for DDBR to function correctly.</p><p>Different types of background. We now evaluate the performance of Basic and mTrack (using PCR) under 3 different background types: (i) Strong background: a metal cabinet is placed near the tracking region, facing one Rx antenna. (ii) Weak background: a 60 GHz RF absorber is placed at the end of tracking region to isolate the impact of cabinet on one Rx antenna, leaving background reflection from drywall to the other antenna. (iii) No background: RF absorbers are placed along both the x-and y-axis, protecting both Rx antennas from background reflection.</p><p>We also evaluate mTrack with human as dynamic background: (i) CS, MS, and FS: A human stands 1m, 2m and 3m facing one Rx antenna. Human breathing changes background reflection signals. (ii) WK1 and WK2: The human randomly walks in parallel or perpendicular at 2∼3m to Rx antenna.</p><p>Figure <ref type="figure" target="#fig_1">19</ref> shows that mTrack maintains mm-scale precision across all background types. Its PCR algorithm effectively eliminates the impact of background reflection, leaving median (90-percentile) residual error of only around 8 (12) mm compared with the perfect case (no background). In contrast, the basic phase tracking deviates by up to 30 (50) mm. Figure <ref type="figure" target="#fig_1">21</ref> shows that PCR can still effectively reduce tracking error under human walking as dynamic background, since human body will not strongly reflect mmWave signals.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1.2">Performance of APA</head><p>We proceed to verify mTrack's APA algorithm with similar experiment setup as above. The target pen is randomly placed over 30 positions 40 to 50 cm away from the receivers. We evaluate mTrack's error in locating the target's angle relative to the transmitter/receiver (Section 6).</p><p>Benchmarking APA with discrete-step beam-steering. To emulate practical behavior of 60 GHz switched-beam antenna, we steer the antenna at discrete steps of 8 • (2× the beamwidth). Figure <ref type="figure" target="#fig_2">22</ref> shows that the spline interpolation does play a crucial role in mitigating the effect of discrete switching between beam directions. Compared with the basic method that directly takes the RSSmaximizing direction (Section 6), it reduces the 90-percentile error from 2.5 • to 1.5 • , translating to positioning error of 10.5 mm.</p><p>Background subtraction for APA. In this experiment, in addition to the default background (cabinet and drywall), we intentionally place a metal cup near the end of writing region. Unlike large background like cabinet or drywall, small reflective object as such is more likely to create sharp peak along certain direction, thus disturbing APA.</p><p>Figure <ref type="figure" target="#fig_2">23</ref> shows the anchor positioning performance. When beam steering granularity is high (e.g., ≤ 4 • ), mTrack has a small direction estimation error (around 1 • ) even without background subtraction. This is because the pen is closer to the antennas and generates stronger reflection than the background cup. Their reflection Locating error (cm) Tracking error (cm)  Y coordinate (cm) X coordinate (cm) peaks can thus be reliably distinguished through fine-grained scanning. However, with coarser steering granularity, their peaks tend to merge, leading to an increasing error. Fortunately, background subtraction effectively mitigates the impact of background reflection, hence reducing the estimation error by 50%.</p><p>Figure <ref type="figure" target="#fig_2">24</ref> shows the APA performance under human movement as dynamic background. Human movement at 2m away from receiver does not affect positioning error, since reflecting RSS from human body is much weaker than pen. Estimation error without background subtraction increases to 2.8 • when human stands close to receive antenna. However, background subtraction can still consistently reduce positioning error even under human movement.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.1.3">Joint Performance of Tracking and APA.</head><p>Recall APA facilitates phase tracking through opportunistic calibration. In this experiment, we verify the effectiveness of this joint execution. The target pen moves along a circular trajectory of radius 7 cm. mTrack continuously runs phase tracking, and performs the k/θ-test (Section 6) every 2 seconds. It invokes APA calibration if the test dictates so. Figure <ref type="figure" target="#fig_2">25</ref> shows the tracking error at every 2-second check point. Without APA calibration, the phase tracking error steadily accumulates over time and reaches 46 cm when moving 150 cm continuously along the circle. In contrast, APA calibration caps the phase tracking error below 10 mm across 90% of the trajectory.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.2">Performance on a Trackpad</head><p>We now evaluate mTrack's performance in a real trackpad application. The experiments are conducted in an office environment with natural background (drywall, metal cabinet, a user, and occasional human walking by). A 50cm ×50cm writing region is created on a wood table. To test the precision of APA in locating anchoring points, the user rests the pen tip on 40 random locations, ensuring the bottom part of the pen is exposed to the antennas. mTrack steers the antennas with granularity of 8 • . To test phase tracking, the user draws 10 circles and 10 triangles (with 20 cm perimeter) following printed trajectories in the normal hand-writing speed. Since humanhand deformation will affect phase tracking, testers hold the middle portion of pen, while directional antennas point to the bottom portion. Due to lack of timing-synchronization between user writing trajectory and tracking estimation, we approximate the tracking error as the minimum projection distance from mTrack's location estimation to the trajectory.</p><p>Types of writing objects. We evaluate APA for 3 writing objects of different reflectivity: metal-surfaced pen, plastic marker, and wood pencil (Figure <ref type="figure" target="#fig_1">15(b)</ref>). Our benchmark measurement shows that, at 40 away from the transmit/receive antenna, the SNR of signals reflected by these objects are 12.3 dB, 10.1 dB and 4.7 dB, respectively. Figure <ref type="figure" target="#fig_2">26</ref> plots the APA error distribution, which shows 90-percentile error of 2 cm, 4 cm and 16 cm, respectively. Obviously, object with strong reflectivity enables APA to easily combat noise, thus achieving higher precision. Note that the APA precision for pen is lower than the benchmark test in Section 8.1.2, mainly because the presence of user's hand creates more uncertainties.</p><p>Remarkably, mTrack's phase-tracking algorithm demonstrates the high accuracy in this trackpad application (Figure <ref type="figure" target="#fig_2">27</ref>). The 90percentile errors for pen, marker and pencil are 8 mm, 11 mm and 4.8 cm respectively.</p><p>Localization/tracking error across a large region. Distance between the target and the receiver determines the reflected signal strength and hence may affect mTrack's accuracy. The transmitter and receivers are placed at coordinates (100, 100) cm, (50, 100)cm and (100, 50)cm, respectively. To quantify such location-dependent error, we partition the writing area into 10cm ×10cm squares, and repeat the previous precision test on each square. Figure <ref type="figure" target="#fig_2">28</ref> and 29 plot the APA and phase-tracking error across all squares within a 90cm ×90cm region.</p><p>When the pen is close to both receivers (distance &lt; 60cm), mTrack can achieve high accuracy with APA/tracking error of &lt;1.5 cm and &lt;8 mm, respectively. Accuracy starts degrading when the target moves over 70 cm away from receiver, and hence SNR drops. Nonetheless, the tracking error is still within 1.5 cm even when the target is 90 cm from the receiver. mmWave attenuates to almost noise floor at 100 cm owing to high pathloss of mmWave signals. We expect at least two ways of scaling the writing region: increasing the transmit power, and placing more receivers along the x-and y-axis. We leave such exploration for future work.  Accuracy of touch event detection. To verify mTrack's event detection algorithm, we recruit 7 users to perform the "touch", "lift" and "click" gestures on the writing region using a pen. Each user first provides a 10-sample training set to find the best threshold H (Sec. 7), and then repeat each gesture for 50 times to test the detection algorithm. Table <ref type="table" target="#tab_7">3</ref> shows the confusion matrix of gesture detection among all users, and Figure <ref type="figure" target="#fig_3">30</ref> plots the detection accuracy of each users over all events. The detection accuracy of all three types of events is around 94% and does not vary noticeably across users. Notably, the event misclassification rate is 0, indicating that the RSS based approach can reliably discriminate different gesture events owing to the highly directional beams. The miss detection of events is mainly due to the variation of users' touching speed, which may not always be consistent with the training set.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="8.3">Application of mTrack</head><p>We integrate mTrack with a word recognition application to showcase its potential in computer-human interaction. In specific, we record the writing trace from mTrack word by word, and then export the trace to control the mouse on a PC that runs the MyScript Stylus <ref type="bibr" target="#b39">[40]</ref> word recognition software. mTrack's event detector is used to segment the connections between characters in a word. Figure <ref type="figure" target="#fig_1">31</ref> shows two examples when we use mTrack to track the character/word trajectory, which exhibit high fidelity even if each character spans only 1 or 2 cm.</p><p>We further recruit 7 users to each write 100 random characters and 50 words using metal-surfaced pen on a 15 cm× 15cm writing region. The words are randomly picked from the standard MacKenzie set <ref type="bibr" target="#b40">[41]</ref>, which well represents the usage frequency of English words. Figure <ref type="figure" target="#fig_2">32</ref> plots the recognition accuracy across users. The accuracy for both character and word ranges from 81 to 89% across users. Users also perform the same test on a real trackpad, and the recognition accuracy is from 88 to 92%, which shows that mTrack's performance is close to the trackpad. Considering the potential penetration of portable millimeter-wave radios <ref type="bibr" target="#b7">[8,</ref><ref type="bibr" target="#b8">9]</ref>, we believe mTrack holds potential as a new form of "in-situ" transcription system.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="9.">DISCUSSION</head><p>Object shape and size. mTrack is designed to track writing objects of small size, like pen or marker, which can be approximated as a point reflector, because their dimension (with diameter ≈ 1cm) is much smaller than its distance to the antennas (&gt; 20cm). Objects with deformable shape or large size, e.g. human hand and body, do not possess these properties, and hence cannot use mTrack's model-driven tracking algorithm. Similarly, mTrack can not differentiate phase change due to large hand-shape deformation. Thus, users need to keep a relatively consistent hand shape when writing to avoid confusing the tracking algorithm. They also need to ensure a sizable part of the pen is exposed to the Tx/Rx to reflect the mmWave signals.</p><p>Phased-Array Antennas. Due to hardware limitation, we are only able to evaluate our concept with directional antennas. Beam pattern of a horn antenna differs slightly from that of an 802.11ad phase-array in two aspects: (i) The beamwidth of a phased-array is dependent on steering direction. For example, for a linear antenna array, beamwidth along 0 • direction can be twice of that along 90 • <ref type="bibr" target="#b28">[30]</ref>. However, since beamforming codebook is predefined and known, we can still compensate the gain distortion of discrete sampling. The systematic solution to this problem will be left for our future work. (ii) Sidelobes of a phased array may be relatively large compared with that of a directional horn antenna. Sidelobes may capture signals from undesired directions. However, since they usually have much smaller gain compared to the main lobe, as long as there is a RSS peak when pointing to the target, mTrack's beamsteering based APA mechanism can still work.</p><p>Tracking multiple objects. mTrack can be potentially extended to track multiple targets simultaneously. When the objects are sufficiently separated, and not falling in the same beam direction, the receiver radios can steer the beam towards different objects in a time-interleaving manner and update their tracking trajectories sequentially. Further exploration of this idea is left for our future work.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head n="10.">CONCLUSION</head><p>We have presented mTrack, a high precision passive object tracking system that uses 60 GHz signals as sensing medium. mTrack takes advantage of the short wavelength and steerable directional beams of 802.11ad-like 60 GHz radio devices, and uses subtle RSS/ phase variation to track passive writing objects on a trackpad-like area. It can track a pen at sub-centimeter level accuracy, which even outperforms existing systems that use radio-instrumented objects. Considering the growing popularity of 60 GHz devices, we believe mTrack can potentially open up a wide range of mobile sensing applications.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Figure 1 :</head><label>1</label><figDesc>Figure 1: Small object (pen) causes diffusive 60 GHz signals that can be captured over different view angles.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Figure 2 :</head><label>2</label><figDesc>Figure 2: Tracking under same 30 • beamwidth (diameter: pen 1.2cm, bottle 5.8cm and can 10.3cm). (a) Small object (pen) can cause [-π,π] phase variation in mmWave. (b) Microwave needs an object (e.g. can) of size 9× larger.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_3"><head>Figure 3 :</head><label>3</label><figDesc>Figure 3: Beam steering to locate target direction. Receiver gets strong RSS when steering toward the target.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_4"><head>Figure 4 :</head><label>4</label><figDesc>Figure 4: Setup of feasibility test. (a) Reflection test (Sec. 3.1): Rx centrally rotates around the target. (b) Tracking test (Sec. 3.2): Rx points to a moving target. (c) Locating test (Sec. 3.3): Rx steers its beam toward various directions.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_6"><head>Figure 5 :Figure 6 :</head><label>56</label><figDesc>Figure 5: mTrack setup. Gray area denotes tracking region.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_7"><head>Figure 7 :</head><label>7</label><figDesc>Figure 7: Multipath Reflection. We model the multipath reflections into two types: background reflection and target reflection. The sum of two reflection components is illustrated in phasor space.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_8"><head></head><label></label><figDesc>Figure 5 illustrates mTrack's basic model setup. When deploying mTrack, the Tx and two Rxs are placed at (2a, 2b), (a, 2b) and (2a, b), respectively. Both a and b are known.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_10"><head>Figure 8 :</head><label>8</label><figDesc>Figure 8: Impact of (static) background reflection on phase shift. (a) Target reflection dominates background. (b) Target reflection is much weaker than background. (c) Intermediate case.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_11"><head>Figure 9 :</head><label>9</label><figDesc>Figure 9: Illustration of signal vectors relation for differential background removal algorithm.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_12"><head>Figure 10 :</head><label>10</label><figDesc>Figure 10: An example snapshot of using PCR to remove background reflection.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_13"><head>1</head><label>1</label><figDesc></figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_14"><head>Figure 11 :Figure 12 :</head><label>1112</label><figDesc>Figure 11: Spline interpolation improves granularity of direction estimation from discrete steering.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_15"><head>Figure 15 :</head><label>15</label><figDesc>Figure 15: mmWave testbed. Testing metal-surfaced pen, plastic marker, wood pencil. Radios are placed 10cm beside 50cm×50cm writing region.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_16"><head>Algorithm 2</head><label>2</label><figDesc>Decision Tree for Touch Gesture Detection 1: Input: phase variance P[n] and RSS R[n] 2: {V, m} ← max(P) /*max value and index*/ 3: if V &gt; H 4: if R[m] &gt; mean(R[m : m + s]) and R[m] &gt; mean(R[m − s : m]) /*Check RSS*/ 5: return "Click" /*Click generates RSS peak*/ 6: else if mean(R[m : m + s]) &gt; mean(R[m − s : m]) 7:</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_17"><head>Figure 16 :Figure 18 :Figure 19 :</head><label>161819</label><figDesc>Figure 16: Tracking along an example linear trajectory(10 cm) without BG.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_18"><head>Figure 20 :</head><label>20</label><figDesc>Figure 20: Tracking trajectory and tracking error of the DDBR algorithm under different levels of phase noise.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_19"><head>Figure 21 :Figure 23 :</head><label>2123</label><figDesc>Figure 21: PCR performance under human as dynamic background.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_20"><head>Figure 24 :Figure 25 :Figure 26 :</head><label>242526</label><figDesc>Figure 24: APA under dynamic background. Step of antenna steer 4 • .</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_21"><head>Figure 27 :</head><label>27</label><figDesc>Figure 27: Tracking error of different materials.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_22"><head>Figure 28 :</head><label>28</label><figDesc>Figure 28: Error map of APA</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_23"><head>Figure 29 :</head><label>29</label><figDesc>Figure 29: Error map of Phase-tracking.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_24"><head>Figure 30 :</head><label>30</label><figDesc>Figure 30: Detection accuracy for different users.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_25"><head>Figure 31 :Figure 32 :</head><label>3132</label><figDesc>Figure 31: mTrack example of letter and word.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_1"><head>Table 1 :</head><label>1</label><figDesc>Comparison of different RF-based tracking systems. FP, PS and BS stand for fingerprint, phase shift and beam-steering. Data are from reported figures of cited works.</figDesc><table /></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>Table 2 :</head><label>2</label><figDesc></figDesc><table /><note>Performance profiles of mTrack's phase tracking algorithms. Error statistics from Section 8.</note></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_5"><head>GHz RF Front-end (Rx) Horn Antenna High Speed ADC/DAC Motorized Rotator WARP Board (FPGA back-end) Motor Controller Ghz RF Front-end (Tx) I/Q Channels</head><label></label><figDesc></figDesc><table><row><cell></cell><cell>Motor</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell>controller1</cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell>Rx I</cell><cell></cell><cell>RF</cell><cell>Steering</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>Rx1</cell><cell>motor2</cell></row><row><cell cols="2">Ethernet</cell><cell></cell><cell></cell><cell></cell></row><row><cell>PC</cell><cell>WARP</cell><cell>ADC/DAC</cell><cell cols="2">Tx I/Q</cell><cell>RF Tx</cell></row><row><cell></cell><cell>40Mhz baseband</cell><cell cols="2">Rx Q 128.9Mhz</cell><cell></cell><cell>RF Rx2 308.6Mhz clock Steering motor1</cell></row><row><cell>USB</cell><cell>Motor</cell><cell cols="2">passband</cell><cell cols="2">60Ghz RFband</cell></row><row><cell></cell><cell>controller2</cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="6">Figure 14: Hardware architecture of mTrack.</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_7"><head>Table 3 :</head><label>3</label><figDesc>Classification accuracy. ND is not detected.</figDesc><table /></figure>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>Acknowledgement</head><p>We appreciate the constructive comments from anonymous reviewers. The work reported in this paper was supported in part by the NSF under Grant CNS-1318292, CNS-1343363, CNS-1350039 and CNS-1404613.</p></div>
+			</div>
+
+			<div type="annex">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>APPENDIX A. PROOF OF EQUATION (4)</head><p>In this section, we derive the rationale behind background removal as stated in Equation (4). For clarity, we introduce the fol-</p><p>Since the target's reflection signal strength remains similar among three consecutive samples, the two triangles in solid line of Figure <ref type="figure">9</ref> can be considered as isosceles triangles. Following the geometrical relation, we have:</p><p>, which proves Equation (4).</p></div>			</div>
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title level="a" type="main">Vision-based Hand-gesture Applications</title>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Wachs</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Kölsch</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Stern</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Edan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communications of the ACM</title>
+		<imprint>
+			<biblScope unit="volume">54</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="2011" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<monogr>
+		<title level="m" type="main">Leap motion controller fails in normal conditions</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Mcelhearn</surname></persName>
+		</author>
+		<ptr target="http://www.mcelhearn.com/not-a-review-leap-motioncontroller-fails-in-normal-conditions/" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">RoboRealm: Microsoft Kinect</title>
+		<ptr target="http://www.roborealm.com/help/MicrosoftKinect.php" />
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title level="a" type="main">Whole-home Gesture Recognition using Wireless Signals</title>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Pu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gupta</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Gollakota</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Patel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM MobiCom</title>
+				<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title level="a" type="main">Leveraging Directional Antenna Capabilities for Fine-grained Gesture Recognition</title>
+		<author>
+			<persName><forename type="first">P</forename><surname>Melgarejo</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Ramanathan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Chu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM UbiComp</title>
+				<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title level="a" type="main">Tagoram: Real-time Tracking of Mobile RFID Tags to High Precision using COTS Devices</title>
+		<author>
+			<persName><forename type="first">L</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X.-Y</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xiao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Li</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM MobiCom</title>
+				<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<monogr>
+		<title level="m" type="main">PHY Specifications: Enhancements for Very High Throughput in the 60 GHz Band</title>
+		<idno>IEEE 802.11ad</idno>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<monogr>
+		<title level="m" type="main">60 GHz Backhaul for Small Cells</title>
+		<author>
+			<persName><surname>Dailywireless</surname></persName>
+		</author>
+		<ptr target="http://www.dailywireless.org/2014/01/03/60ghz-backhaul-for-small-cells/" />
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<monogr>
+		<title level="m" type="main">Wilocity Unveils Blazing Fast 802.11ad Smartphone Wi-Fi Chip</title>
+		<author>
+			<persName><surname>Pc Magazine</surname></persName>
+		</author>
+		<ptr target="http://www.pcmag.com/" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<analytic>
+		<title level="a" type="main">RF-IDraw: Virtual Touch Screen in the Air using RF Signals</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Vasisht</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Katabi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM SIGCOMM</title>
+				<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<analytic>
+		<title level="a" type="main">Breathfinding: A Wireless Network That Monitors and Locates Breathing in a Home</title>
+		<author>
+			<persName><forename type="first">N</forename><surname>Patwari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Brewer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Q</forename><surname>Tate</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">O</forename><surname>Kaltiokallio</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Bocca</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">JSAC</title>
+		<imprint>
+			<biblScope unit="volume">8</biblScope>
+			<biblScope unit="issue">1</biblScope>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">SCPL: Indoor Device-free Multi-subject Counting and Localization Using Radio Signal Strength</title>
+		<author>
+			<persName><forename type="first">C</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Firner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">S</forename><surname>Moore</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Trappe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Howard</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>An</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. of ACM/IEEE IPSN</title>
+				<meeting>of ACM/IEEE IPSN</meeting>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<analytic>
+		<title level="a" type="main">See Through Walls with WiFi!</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Adib</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Katabi</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. of ACM SIGCOMM</title>
+				<meeting>of ACM SIGCOMM</meeting>
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<analytic>
+		<title level="a" type="main">3D Tracking via Body Radio Reflections</title>
+		<author>
+			<persName><forename type="first">F</forename><surname>Adib</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Kabelac</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Katabi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">C</forename><surname>Miller</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. of USENIX NSDI</title>
+				<meeting>of USENIX NSDI</meeting>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">Background Subtraction for Online Calibration of Baseline RSS in RF Sensing Networks</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Edelstein</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Rabbat</surname></persName>
+		</author>
+		<idno>abs/1207.1137</idno>
+		<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+	<note type="report_type">CoRR</note>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title level="a" type="main">Statistical Channel Model for 60 GHz WLAN Systems in Conference Room Environment</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Maltsev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Maslennikov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Sevastyanov</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Lomayev</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Khoryaev</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. of European Conference on Antennas and Propagation</title>
+				<meeting>of European Conference on Antennas and Propagation</meeting>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">No Need to War-drive: Unsupervised Indoor Localization,&quot; ser</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Elgohary</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Farid</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Youssef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">R</forename><surname>Choudhury</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+			<publisher>ACM MobiSys</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<analytic>
+		<title level="a" type="main">Spot Localization using PHY Layer Information</title>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><surname>Radunovic</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM MobiSys</title>
+				<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title level="a" type="main">Push the Limit of WiFi Based Localization for Smartphones</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Gan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Yang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Sidhom</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">F</forename><surname>Ye</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM MobiCom</title>
+				<imprint>
+			<date type="published" when="2012" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<monogr>
+		<title level="m" type="main">60 GHz RSS Localization with Omni-directional and Horn Antennas</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Fang</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+	<note type="report_type">Ph.D. dissertation</note>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<monogr>
+		<title level="m" type="main">Microwave and millimeter-wave remote sensing for security applications</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nanzer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+			<publisher>Artech House</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<analytic>
+		<title level="a" type="main">Non-invasive respiratory movement detection and monitoring of hidden humans using ultra wideband pulse radar</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Ossberger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Buchegger</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Schimback</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Stelzer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Weigel</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Conference on Ultrawideband Systems and Technologies</title>
+				<imprint>
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title level="a" type="main">Challenges: Device-free Passive Localization for Wireless Environments</title>
+		<author>
+			<persName><forename type="first">M</forename><surname>Youssef</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Mah</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Agrawala</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">Proc. of ACM MobiCom</title>
+				<meeting>of ACM MobiCom</meeting>
+		<imprint>
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<analytic>
+		<title level="a" type="main">dRTI: Directional RadioTomographic Imaging</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>Wei</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Varshney</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">W</forename><surname>Hu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>Patwari</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><forename type="middle">T</forename><surname>Chou</surname></persName>
+		</author>
+		<idno>abs/1402.2744</idno>
+	</analytic>
+	<monogr>
+		<title level="j">CoRR</title>
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<analytic>
+		<title level="a" type="main">Feasibility and Limits of Wi-Fi Imaging</title>
+		<author>
+			<persName><forename type="first">Donny</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Rajalakshmi</forename><surname>Nandakumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Shyamnath</forename><surname>Gollakota</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM SenSys</title>
+				<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Zhang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">Y</forename><surname>Zhao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Zheng</surname></persName>
+		</author>
+		<title level="m">60ghz mobile imaging radar,&quot; ser. HotMobile &apos;15</title>
+				<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">"tdk Is-005a Rf</forename><surname>Absorber</surname></persName>
+		</author>
+		<ptr target="http://www.tdk.com/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<analytic>
+		<title level="a" type="main">A new recurrent approach for phase unwrapping</title>
+		<author>
+			<persName><forename type="first">K</forename><surname>Abbas</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Journal of Applied Science and Engineering</title>
+		<imprint>
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title level="a" type="main">Beamforming Codebook Design and Performance Evaluation for 60GHz Wideband WPANs</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Z</forename><surname>Lan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C.-S</forename><surname>Sum</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE Vehicular Technology Conference</title>
+				<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<monogr>
+		<title level="m" type="main">Microwave and Millimeter-Wave Remote Sensing for Security Applications</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nanzer</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2012" />
+			<publisher>Artech House</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title level="a" type="main">Phase based spatial identification of UHF RFID tags</title>
+		<author>
+			<persName><forename type="first">P</forename><forename type="middle">V</forename><surname>Nikitin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Martinez</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Ramamurthy</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Leland</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Spiess</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Rao</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">IEEE International Conference on RFID</title>
+				<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title level="a" type="main">Detecting Periodicity in Short and Noisy Time Series Data</title>
+		<author>
+			<persName><forename type="first">J</forename><surname>Lindstrãűm</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Kokko</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Ranta</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Oikos</title>
+		<imprint>
+			<biblScope unit="volume">78</biblScope>
+			<biblScope unit="issue">2</biblScope>
+			<date type="published" when="1997" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Valdes-Garcia</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Reynolds</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Natarajan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Kam</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-W</forename></persName>
+		</author>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<analytic>
+		<title level="a" type="main">Single-element and phased-array transceiver chipsets for 60-GHz Gb/s communications</title>
+		<author>
+			<persName><forename type="first">Y.-L</forename><surname>Lai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P.-Y</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M.-D</forename><surname>Chen</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J.-H</forename><surname>Tsai</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Zhan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Communications Magazine</title>
+		<imprint>
+			<date type="published" when="2011" />
+			<publisher>IEEE</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">H</forename><surname>Witten</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Frank</surname></persName>
+		</author>
+		<title level="m">Data Mining: Practical Machine Learning Tools and Techniques</title>
+				<imprint>
+			<publisher>Morgan Kaufmann Publishers</publisher>
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<title level="m" type="main">Wireless Open-Access Research Platform</title>
+		<ptr target="http://warp.rice.edu/trac/wiki" />
+		<imprint>
+			<date type="published" when="2013" />
+		</imprint>
+		<respStmt>
+			<orgName>Rice University</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Vubiq 60GHz System</title>
+		<ptr target="http://vubiq.com/v60wgd03/" />
+		<imprint>
+			<date type="published" when="2014" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Axis360 Motion Control System</title>
+		<ptr target="http://cinetics.com/two-axis360/" />
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Mitigation of Phase Noise at Millimeter-Wave Frequencies for Wireless Personal Area Network Applications</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Waheed</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Ashik</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+	<note type="report_type">Masters Theses</note>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<analytic>
+		<title/>
+		<ptr target="http://myscript.com/technology/" />
+	</analytic>
+	<monogr>
+		<title level="j">MyScript technology</title>
+		<imprint>
+			<date type="published" when="2015" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+		<title level="a" type="main">Phrase Sets for Evaluating Text Entry Techniques</title>
+		<author>
+			<persName><forename type="first">I</forename><forename type="middle">S</forename><surname>Mackenzie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">W</forename><surname>Soukoreff</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">ACM CHI Extended Abstracts</title>
+				<imprint>
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>
