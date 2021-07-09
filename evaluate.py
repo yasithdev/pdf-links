@@ -35,6 +35,10 @@ def calculate_agg_metrics(metrics: dict, cmd: str) -> dict:
   return agg_metrics
 
 
+def clean(url: str) -> str:
+  return url.strip().lower().rstrip('.,/?')
+
+
 def run(labels_dir: str, urls_dir: str, cmd: str):
   all_metrics = {}
 
@@ -42,13 +46,13 @@ def run(labels_dir: str, urls_dir: str, cmd: str):
   print('\n===============\nmetrics by file\n===============')
   for full_path in sorted(glob.glob(f"{labels_dir}/*.pdf.txt")):
     file_name = os.path.basename(full_path[:-4])
-    true_urls = get_urls(f'{labels_dir}/{file_name}.txt')
+    true_urls = set(map(clean, get_urls(f'{labels_dir}/{file_name}.txt')))
     metrics = {}
     # get URLs from each method
     for extractor in ['PDFM', 'GROB']:
       for option in ['R1', 'R2']:
         exc = f"{extractor}-{option}-{cmd}"
-        extracted_urls = get_urls(f'{urls_dir}/{file_name}-{exc}.txt')
+        extracted_urls = set(map(clean, get_urls(f'{urls_dir}/{file_name}-{exc}.txt')))
         metrics[exc] = calculate_metrics(true_urls, extracted_urls)
     # save metrics
     all_metrics[file_name] = metrics
