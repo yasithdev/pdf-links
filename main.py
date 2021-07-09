@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import re
-from typing import Optional, List, Set, Type
+from typing import Optional, List, Set
 
 import bs4
 
@@ -32,7 +32,7 @@ class UrlRegex:
         re.compile(r'(www\.([^\s@/?#]+\.)*[a-z]{2,}(/[^\s?#]+)?(\?[^\s#]+)?(#\S)?)', re.I)
       ]
     else:
-      raise Exception('Requested Alternative Not Found')
+      raise NotImplementedError('Option Does Not Exist!')
 
   def __init__(self, option: int, safe=True):
     idx_f = 0
@@ -134,6 +134,43 @@ class Util:
     urls = urls.union(find_urls(text, regex.PARTIAL_URL, 0))
     # get valid urls from the set
     return Util.get_valid_urls(urls, regex)
+
+  @staticmethod
+  def has_match(x: str, pool: Set[str]):
+    """
+    Return whether the URL x has sub/super string matches in pool
+    :param x: URL to check for uniqueness
+    :param pool: pool of URLs to check uniqueness against
+    :return: True if url is unique, else False
+    """
+    return any((x[8:] in y[8:]) or (y[8:] in x[8:]) for y in pool)
+
+  @staticmethod
+  def pick_uniq_urls(pool: Set[str], prefer_long=False):
+    """
+    Return a subset of unique URLs from pool (favors shorter URLs by default)
+
+    :param pool: pool of URLs
+    :param prefer_long: Whether to favor short URLs (default) or long URLs
+    :return: subset of unique URLs
+    """
+    uniq_urls = set()
+    for url in sorted(pool, key=len, reverse=prefer_long):
+      if not Util.has_match(url, uniq_urls):
+        uniq_urls.add(url)
+    return uniq_urls
+
+  @staticmethod
+  def pick_new_urls(pool: Set[str], blacklist: Set[str]) -> Set[str]:
+    """
+    Return a subset of URLs from pool that are not in the blacklist
+
+    :param pool: pool of URLs
+    :param blacklist: set of URLs to avoid
+    :return: subset of new URLs
+    """
+    # return subset of uniq_urls that are not in blacklist
+    return set(url for url in pool if not Util.has_match(url, blacklist))
 
 
 # ======================================================================================================================
@@ -261,79 +298,81 @@ class GROBID:
 # ======================================================================================================================
 
 
-class BaseExtractor:
-
-  @staticmethod
-  def get_urls(fp: str, regex: UrlRegex) -> List[str]:
-    raise NotImplementedError('Base Class!')
-
-  @staticmethod
-  def get_text(fp: str) -> str:
-    raise NotImplementedError('Base Class!')
-
-
-class ExtractorA(BaseExtractor):
+class Extractor:
   """
-  URL extraction using PyPDF2 -> PDFMiner
+  Base extractor. Should be implemented as a subclass
 
   """
 
-  @staticmethod
-  def get_urls(fp: str, regex: UrlRegex) -> List[str]:
-    # step 1 - extract annotated URLs (baseline, assumed valid)
-    annot_urls = PyPDF2.get_annot_urls(fp, regex)
-    # step 2 - extract full text URLs (error-prone)
-    full_text = PDFMiner.get_full_text(fp)
-    full_text_urls = Util.harvest_urls(full_text, regex)
-    # step 3 - get URLs in full_text_urls that do not match (exact/partial) any URL in annot_urls
-    better_full_text_urls = annot_urls.copy()
-    for url in full_text_urls:
-      if not any(url == x or url[8:].find(x[8:]) != -1 or x[8:].find(url[8:]) != -1 for x in annot_urls):
-        better_full_text_urls.add(url)
-    # step 4 - concatenate urls, sort, and return
-    final_urls = annot_urls.union(better_full_text_urls)
-    return sorted(final_urls)
+  def get_text(self, fp: str) -> str:
+    raise NotImplementedError('Base Class!')
 
   @staticmethod
-  def get_text(fp: str) -> str:
+  def get_annot_urls(regex: UrlRegex, fp: str) -> List[str]:
+    return sorted(PyPDF2.get_annot_urls(fp, regex))
+
+  def get_text_urls(self, regex: UrlRegex, fp: str) -> List[str]:
+    raise NotImplementedError('Base Class!')
+
+  def get_all_urls(self, regex: UrlRegex, fp: str) -> List[str]:
+    # extract annotated URLs (baseline, always valid)
+    annot_urls = set(self.get_annot_urls(regex, fp))
+    # extract full text URLs (error-prone)
+    full_text_urls = set(self.get_text_urls(regex, fp))
+    # pick unique URLs from full_text_urls
+    full_text_urls = Util.pick_uniq_urls(full_text_urls)
+    # pick URLs from full_text_urls do not match (exact/partial) any URL in annot_urls
+    full_text_urls = Util.pick_new_urls(full_text_urls, annot_urls)
+    # concatenate, sort, and return
+    return sorted(annot_urls.union(full_text_urls))
+
+
+class ExtractorA(Extractor):
+  """
+  URL extractor using PyPDF2 -> PDFMiner
+
+  """
+
+  def get_text(self, fp: str) -> str:
     return PDFMiner.get_full_text(fp)
 
-
-class ExtractorB(BaseExtractor):
-  """
-  URL extraction using PyPDF2 -> GROBID
-
-  """
-
-  @staticmethod
-  def get_urls(fp: str, regex: UrlRegex) -> List[str]:
-    # step 1 - extract annotated URLs (baseline, assumed valid)
-    annot_urls = PyPDF2.get_annot_urls(fp, regex)
-    # step 2 - generate TEI-XML from PDF
-    tei_xml = GROBID.get_tei_xml(fp)
-    # step 3 - extract annotated URL from TEI-XML (error-prone)
-    tei_urls = GROBID.get_annot_urls(tei_xml, regex)
-    # step 4 - get URLs in tei_urls that do not match (exact/partial) any URL in annot_urls
-    better_tei_urls = set()
-    for url in tei_urls:
-      if not any(url == x or url[8:].find(x[8:]) != -1 or x[8:].find(url[8:]) != -1 for x in annot_urls):
-        better_tei_urls.add(url)
-    # step 5 - extract full text URLs from TEI-XML (error-prone)
-    full_text = GROBID.get_full_text(tei_xml)
+  def get_text_urls(self, regex: UrlRegex, fp: str) -> List[str]:
+    # extract full text from PDF
+    full_text = self.get_text(fp)
+    # extract full text URLs
     full_text_urls = Util.harvest_urls(full_text, regex)
-    # step 6 - get URLs in full_text_urls that do not match (exact/partial) any URL in [annot_urls, better_tei_urls]
-    better_full_text_urls = set()
-    for url in full_text_urls:
-      if not any(url == x or url[8:].find(x[8:]) != -1 or x[8:].find(url[8:]) != -1 for x in
-                 annot_urls.union(better_tei_urls)):
-        better_full_text_urls.add(url)
-    # step 7 - concatenate urls, sort, and return
-    final_urls = annot_urls.union(better_tei_urls).union(better_full_text_urls)
-    return sorted(final_urls)
+    # pick unique URLs from full_text_urls
+    full_text_urls = Util.pick_uniq_urls(full_text_urls)
+    # sort and return
+    return sorted(full_text_urls)
 
-  @staticmethod
-  def get_text(fp: str) -> str:
+
+class ExtractorB(Extractor):
+  """
+  URL extractor using PyPDF2 -> GROBID
+
+  """
+
+  def get_text(self, fp: str) -> str:
     return GROBID.get_tei_xml(fp)
+
+  def get_text_urls(self, regex: UrlRegex, fp: str) -> List[str]:
+    # convert PDF to TEI-XML
+    tei_xml = self.get_text(fp)
+    # extract annotated URLs from TEI-XML (assumed valid)
+    tei_urls = GROBID.get_annot_urls(tei_xml, regex)
+    # pick unique URLs from tei_urls
+    tei_urls = Util.pick_uniq_urls(tei_urls)
+    # extract full text from TEI-XML
+    full_text = GROBID.get_full_text(tei_xml)
+    # extract full text URLs
+    full_text_urls = Util.harvest_urls(full_text, regex)
+    # pick unique URLs from full_text_urls
+    full_text_urls = Util.pick_uniq_urls(full_text_urls)
+    # pick URLs from full_text_urls that do not match (exact/partial) any URL in tei_urls
+    full_text_urls = Util.pick_new_urls(full_text_urls, tei_urls)
+    # concatenate, sort, and return
+    return sorted(tei_urls.union(full_text_urls))
 
 
 # ======================================================================================================================
@@ -345,31 +384,33 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(description='Link Extractor')
   parser.add_argument('-e', required=True, help="extractor to use", choices=['A', 'B'])
-  parser.add_argument('-c', required=True, help="command to execute", choices=['TXT', 'URL'])
-  parser.add_argument('-r', required=False, help="regex config to use", type=int)
-  parser.add_argument('-i', metavar='INPUT_PATH', required=True, help="path to input file")
-  parser.add_argument('-o', metavar='OUTPUT_PATH', required=False, help="path to output file")
+  parser.add_argument('-c', required=True, help="command to run", choices=['TXT', 'URLS_ANN', 'URLS_TXT', 'URLS_ALL'])
+  parser.add_argument('-r', metavar='OPTION_NUMBER', required=False, help="regex option to use", type=int)
+  parser.add_argument('-i', metavar='INPUT_FILE', required=True, help="path to input file", type=str)
+  parser.add_argument('-o', metavar='OUTPUT_FILE', required=False, help="path to output file", type=str)
   args = parser.parse_args()
 
   # select extractor to use
-  extractor: Type[BaseExtractor]
   if args.e == 'A':
-    extractor = ExtractorA
+    e = ExtractorA()
   elif args.e == 'B':
-    extractor = ExtractorB
+    e = ExtractorB()
   else:
-    raise NotImplementedError('Requested Extractor Does Not Exist')
-
-  # select command to execute
-  if args.c == 'URL':
-    fn = lambda x: '\n'.join(extractor.get_urls(x, UrlRegex(args.r)))
-  elif args.c == 'TXT':
-    fn = extractor.get_text
-  else:
-    raise NotImplementedError('Requested Method Does Not Exist')
+    raise NotImplementedError('Extractor Does Not Exist!')
 
   # execute command
-  result = fn(args.i)
+  if args.c == 'TXT':
+    result = e.get_text(args.i)
+  elif args.c == 'URLS_ANN':
+    result = "\n".join(e.get_annot_urls(UrlRegex(args.r), args.i))
+  elif args.c == 'URLS_TXT':
+    result = "\n".join(e.get_text_urls(UrlRegex(args.r), args.i))
+  elif args.c == 'URLS_ALL':
+    result = "\n".join(e.get_all_urls(UrlRegex(args.r), args.i))
+  else:
+    raise NotImplementedError('Command Does Not Exist!')
+
+  # write output
   if args.o:
     with open(args.o, 'w') as f_out:
       f_out.write(result)

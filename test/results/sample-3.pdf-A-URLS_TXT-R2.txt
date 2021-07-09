@@ -1,0 +1,4 @@
+https://code.google.com/p/dkpro-similarity-asl
+https://www.gutenberg.org
+https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations12strengthofagreementforkvaluesaccordingtolandisandkoch(1977)13wereporttheresultsforourre-implementationofthesystembycloughandstevenson(2011).intheiroriginalwork,theydidnotevaluateonthisdataset.
+https://www.wikipedia.org5www.wiktionary.org

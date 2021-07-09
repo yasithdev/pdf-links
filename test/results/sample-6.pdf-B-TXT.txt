@@ -1,0 +1,904 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEI xml:space="preserve" xmlns="http://www.tei-c.org/ns/1.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.tei-c.org/ns/1.0 https://raw.githubusercontent.com/kermitt2/grobid/master/grobid-home/schemas/xsd/Grobid.xsd"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+	<teiHeader xml:lang="en">
+		<fileDesc>
+			<titleStmt>
+				<title level="a" type="main">Twitter mood predicts the stock market</title>
+			</titleStmt>
+			<publicationStmt>
+				<publisher/>
+				<availability status="unknown"><licence/></availability>
+				<date type="published" when="2010-10-14">14 Oct 2010</date>
+			</publicationStmt>
+			<sourceDesc>
+				<biblStruct>
+					<analytic>
+						<author>
+							<persName><forename type="first">Johan</forename><surname>Bollen</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Huina</forename><surname>Mao</surname></persName>
+						</author>
+						<author>
+							<persName><forename type="first">Xiao-Jun</forename><surname>Zeng</surname></persName>
+						</author>
+						<title level="a" type="main">Twitter mood predicts the stock market</title>
+					</analytic>
+					<monogr>
+						<imprint>
+							<date type="published" when="2010-10-14">14 Oct 2010</date>
+						</imprint>
+					</monogr>
+					<idno type="arXiv">arXiv:1010.3003v1[cs.CE]</idno>
+				</biblStruct>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<appInfo>
+				<application version="0.6.2" ident="GROBID" when="2021-07-09T02:55+0000">
+					<desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+					<ref target="https://github.com/kermitt2/grobid"/>
+				</application>
+			</appInfo>
+		</encodingDesc>
+		<profileDesc>
+			<abstract>
+<div xmlns="http://www.tei-c.org/ns/1.0"><p>Behavioral economics tells us that emotions can profoundly affect individual behavior and decision-making. Does this also apply to societies at large, i.e. can societies experience mood states that affect their collective decision making? By extension is the public mood correlated or even predictive of economic indicators? Here we investigate whether measurements of collective mood states derived from large-scale Twitter feeds are correlated to the value of the Dow Jones Industrial Average (DJIA) over time. We analyze the text content of daily Twitter feeds by two mood tracking tools, namely OpinionFinder that measures positive vs. negative mood and Google-Profile of Mood States (GPOMS) that measures mood in terms of 6 dimensions (Calm, Alert, Sure, Vital, Kind, and Happy). We cross-validate the resulting mood time series by comparing their ability to detect the public's response to the presidential election and Thanksgiving day in 2008. A Granger causality analysis and a Self-Organizing Fuzzy Neural Network are then used to investigate the hypothesis that public mood states, as measured by the OpinionFinder and GPOMS mood time series, are predictive of changes in DJIA closing values. Our results indicate that the accuracy of DJIA predictions can be significantly improved by the inclusion of specific public mood dimensions but not others. We find an accuracy of 87.6% in predicting the daily up and down changes in the closing values of the DJIA and a reduction of the Mean Average Percentage Error by more than 6%.</p></div>
+			</abstract>
+		</profileDesc>
+	</teiHeader>
+	<text xml:lang="en">
+		<body>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>I. INTRODUCTION</head><p>S TOCK market prediction has attracted much attention from academia as well as business. But can the stock market really be predicted? Early research on stock market prediction <ref type="bibr" target="#b0">[1]</ref>, <ref type="bibr" target="#b1">[2]</ref>, <ref type="bibr" target="#b2">[3]</ref> was based on random walk theory and the Efficient Market Hypothesis (EMH) <ref type="bibr" target="#b3">[4]</ref>. According to the EMH stock market prices are largely driven by new information, i.e. news, rather than present and past prices. Since news is unpredictable, stock market prices will follow a random walk pattern and cannot be predicted with more than 50 percent accuracy <ref type="bibr" target="#b4">[5]</ref>.</p><p>There are two problems with EMH. First, numerous studies show that stock market prices do not follow a random walk and can indeed to some degree be predicted <ref type="bibr" target="#b4">[5]</ref>, <ref type="bibr" target="#b5">[6]</ref>, <ref type="bibr" target="#b6">[7]</ref>, <ref type="bibr" target="#b7">[8]</ref> thereby calling into question EMH's basic assumptions. Second, recent research suggests that news may be unpredictable but that very early indicators can be extracted from online social media (blogs, Twitter feeds, etc) to predict changes in various economic and commercial indicators. This may conceivably also be the case for the stock market. For example, <ref type="bibr" target="#b10">[11]</ref> shows how online chat activity predicts book sales. <ref type="bibr" target="#b11">[12]</ref> uses assessments of blog sentiment to predict movie sales. <ref type="bibr" target="#b14">[15]</ref> predict future product sales using a Probabilistic Latent Semantic Analysis (PLSA) model to extract indicators of sentiment from blogs. In addition, Google search queries have been shown to provide early indicators of disease infection rates and consumer spending <ref type="bibr" target="#b13">[14]</ref>. <ref type="bibr" target="#b8">[9]</ref> investigates the relations between breaking financial news and stock price changes. Most recently <ref type="bibr" target="#b12">[13]</ref> provide a ground-breaking demonstration of how public sentiment related to movies, as expressed on Twitter, can actually predict box office receipts.</p><p>Although news most certainly influences stock market prices, public mood states or sentiment may play an equally important role. We know from psychological research that emotions, in addition to information, play an significant role in human decision-making <ref type="bibr" target="#b15">[16]</ref>, <ref type="bibr" target="#b17">[18]</ref>, <ref type="bibr" target="#b38">[39]</ref>. Behavioral finance has provided further proof that financial decisions are significantly driven by emotion and mood <ref type="bibr" target="#b18">[19]</ref>. It is therefore reasonable to assume that the public mood and sentiment can drive stock market values as much as news. This is supported by recent research by <ref type="bibr" target="#b9">[10]</ref> who extract an indicator of public anxiety from LiveJournal posts and investigate whether its variations can predict S&amp;P500 values.</p><p>However, if it is our goal to study how public mood influences the stock markets, we need reliable, scalable and early assessments of the public mood at a time-scale and resolution appropriate for practical stock market prediction. Large surveys of public mood over representative samples of the population are generally expensive and time-consuming to conduct, cf. Gallup's opinion polls and various consumer and well-being indices. Some have therefore proposed indirect assessment of public mood or sentiment from the results of soccer games <ref type="bibr" target="#b19">[20]</ref> and from weather conditions <ref type="bibr" target="#b20">[21]</ref>. The accuracy of these methods is however limited by the low degree to which the chosen indicators are expected to be correlated with public mood.</p><p>Over the past 5 years significant progress has been made in sentiment tracking techniques that extract indicators of public mood directly from social media content such as blog content <ref type="bibr" target="#b9">[10]</ref>, <ref type="bibr" target="#b11">[12]</ref>, <ref type="bibr" target="#b14">[15]</ref>, <ref type="bibr" target="#b16">[17]</ref> and in particular large-scale Twitter feeds <ref type="bibr" target="#b21">[22]</ref>. Although each so-called tweet, i.e. an individual user post, is limited to only 140 characters, the aggregate of millions of tweets submitted to Twitter at any given time may provide an accurate representation of public mood and sentiment. This has led to the development of realtime sentiment-tracking indicators such as <ref type="bibr" target="#b16">[17]</ref> and "Pulse of Nation" <ref type="bibr" target="#b0">1</ref> .</p><p>In this paper we investigate whether public sentiment, as expressed in large-scale collections of daily Twitter posts, can be used to predict the stock market. We use two tools to measure variations in the public mood from tweets submitted to the Twitter service from <ref type="bibr">February 28, 2008</ref> to <ref type="bibr">December 19, 2008</ref>. The first tool, OpinionFinder, analyses the text content of tweets submitted on a given day to provide a positive vs. negative daily time series of public mood. The second tool, GPOMS, similarly analyses the text content of tweets to generate a six-dimensional daily time series of public mood to provide a more detailed view of changes in public along a variety of different mood dimensions. The resulting public mood time series are correlated to the Dow Jones Industrial Average (DJIA) to assess their ability to predict changes in the DJIA over time. Our results indicate that the prediction accuracy of standard stock market prediction models is significantly improved when certain mood dimensions are included, but not others. In particular variations along the public mood dimensions of Calm and Happiness as measured by GPOMS seem to have a predictive effect, but not general happiness as measured by the OpinionFinder tool.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>II. RESULTS</head></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>A. Data and methods overview</head><p>We obtained a collection of public tweets that was recorded from February 28 to December 19th, 2008 (9,853,498 tweets posted by approximately 2.7M users). For each tweet these records provide a tweet identifier, the date-time of the submission (GMT+0), its submission type, and the text content of the Tweet which is by design limited to 140 characters. After removal of stop-words and punctuation, we group all tweets that were submitted on the same date. We only take into account tweets that contain explicit statements of their author's mood states, i.e. those that match the expressions "i feel","i am feeling","i'm feeling","i dont feel", "I'm", "Im", "I am", and "makes me". In order to avoid spam messages and other information-oriented tweets, we also filter out tweets that match the regular expressions "http:" or "www."</p><p>As shown in Fig. <ref type="figure">1</ref> we then proceed in three phases. In the first phase, we subject the collections of daily tweets to 2 mood assessment tools: (1) OpinionFinder which measures positive vs. negative mood from text content, and (2) GPOMS which measures 6 different mood dimensions from text content. This results in a total of 7 public mood time series, one generated by OpinionFinder and six generated by GPOMS, each representing a potentially different aspect of the public's mood on a given day. In addition, we extract a time series of daily DJIA closing-values from Yahoo! Finance. In the second phase, we investigate the hypothesis that public mood as measured by GPOMS and OpinionFinder is predictive of future DJIA values. We use a Granger causality analysis in which we correlate DJIA values to GPOMs and OF values of the past n days. In the third phase, we deploy a Self-Organizing Fuzzy Neural Network model to test the hypothesis that the prediction accuracy of DJIA prediction models can be improved by including measurements of public mood. We are not interested in proposing an optimal DJIA prediction model, but to assess the effects of including public mood information on the accuracy of a "baseline" prediction model. </p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>B. Generating public mood time series: OpinionFinder and GPOMS</head><p>OpinionFinder (OF) 2 is a publicly available software package for sentiment analysis that can be applied to determine sentence-level subjectivity <ref type="bibr" target="#b24">[25]</ref>, i.e. to identify the emotional polarity (positive or negative) of sentences. It has been successfully used to analyze the emotional content of large collections of tweets <ref type="bibr" target="#b25">[26]</ref> by using the OF lexicon to determine the ratio of positive versus negative tweets on a given day. The resulting time series were shown to correlate with the Consumer Confidence Index from Gallup 3 and the Reuters/University of Michigan Surveys of Consumers 4 over a given period of time. We adopt OF's subjective lexicon that has been established upon previous work <ref type="bibr" target="#b36">[37]</ref>, <ref type="bibr" target="#b37">[38]</ref>, <ref type="bibr" target="#b23">[24]</ref>. We select positive and negative words that are marked as either "weak" and "strong" from the OF sentiment lexicon resulting in a list of 2718 positive and 4912 negative words. For each tweet we determine whether it contains any number of negative and positive terms from the OF lexicon. For each occurrence we increase the score of either negative or positive tweets by 1 and calculate the ratio of positive vs. negative messages for the tweets posted on the same day t.</p><p>Like many sentiment analysis tools OF adheres to a unidimensional model of mood, making binary distinctions between positive and negative sentiment <ref type="bibr" target="#b22">[23]</ref>. This may however ignore the rich, multi-dimensional structure of human mood. To capture additional dimensions of public mood we created a second mood analysis tools, labeled GPOMS, that can measure human mood states in terms of 6 different mood dimensions, namely Calm, Alert, Sure, Vital, Kind and Happy. GPOMS' mood dimensions and lexicon are derived from an existing and well-vetted psychometric instrument, namely the Profile of Mood States (POMS-bi) <ref type="bibr" target="#b31">[32]</ref>, <ref type="bibr" target="#b32">[33]</ref>. To make it applicable to Twitter mood analysis we expanded the original 72 terms of the POMS questionnaire to a lexicon of 964 associated terms by analyzing word co-occurrences in a collection of 2.5 billion 4-and 5-grams 5 computed by Google in 2006 from approximately 1 trillion word tokens observed in publicly accessible Webpages <ref type="bibr" target="#b34">[35]</ref>, <ref type="bibr" target="#b35">[36]</ref>. The enlarged lexicon of 964 terms thus allows GPOMS to capture a much wider variety of naturally occurring mood terms in Tweets and map them to their respective POMS mood dimensions. We match the terms used in each tweet against this lexicon. Each tweet term that matches an n-gram term is mapped back to its original POMS terms (in accordance with its co-occurence weight) and via the POMS scoring table to its respective POMS dimension. The score of each POMS mood dimension is thus determined as the weighted sum of the co-occurence weights of each tweet term that matched the GPOMS lexicon. All data sets and methods are available on our project web site <ref type="bibr" target="#b5">6</ref> .</p><p>To enable the comparison of OF and GPOMS time series we normalize them to z-scores on the basis of a local mean and standard deviation within a sliding window of k days before and after the particular date. For example, the z-score of time series X t , denoted Z Xt , is defined as:</p><formula xml:id="formula_0">Z Xt = X t −x(X t±k ) σ(X t±k )<label>(1)</label></formula><p>wherex(X t±k ) and σ(D t±k ) represent the mean and standard deviation of the time series within the period [t−k, t+k]. This normalization causes all time series to fluctuate around a zero mean and be expressed on a scale of 1 standard deviation.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>C. Cross-validating OF and GPOMS time series against large socio-cultural events</head><p>We first validate the ability of OF and GPOMS to capture various aspects of public mood. To do so we apply them to tweets posted in a 3-month period from October 5, 2008 to December 5, 2008. This period was chosen specifically because it includes several socio-cultural events that may have had a unique, significant and complex effect on public mood namely the U.S presidential election (November 4, 2008) and Thanksgiving (November 27, 2008). The OF and GPOMS measurements can therefore be cross-validated against the expected emotional responses to these events. The resulting mood time series are shown in Fig. <ref type="figure" target="#fig_0">2</ref> and are expressed in z-scores as given by in Eq. 1.</p><p>Fig. <ref type="figure" target="#fig_0">2</ref> shows that the OF successfully identifies the public's emotional response to the Presidential election on November 4th and Thanksgiving on November 27th. In both cases OF marks a significant, but short-lived uptick in positive sentiment specific to those days.</p><p>The GPOMS results reveal a more differentiated public mood response to the events in the three-day period surrounding the election day (November 4, 2008). November 3, 2008 is characterized by a significant drop in Calm indicating highly elevated levels of public anxiety. Election Day itself is characterized by a reversal of Calm scores indicating a significant reduction in public anxiety, in conjunction with a significant increases of Vital, Happy as well as Kind scores. The latter indicates a public that is energized, happy and friendly on election day. On November 5, these GPOMS dimensions continue to indicate positive mood levels, in particular high levels of Calm, Sure, Vital and Happy. After November 5, all mood dimensions gradually return to the baseline. The public mood response to Thanksgiving on November 27, 2008 provides a counterpart to the differentiated response to the Presidential election. On Thanksgiving day we find a spike in Happy values, indicating high levels of public happiness. However, no other mood dimensions are elevated on November 27. Furthermore, the spike in Happy values is limited to the one day, i.e. we find no significant mood response the day before or after Thanksgiving.  A visual comparison of Fig. <ref type="figure" target="#fig_0">2</ref> suggests that GPOMS' Happy dimension best approximates the mood trend provided by OpinionFinder. To quantitatively determine the relations between GPOMS's mood dimensions and the OF mood trends, we test the correlation between the trend obtained from OF lexicon and the six dimensions of GPOMS using multiple regression. The regression model is shown in Eq. 2.</p><formula xml:id="formula_1">Y OF = α + n i β i X i + t (2)</formula><p>where X 1 , X 2 , X 3 , X 4 , X 5 and X 6 represent the mood time series obtained from the 6 GPOMS dimensions, respectively is significantly correlated with X 3 (Sure), X 4 (Vital) and X 6 (Happy), but not with X 1 (Calm), X 2 (Alert) and X 5 (Kind). We therefore conclude that certain GPOMS mood dimension partially overlap with the mood values provided by OpinionFinder, but not necessarily all mood dimensions that may be important in describing the various components of public mood e.g. the varied mood response to the Presidential election. The GPOMS thus provides a unique perspective on public mood states not captured by uni-dimensional tools such as OpinionFinder.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>D. Bivariate Granger Causality Analysis of Mood vs. DJIA prices</head><p>After establishing that our mood time series responds to significant socio-cultural events such as the Presidential election and Thanksgiving, we are concerned with the question whether other variations of the public's mood state correlate with changes in the stock market, in particular DJIA closing values. To answer this question, we apply the econometric technique of Granger causality analysis to the daily time series produced by GPOMS and OpinionFinder vs. the DJIA. Granger causality analysis rests on the assumption that if a variable X causes Y then changes in X will systematically occur before changes in Y . We will thus find that the lagged values of X will exhibit a statistically significant correlation with Y . Correlation however does not prove causation. We therefore use Granger causality analysis in a similar fashion to <ref type="bibr" target="#b9">[10]</ref>; we are not testing actual causation but whether one time series has predictive information about the other or not <ref type="bibr" target="#b6">7</ref> .</p><p>Our DJIA time series, denoted D t , is defined to reflect daily changes in stock market value, i.e. its values are the delta between day t and day t − 1: D t = DJIA t − DJIA t−1 . To test whether our mood time series predicts changes in stock market values we compare the variance explained by two linear models as shown in Eq. 3 and Eq. 4. The first model (L 1 ) uses only n lagged values of D t , i.e. (D t−1 , • • • , D t−n ) for prediction, while the second model L 2 uses the n lagged values of both D t and the GPOMS plus the OpinionFinder mood time series denoted X t−1 , • • • , X t−n .</p><p>We perform the Granger causality analysis according to model L 1 and L 2 shown in Eq. 3 and 4 for the period of time between February 28 to November 3, 2008 to exclude the exceptional public mood response to the Presidential Election and Thanksgiving from the comparison. GPOMS and OpinionFinder time series were produced for 342,255 tweets in that period, and the daily Dow Jones Industrial Average (DJIA) was retrieved from Yahoo! Finance for each day <ref type="bibr" target="#b7">8</ref> .</p><formula xml:id="formula_2">L 1 : D t = α + n i=1 β i D t−i + t (3) L 2 : D t = α + n i=1 β i D t−i + n i=1 γ i X t−i + t (4)</formula><p>Based on the results of our Granger causality (shown in Table <ref type="table" target="#tab_2">II</ref>), we can reject the null hypothesis that the mood time series do not predict DJIA values, i.e. β {1,2,••• ,n} = 0 with a high level of confidence. However, this result only applies to 1 GPOMS mood dimension. We observe that X 1 (i.e. Calm) has the highest Granger causality relation with DJIA for lags ranging from 2 to 6 days (p-values &lt; 0.05). The other four mood dimensions of GPOMS do not have significant causal relations with changes in the stock market, and neither does the OpinionFinder time series.</p><p>To visualize the correlation between X 1 and the DJIA in more detail, we plot both time series in Fig. <ref type="figure" target="#fig_1">3</ref>. To maintain the same scale, we convert the DJIA delta values D t and mood index value X t to z-scores as shown in Eq. 1. As can be seen in Fig. <ref type="figure" target="#fig_1">3</ref> both time series frequently overlap or point in the same direction. Changes in past values of Calm (t − 3 ) predicts a similar rise or fall in DJIA values (t = The cases in which the t − 3 mood time series fails to track changes in the DJIA are nearly equally informative as where it doesn't. In particular we point to a significant deviation between the two graphs on October 13th where the DJIA surges by more than 3 standard deviations trough-topeak. The Calm curve however remains relatively flat at that time after which it starts to again track changes in the DJIA again. This discrepancy may be the result of the the Federal Reserve's announcement on October 13th of a major bank bailout initiative which unexpectedly increase DJIA values that day. The deviation between Calm values and the DJIA on that day illustrates that unexpected news is not anticipated by the public mood yet remains a significant factor in modeling the stock market.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>E. Non-linear models for emotion-based stock prediction</head><p>Our Granger causality analysis suggests a predictive relation between certain mood dimensions and DJIA. However, Granger causality analysis is based on linear regression whereas the relation between public mood and stock market values is almost certainly non-linear. To better address these non-linear effects and assess the contribution that public mood assessments can make in predictive models of DJIA values, we compare the performance of a Self-organizing Fuzzy Neural Network (SOFNN) model <ref type="bibr" target="#b29">[30]</ref> that predicts DJIA values on the basis of two sets of inputs: (1) the past 3 days of DJIA values, and (2) the same combined with various permutations of our mood time series (explained below). Statistically significant performance differences will allow us to either confirm or reject the null hypothesis that public mood measurement do not improve predictive models of DJIA values.</p><p>We use a SOFNN as our prediction model since they have previously been used to decode nonlinear time series data which describe the characteristics of the stock market <ref type="bibr" target="#b27">[28]</ref> and predict its values <ref type="bibr" target="#b28">[29]</ref>. Our SOFNN in particular is a fivelayer hybrid neural network with the ability to self-organize its own neurons in the learning process. A similar organization has been successfully used for electricial load forecasting in our previous work <ref type="bibr" target="#b30">[31]</ref>.</p><p>To predict the DJIA value on day t, the input attributes of our SOFNN include combinations of DJIA values and mood values of the past n days. We choose n = 3 since the results shown in Table <ref type="table" target="#tab_2">II</ref> indicate that past n = 4 the Granger causal relation between Calm and DJIA decreases significantly. All historical load values are linearly scaled to [0,1]. This procedure causes every input variable be treated with similar importance since they are processed within a uniform range.</p><p>SOFNN models require the tuning of a number of parameters that can influence the performance of the model. We maintain the same parameter values across our various input combinations to allow an unbiased comparison of model performance, namely δ = 0.04, σ = 0.01, k rmse = 0.05, k d (i), (i = 1, ..., r) = 0.1 where r is the dimension of input variables and k rmse is the expected training root mean squared error which is a predefined value.</p><p>To properly evaluate the SOFNN model's ability to predict daily DJIA prices, we extend the period under consideration to <ref type="bibr">February 28, 2008</ref> to <ref type="bibr">December 19, 2008</ref> for training and testing. <ref type="bibr">February 28, 2008</ref> to November 28, 2008 is chosen as the longest possible training period while Dec 1 to Dec 19, 2008 was chosen as the test period because it was characterized by stabilization of DJIA values after considerable volatility in previous months and the absence of any unusual or significant socio-cultural events. Fig. <ref type="figure" target="#fig_2">4</ref> shows that the Fall of 2008 is an unusual period for the DJIA due to a sudden dramatic decline of stock prices. This variability may in fact render stock market prediction more difficult than in other periods. The Granger causality analysis indicates that only Calm (and to some degree Happy) is Granger-causative of DJIA values. However, the other mood dimensions could still contain predictive information of DJIA values when combined with other mood dimensions. For example, Happy may not be independently linearly related with DJIA, but it may nevertheless improve the SOFNN prediction accuracy when combined with Calm. To clarify these questions, we investigate seven permutations of input variables to the SOFNN model, the first of which, denoted I 0 , represents a naive, baseline model that has been trained to predict DJIA values at time t from the historical values at time {t − 1, t − 2, t − 3} :</p><formula xml:id="formula_3">I 0 = {DJIA t−3,2,1 } I 1 = {DJIA t−3,2,1 , X 1,t−3,2,1 } I 1,2 = {DJIA t−3,2,1 , X 1,t−3,2,1 , X 2,t−3,2,1 } I 1,3 = {DJIA t−3,2,1 , X 1,t−3,2,1 , X 3,t−3,2,1 } • • • DJIA t−3,2,1</formula><p>represents the DJIA values and X 1,t−3,2,1 represents the values of the GPOMS mood dimension 1, at time t − 3, t − 2, and t − 1. According to the same notation I 1,3 , I 1,4 , I 1,5 , I 1,6 represent a combination of historical DJIA with mood dimensions 3, 4, 5 and 6 at time t − 3, t − 2, and t − 1. For example, I 1,6 represents a set of inputs that includes the DJIA values t − 3, t − 2, and t − 1, and mood dimensions 1 and 6 at the same times.</p><p>In order to compare the performance of the GPOMS mood data with the positive/negative sentiment values given by OpinionFinder, we additionally define the input combination:</p><formula xml:id="formula_4">I OF = {DJIA t−3,2,1 , X OF,t−3,2,1 }</formula><p>Forecasting accuracy is measured in terms of the average Mean Absolute Percentage Error (MAPE) and the direction accuracy (up or down) during the test period (December 1 to <ref type="bibr">December 19, 2008)</ref>. The prediction results are shown in Table <ref type="table" target="#tab_2">III</ref>.</p><p>We can draw several conclusions from these results. First, adding positive/negative sentiment obtained from OF (I OF ) has no effect on prediction accuracy compared to using only historical DJIA values(I 0 ). This confirms the results of our Granger causuality analysis.</p><p>Second, adding Calm, i.e. input I 1 , we find the highest prediction accuracy. Compared to I 0 and all other input combinations, adding input I 1 leads to significant improvements in MAPE values (1.83% vs. the maximum of 2.13% and 1.95% for I OF ) and direction accuracy (86.7% compared to 73.3% for I OF and 46.7% for I 1,3 ). Thirdly, I 1,3 and I 1,4 actually reduce prediction accuracy significantly both in terms of MAPE and direction %, most likely because X 3 (Sure) and X 4 (Vital) do not contain information that is useful for prediction of DJIA values causing prediction accuracy to regress to chance levels. It is notable that I 1,6 , i.e. a combination of X 6 and X 1 does significantly reduce average MAPE, and provides good direction accuracy (80%). This is surprising since X 6 (i.e. Happy) does not have a good Granger causality relation with DJIA at a lag of n = 3 days (see Table <ref type="table" target="#tab_2">II</ref>, p = 0.723). However in combination with Calm, it produces a more accurate SOFNN prediction (MAPE=1.79%) and direction accuracy (80%).</p><p>To assess the statistical significance of the SOFNN achieving the above mentioned accuracy of 87.6% in predicting the up and down movement of the DJIA we calculate the odds of this result occurring by chance. The binomial distribution indicates that the probability of achieving exactly 87.6% correct guesses over 15 trials (20 days minus weekends) with a 50% chance of success on each single trial equals 0.32%. Taken over the entire length of our data set (February 28 to December 20, excluding weekends) we find approximately 10.9 of such 20 day periods. The odds that the mentioned probability would hold by chance for a random period of 20 days within that period is then estimated to be 1−(1−0.0032) 10.9 = 0.0343 or 3.4%. The SOFNN direction accuracy is thus most likely not the result of chance nor our selecting a specifically favorable test period.</p><p>In addition, we test the linear effect of both Calm(X 1 ) and Happy (X 6 ) on DJIA, with a nested F − test between the full model F and reduced model R shown as follows:</p><formula xml:id="formula_5">F : D t = α + n i=1 β i D t−i + 3 i=1 γ i X 1,t−i + 3 i=1 γ i X 6,t−i + t R : D t = α + n i=1 β i D t−i + 3 i=1 γ i X 1,t−i + t</formula><p>We find a p-value of 0.66 and an F-statistic of 0.53 indicating that a linear combination of X 1 and X 6 produces worse results than X 1 alone. Since the SOFNN prediction is more accurate when using a combination of X 1 and X 6 , we conclude that this confirms a nonlinear relation among the different dimensions of moods.</p></div>
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>III. DISCUSSION</head><p>In this paper, we investigate whether public mood as measured from large-scale collection of tweets posted on twitter.com is correlated or even predictive of DJIA values. Our results show that changes in the public mood state can indeed be tracked from the content of large-scale Twitter feeds by means of rather simple text processing techniques and that such changes respond to a variety of socio-cultural drivers in a highly differentiated manner. Among the 7 observed mood dimensions only some are Granger causative of the DJIA; changes of the public mood along these mood dimensions match shifts in the DJIA values that occur 3 to 4 days later. Surprisingly we do not observe this effect for OpinionFinder's assessment of public mood states in terms of positive vs. negative mood but rather for the GPOMS dimension labeled "Calm". The calmness of the public (measured by GPOMS) is thus predictive of the DJIA rather than general levels of positive sentiment as measured by OpinionFinder. A Self-Organizing Fuzzy Neural Network trained on the basis of past DJIA values and our public mood time series furthermore demonstrated the ability of the latter to significantly improve the accuracy of even the most basic models to predict DJIA closing values. Given the performance increase for a relatively basic model such as the SOFNN we are hopeful to find equal or better improvements for more sophisticated market models that may in fact include other information derived from news sources, and a variety of relevant economic indicators. These results have implications for existing sentiment tracking tools as well as surveys of "self-reported subjective well-being" in which individuals evaluate the extent to which they experience positive and negative affect, happiness, or satisfaction with life <ref type="bibr" target="#b39">[40]</ref>. Such surveys are relatively expensive and timeconsuming, and may nevertheless not allow the measurement of public mood along mood dimensions that are relevant to assess particular socio-economic indicators. Public mood analysis from Twitter feeds on the other hand offers an automatic, fast, free and large-scale addition to this toolkit that may in addition be optimized to measure a variety of dimensions of the public mood state. Our analysis does not acknowledge a number of important factors that will form the basis of future research. First, we note that our analysis is not designed to be limited to any particular geographical location nor subset of the world's population. This approach may be appropriate since the US stock markets are affected by individuals worldwide, but for the particular period under observation Twitter.com users were de facto predominantly English speaking and located in the US. As Twitter.com's user base becomes increasingly international and the use of smartphones equipped with geo-location increases, future analysis will have to factor in location and language to avoid geographical and cultural sampling errors. Second, although we have cross-validated the results of 2 different tools to assess public mood states, we have no knowledge of the "ground truth" for public mood states nor in fact for the particular subsample of the population represented by the community of Twitter.com users. This problem can only be addressed by increased research into direct assessments of public mood states vs. those derived from online communities such as Twitter. Third, these results are strongly indicative of a predictive correlation between measurements of the public mood states from Twitter feeds, but offer no information on the causative mechanisms that may connect public mood states with DJIA values in this manner. One could speculate that the general public is presently as strongly invested in the DJIA as financial experts, and that therefore their mood states will directly affect their investment decisions and thus stock market values, but this too remains an area of future research.</p></div><figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_0"><head>Fig. 2 .</head><label>2</label><figDesc>Fig. 2. Tracking public mood states from tweets posted between October 2008 to December 2008 shows public responses to presidential election and thanksgiving.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_1"><head>Fig. 3 .</head><label>3</label><figDesc>Fig. 3.A panel of three graphs. The top graph shows the overlap of the day-to-day difference of DJIA values (blue: Z D t ) with the GPOMS' Calm time series (red: Z X t ) that has been lagged by 3 days. Where the two graphs overlap the Calm time series predict changes in the DJIA closing values that occur 3 days later. Areas of significant congruence are marked by gray areas. The middle and bottom graphs show the separate DJIA and GPOMS' Calm time series.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" xml:id="fig_2"><head>Fig. 4 .</head><label>4</label><figDesc>Fig. 4. Daily Dow Jones Industrial Average values between February 28, 2008 and December 19, 2008.</figDesc></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_0"><head>Mood indicators (daily) DJIA~S tock market (daily) (3) DJIA Granger causality -n (lag) F-statistic p-value</head><label></label><figDesc></figDesc><table><row><cell cols="2">Methodology</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>text</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell>analysis</cell><cell cols="2">1) OpinionFinder</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="2">Twitter</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>2</cell></row><row><cell cols="4">feed~(</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell cols="2">(2) G-POMS (6 dim.)</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>predicted</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>t-2 t-1</cell><cell></cell><cell>SOFNN</cell><cell cols="2">value MAPE Direction %</cell><cell>3</cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>t-3</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell cols="2">normalization</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>t=0</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>value</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell cols="3">Data sets and timeline</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">(1) OF G</cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>POMS</cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell cols="3">(2) Granger Causality analysis</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell></cell><cell></cell><cell></cell><cell cols="2">(3) SOFNN training</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell cols="2">test</cell></row><row><cell>feb28</cell><cell>apr</cell><cell>may</cell><cell>jun</cell><cell>jul</cell><cell>aug</cell><cell>sep</cell><cell>oct</cell><cell>nov</cell><cell>dec</cell><cell>dec20</cell></row><row><cell>2008</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell>2008</cell></row><row><cell cols="11">Fig. 1. Diagram outlining 3 phases of methodology and corresponding data</cell></row><row><cell cols="11">sets: (1) creation and validation of OpinionFinder and GPOMS public mood</cell></row><row><cell cols="11">time series from October 2008 to December 2008 (Presidential Election and</cell></row><row><cell cols="11">Thanksgiving), (2) use of Granger causality analysis to determine correlation</cell></row><row><cell cols="11">between DJIA, OpinionFinder and GPOMS public mood from August 2008 to</cell></row><row><cell cols="11">December 2008, and (3) training of a Self-Organizing Fuzzy Neural Network</cell></row><row><cell cols="11">to predict DJIA values on the basis of various combinations of past DJIA</cell></row><row><cell cols="11">values and OF and GPOMS public mood data from March 2008 to December</cell></row><row><cell>2008.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_2"><head>TABLE I MULTIPLE</head><label>I</label><figDesc>REGRESSION RESULTS FOR OPINIONFINDER VS. 6 GPOMS MOOD DIMENSIONS.</figDesc><table><row><cell>Parameters</cell><cell></cell><cell>Coeff.</cell><cell>Std.Err.</cell><cell>t</cell><cell>p</cell></row><row><cell>Calm (X 1 )</cell><cell></cell><cell>1.731</cell><cell>1.348</cell><cell>1.284</cell><cell>0.20460</cell></row><row><cell>Alert (X 2 )</cell><cell></cell><cell>0.199</cell><cell>2.319</cell><cell>0.086</cell><cell>0.932</cell></row><row><cell>Sure (X 3 )</cell><cell></cell><cell>3.897</cell><cell>0.613</cell><cell>6.356</cell><cell>4.25e-08</cell></row><row><cell>Vital (X 4 )</cell><cell></cell><cell>1.763</cell><cell>0.595</cell><cell>2.965</cell><cell>0.004</cell></row><row><cell>Kind (X 5 )</cell><cell></cell><cell>1.687</cell><cell>1.377</cell><cell>1.226</cell><cell>0.226</cell></row><row><cell>Happy (X 6 )</cell><cell></cell><cell>2.770</cell><cell>0.578</cell><cell>4.790</cell><cell>1.30e-05</cell></row><row><cell>Summary</cell><cell cols="2">Residual Std.Err</cell><cell>Adj.R 2</cell><cell>F 6,55</cell><cell>p</cell></row><row><cell></cell><cell></cell><cell>0.078</cell><cell>0.683</cell><cell>22.93</cell><cell>2.382e-13</cell></row><row><cell cols="2">(p-value &lt; 0.001:</cell><cell cols="4">, p-value &lt; 0.05: , p-value &lt; 0.1: )</cell></row><row><cell cols="5">Calm, Alert, Sure, Vital, Kind and Happy.</cell></row><row><cell cols="6">The multiple linear regression results are provided in</cell></row><row><cell cols="6">Table I (coefficient and p-values), and indicate that Y OF</cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_3"><head>TABLE II STATISTICAL</head><label>II</label><figDesc>SIGNIFICANCE (P-VALUES) OF BIVARIATE GRANGER-CAUSALITY CORRELATION BETWEEN MOODS AND DJIA IN PERIOD FEBRUARY 28, 2008 TO NOVEMBER 3, 2008. The Calm mood dimension thus has predictive value with regards to the DJIA. In fact the p-value for this shorter period, i.e. August 1, 2008 to October 30 2008, is significantly lower (lag n = 3, p = 0.009) than that listed in Table II for the period February 28, 2008 to November 3, 2008.</figDesc><table><row><cell>Lag</cell><cell>OF</cell><cell>Calm</cell><cell>Alert</cell><cell>Sure</cell><cell>Vital</cell><cell>Kind</cell><cell>Happy</cell></row><row><cell>1 day</cell><cell>0.085</cell><cell>0.272</cell><cell cols="5">0.952 0.648 0.120 0.848 0.388</cell></row><row><cell>2 days</cell><cell>0.268</cell><cell>0.013</cell><cell cols="5">0.973 0.811 0.369 0.991 0.7061</cell></row><row><cell>3 days</cell><cell>0.436</cell><cell>0.022</cell><cell cols="5">0.981 0.349 0.418 0.991 0.723</cell></row><row><cell>4 days</cell><cell>0.218</cell><cell>0.030</cell><cell cols="5">0.998 0.415 0.475 0.989 0.750</cell></row><row><cell>5 days</cell><cell>0.300</cell><cell>0.036</cell><cell cols="5">0.989 0.544 0.553 0.996 0.173</cell></row><row><cell>6 days</cell><cell>0.446</cell><cell>0.065</cell><cell cols="4">0.996 0.691 0.682 0.994</cell><cell>0.081</cell></row><row><cell>7 days</cell><cell>0.620</cell><cell>0.157</cell><cell cols="5">0.999 0.381 0.713 0.999 0.150</cell></row><row><cell cols="4">(p-value &lt; 0.05: , p-value &lt; 0.1: )</cell><cell></cell><cell></cell><cell></cell><cell></cell></row><row><cell>0.</cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+<figure xmlns="http://www.tei-c.org/ns/1.0" type="table" xml:id="tab_4"><head>TABLE III DJIA</head><label>III</label><figDesc>2.13 2.05 1.85 1.79 Direction (%) 73.3 73.3 86.7 60.0 46.7 60.0 73.3 80.0</figDesc><table><row><cell></cell><cell></cell><cell cols="5">DAILY PREDICTION USING SOFNN</cell><cell></cell><cell></cell></row><row><cell>Evaluation</cell><cell>I OF</cell><cell>I 0</cell><cell>I 1</cell><cell>I 1,2</cell><cell>I 1,3</cell><cell>I 1,4</cell><cell>I 1,5</cell><cell>I 1,6</cell></row><row><cell>MAPE (%)</cell><cell>1.95</cell><cell cols="2">1.94 1.83</cell><cell>2.03</cell><cell></cell><cell></cell><cell></cell><cell></cell></row></table></figure>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="2">http://www.cs.pitt.edu/mpqa/opinionfinderrelease/ 3 http://www.gallup.com/poll/122840/Gallup-Daily-Economic-Indexes.aspx 4 http://www.sca.isr.umich.edu/</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="5">n-grams are frequently occurring sequences of terms in text of length n, for example "we are the robots" could be a frequent 4-gram.<ref type="bibr" target="#b5">6</ref> http://terramood.informatics.indiana.edu/data</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="7"><ref type="bibr" target="#b9">[10]</ref> uses only one mood index, namely Anxiety, but we investigate the relation between DJIA values and all Twitter mood dimensions measured by GPOMS and OpinionFinder</note>
+			<note xmlns="http://www.tei-c.org/ns/1.0" place="foot" n="8">Our DJIA time series has no values for weekends and holidays because trading is suspended during those days. We do not linearly extropolate to fill the gaps. This results in a time series of 64 days.</note>
+		</body>
+		<back>
+
+			<div type="acknowledgement">
+<div xmlns="http://www.tei-c.org/ns/1.0"><head>ACKNOWLEDGMENT</head><p>This research was supported by NSF Grant BCS #1032101. We thank David Crandell and Michael Nelson for their helpful comments on earlier versions of this manuscript. We are also grateful to Daniel Kahneman for his early comments on our work.</p></div>
+			</div>
+
+			<div type="references">
+
+				<listBibl>
+
+<biblStruct xml:id="b0">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">Eugene</forename><forename type="middle">F</forename><surname>Fama</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">A</forename></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">International Economic Review</title>
+		<imprint>
+			<biblScope unit="volume">10</biblScope>
+			<biblScope unit="page" from="1" to="21" />
+			<date type="published" when="1969" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b1">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">F</forename><surname>Fama</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">46</biblScope>
+			<biblScope unit="page" from="1575" to="1617" />
+			<date type="published" when="1991" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b2">
+	<monogr>
+		<title level="m" type="main">The random character of stock market prices</title>
+		<author>
+			<persName><forename type="first">H</forename><surname>Cootner</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1964" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b3">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">E</forename><forename type="middle">F</forename><surname>Fama</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">The Journal of Business</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="34" to="105" />
+			<date type="published" when="1965" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b4">
+	<analytic>
+		<title/>
+		<author>
+			<persName><surname>Qian</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Intelligence</title>
+		<imprint>
+			<biblScope unit="volume">26</biblScope>
+			<biblScope unit="page" from="25" to="33" />
+			<date type="published" when="2007" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b5">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">L</forename><surname>Gallagher</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><forename type="middle">P</forename><surname>Taylor</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Southern Economic Journal</title>
+		<imprint>
+			<biblScope unit="volume">69</biblScope>
+			<biblScope unit="page" from="345" to="362" />
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b6">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">M &amp;</forename><surname>Kavussanos</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Dockery</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Applied Financial Economics</title>
+		<imprint>
+			<biblScope unit="volume">11</biblScope>
+			<biblScope unit="page" from="573" to="579" />
+			<date type="published" when="2001" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b7">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">K</forename><surname>Butler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><forename type="middle">J</forename><surname>Malaikah</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Banking and Finance</title>
+		<imprint>
+			<biblScope unit="volume">16</biblScope>
+			<biblScope unit="page" from="197" to="210" />
+			<date type="published" when="1992" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b8">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><surname>Schumaker</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Chen</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">ACM Trans. Inf. Syst</title>
+		<imprint>
+			<biblScope unit="volume">27</biblScope>
+			<biblScope unit="page">19</biblScope>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b9">
+	<monogr>
+		<title level="m" type="main">Widespread worry and the stock market</title>
+		<author>
+			<persName><forename type="first">E &amp;</forename><surname>Gilbert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">K</forename><surname>Karahalios</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b10">
+	<monogr>
+		<title level="m" type="main">The predictive power of online chatter</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Gruhl</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Guha</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Kumar</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Novak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Tomkins</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2005" />
+			<publisher>ACM</publisher>
+			<biblScope unit="page" from="78" to="87" />
+			<pubPlace>New York, NY, USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b11">
+	<analytic>
+		<title level="a" type="main">Predicting Movie Sales from Blogger Sentiment</title>
+		<author>
+			<persName><forename type="first">G</forename><surname>Mishne</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><surname>&amp; Glance</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="m">AAAI 2006 Spring Symposium on Computational Approaches to Analysing Weblogs</title>
+				<imprint>
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b12">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Asur</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">A</forename><surname>Huberman</surname></persName>
+		</author>
+		<idno type="arXiv">arXiv:1003.5699v1</idno>
+		<title level="m">Predicting the Future with Social Media</title>
+				<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b13">
+	<monogr>
+		<title level="m" type="main">Predicting the present with google trends</title>
+		<author>
+			<persName><forename type="first">H &amp;</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Varian</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b14">
+	<monogr>
+		<title level="m" type="main">ARSA: a sentiment-aware model for predicting sales performance using blogs</title>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Liu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Huang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>An</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X</forename><surname>Yu</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2007" />
+			<publisher>ACM</publisher>
+			<biblScope unit="page" from="607" to="614" />
+			<pubPlace>New York, NY, USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b15">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">R</forename><forename type="middle">J</forename><surname>Dolan</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Science</title>
+		<imprint>
+			<biblScope unit="volume">298</biblScope>
+			<biblScope unit="page" from="1191" to="1194" />
+			<date type="published" when="2002" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b16">
+	<monogr>
+		<title level="m" type="main">Journal of Happiness</title>
+		<author>
+			<persName><forename type="first">Peter</forename><surname>Dodds</surname></persName>
+		</author>
+		<idno type="DOI">10.1007/s10902-009-9150-9</idno>
+		<imprint>
+			<date type="published" when="2009-07" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b17">
+	<monogr>
+		<title level="m" type="main">Descartes&apos; error : emotion, reason, and the human brain</title>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">R</forename><surname>Damasio</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1994" />
+			<biblScope unit="page">312</biblScope>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b18">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><surname>Nofsinger</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Behaviour Finance</title>
+		<imprint>
+			<biblScope unit="volume">6</biblScope>
+			<biblScope unit="page" from="144" to="160" />
+			<date type="published" when="2005" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b19">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">A</forename><surname>Edmans</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Garca</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Norli</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">62</biblScope>
+			<date type="published" when="1967" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b20">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">D &amp;</forename><surname>Hirshleifer</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Shumway</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Finance</title>
+		<imprint>
+			<biblScope unit="volume">58</biblScope>
+			<biblScope unit="page" from="1009" to="1032" />
+			<date type="published" when="2003" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b21">
+	<monogr>
+		<title level="m" type="main">Twitter as a Corpus for Sentiment Analysis and Opinion Mining. (European Language Resources Association (ELRA)</title>
+		<author>
+			<persName><forename type="first">A</forename><surname>Pak</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Paroubek</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+			<pubPlace>Valletta, Malta</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b22">
+	<analytic>
+		<title/>
+		<author>
+			<persName><surname>Pang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Lee</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Foundations and Trends in Information Retrieval</title>
+		<imprint>
+			<biblScope unit="volume">2</biblScope>
+			<biblScope unit="page" from="1" to="135" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b23">
+	<monogr>
+		<title level="m" type="main">Recognizing Contextual Polarity in Phrase-Level Sentiment Analysis</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wiebe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2005" />
+			<pubPlace>Vancouver, CA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b24">
+	<monogr>
+		<title level="m" type="main">OpinionFinder: A system for subjectivity analysis</title>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wilson</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">P</forename><surname>Hoffmann</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Somasundaran</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Kessler</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wiebe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Choi</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">C</forename><surname>Cardie</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Riloff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">S</forename><surname>Patwardhan</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2005" />
+			<biblScope unit="page" from="34" to="35" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b25">
+	<monogr>
+		<title level="m" type="main">From Tweets to Polls: Linking Text Sentiment to Public Opinion Time Series</title>
+		<author>
+			<persName><forename type="first">B</forename><surname>O'connor</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Balasubramanyan</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">R</forename><surname>Routledge</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">N</forename><forename type="middle">A</forename><surname>Smith</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2010" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b26">
+	<analytic>
+		<title level="a" type="main">Factors Predicting the Subjective Well-Being of Nations</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Diener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">M</forename><surname>Diener</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">D</forename><surname>Diener</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Social Indicators Research Series</title>
+		<imprint>
+			<biblScope unit="volume">38</biblScope>
+			<biblScope unit="page" from="43" to="70" />
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b27">
+	<monogr>
+		<title level="m" type="main">Nonlinear signal processing using neural network: Prediction and system modeling</title>
+		<author>
+			<persName><surname>Lapedes</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Farber</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1987" />
+		</imprint>
+		<respStmt>
+			<orgName>Los Alamos National Lab Technical Report</orgName>
+		</respStmt>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b28">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">X</forename><surname>Zhu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Wang</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">L</forename><surname>Xu</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">H</forename><surname>Li</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Expert Syst. Appl</title>
+		<imprint>
+			<biblScope unit="volume">34</biblScope>
+			<biblScope unit="page" from="3043" to="3054" />
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b29">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">G</forename><surname>Leng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Prasad</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><forename type="middle">M</forename><surname>Mcginnity</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Neural Netw</title>
+		<imprint>
+			<biblScope unit="volume">17</biblScope>
+			<biblScope unit="page" from="1477" to="1493" />
+			<date type="published" when="2004" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b30">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">H</forename><surname>Mao</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">X.-J</forename><surname>Zeng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">G</forename><surname>Leng</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Y</forename><surname>Zhai</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><forename type="middle">J</forename><surname>Keane</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">IEEE Transaction on Power System</title>
+		<imprint>
+			<biblScope unit="volume">24</biblScope>
+			<biblScope unit="page" from="1080" to="1090" />
+			<date type="published" when="2009" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b31">
+	<analytic>
+		<title/>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">C</forename><surname>Norcross</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Guadagnoli</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">O</forename><surname>Prochaska</surname></persName>
+		</author>
+	</analytic>
+	<monogr>
+		<title level="j">Journal of Clinical Psychology</title>
+		<imprint>
+			<biblScope unit="volume">40</biblScope>
+			<biblScope unit="page" from="1270" to="1277" />
+			<date type="published" when="2006" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b32">
+	<monogr>
+		<title level="m" type="main">Profile of mood states</title>
+		<author>
+			<persName><forename type="first">D</forename><surname>Mcnair</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><forename type="middle">P</forename><surname>Heuchert</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">E</forename><surname>Shilony</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1964" />
+			<publisher>Multi-Health Systems</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b33">
+	<monogr>
+		<title level="m" type="main">Between conjecture and memento: shaping a collective emotional perception of the future</title>
+		<author>
+			<persName><surname>Pepe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Bollen</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2008" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b34">
+	<monogr>
+		<title level="m" type="main">Web 1t 5-gram version 1</title>
+		<author>
+			<persName><forename type="first">T &amp;</forename><surname>Brants</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">A</forename><surname>Franz</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2006" />
+			<publisher>Linguistic Data Consortium</publisher>
+			<pubPlace>Philadelphia</pubPlace>
+		</imprint>
+	</monogr>
+	<note type="report_type">Technical report</note>
+</biblStruct>
+
+<biblStruct xml:id="b35">
+	<monogr>
+		<author>
+			<persName><forename type="first">S</forename><surname>Bergsma</surname></persName>
+		</author>
+		<author>
+			<persName><surname>Lin</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">R</forename><surname>Goebel</surname></persName>
+		</author>
+		<title level="m">IJCAI&apos;09: Proceedings of the 21st international jont conference on Artifical intelligence</title>
+				<meeting><address><addrLine>San Francisco, CA</addrLine></address></meeting>
+		<imprint>
+			<date type="published" when="2009" />
+			<biblScope unit="page" from="1507" to="1512" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b36">
+	<monogr>
+		<title level="m" type="main">Learning subjective nouns using extraction pattern bootstrapping</title>
+		<author>
+			<persName><forename type="first">E</forename><surname>Riloff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wiebe</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">T</forename><surname>Wilson</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2003" />
+			<publisher>Association for Computational Linguistics</publisher>
+			<biblScope unit="page" from="25" to="32" />
+			<pubPlace>Morristown, NJ, USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b37">
+	<monogr>
+		<title level="m" type="main">Learning extraction patterns for subjective expressions</title>
+		<author>
+			<persName><forename type="first">E &amp;</forename><surname>Riloff</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">J</forename><surname>Wiebe</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2003" />
+			<publisher>Association for Computational Linguistics</publisher>
+			<biblScope unit="page" from="105" to="112" />
+			<pubPlace>Morristown, NJ, USA</pubPlace>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b38">
+	<monogr>
+		<title level="m" type="main">Prospect Theory: An Analysis of Decision under Risk</title>
+		<author>
+			<persName><forename type="first">D &amp;</forename><surname>Kahneman</surname></persName>
+		</author>
+		<author>
+			<persName><forename type="first">Amos</forename><surname>Tversky</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="1979" />
+			<biblScope unit="page" from="263" to="291" />
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b39">
+	<monogr>
+		<title level="m" type="main">Happiness: A Revolution in Economics</title>
+		<author>
+			<persName><forename type="first">B</forename><forename type="middle">S</forename><surname>Frey</surname></persName>
+		</author>
+		<imprint>
+			<date type="published" when="2008" />
+			<publisher>The MIT Press</publisher>
+		</imprint>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b40">
+	<analytic>
+	</analytic>
+	<monogr>
+		<title level="m">United States Email:jbollen@indiana</title>
+				<meeting><address><addrLine>Indiana Unviersity-Bloomington</addrLine></address></meeting>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b41">
+	<analytic>
+		<title level="a" type="main">United States Email: huinmao@indiana</title>
+	</analytic>
+	<monogr>
+		<title level="j">Huina Mao School of Informatics and Computing</title>
+		<imprint/>
+	</monogr>
+</biblStruct>
+
+<biblStruct xml:id="b42">
+	<monogr>
+		<title/>
+		<author>
+			<persName><surname>Xiao-Jun</surname></persName>
+		</author>
+		<ptr target="x.zeng@manchester.ac.uk" />
+		<imprint>
+			<pubPlace>United Kingdom Email</pubPlace>
+		</imprint>
+		<respStmt>
+			<orgName>Zeng School of Computer Science, The University of Manchester</orgName>
+		</respStmt>
+	</monogr>
+</biblStruct>
+
+				</listBibl>
+			</div>
+		</back>
+	</text>
+</TEI>

@@ -8,7 +8,7 @@ from typing import Set
 import pandas as pd
 
 
-def get_links(fp: str) -> Set[str]:
+def get_urls(fp: str) -> Set[str]:
   with open(fp) as f:
     return set(map(lambda x: x.lower().strip(' /'), f.readlines()))
 
@@ -24,8 +24,8 @@ def calculate_metrics(target: Set[str], got: Set[str]) -> dict:
 def calculate_agg_metrics(metrics: dict) -> dict:
   agg_metrics = {}
   for method in ['A', 'B']:
-    for regex_mode in ['R1', 'R2']:
-      exc = f"{method}-{regex_mode}"
+    for option in ['R1', 'R2']:
+      exc = f"{method}-{option}"
       r = {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0}
       for sample in metrics:
         for measure in r:
@@ -37,38 +37,31 @@ def calculate_agg_metrics(metrics: dict) -> dict:
 
 
 def run(results_dir: str):
-  metrics = {}
+  all_metrics = {}
 
+  # calculate and print metrics for each file
+  print('\n===============\nmetrics by file\n===============')
   for file_name in sorted(glob.glob(f"{results_dir.rstrip('/ ')}/*-true.txt")):
     file_name = file_name[:-9]
-
-    # get links from each method
-    true_links = get_links(f'{file_name}-true.txt')
-    a_r1_links = get_links(f'{file_name}-A-R1.txt')
-    a_r2_links = get_links(f'{file_name}-A-R2.txt')
-    b_r1_links = get_links(f'{file_name}-B-R1.txt')
-    b_r2_links = get_links(f'{file_name}-B-R2.txt')
-
-    # calculate metrics
-    metrics[os.path.basename(file_name)] = {
-      'A-R1': calculate_metrics(true_links, a_r1_links),
-      'A-R2': calculate_metrics(true_links, a_r2_links),
-      'B-R1': calculate_metrics(true_links, b_r1_links),
-      'B-R2': calculate_metrics(true_links, b_r2_links)
-    }
-
-  # calculate aggregate metrics
-  agg_metrics = calculate_agg_metrics(metrics)
-
-  # print calculated metrics
-  print('\n===============\nmetrics by file\n===============')
-  for f in metrics:
-    df = pd.DataFrame.from_dict(metrics[f], orient='index')
-    df.index.name = f
+    true_urls = get_urls(f'{file_name}-true.txt')
+    metrics = {}
+    # get URLs from each method
+    for extractor in ['A', 'B']:
+      for option in ['R1', 'R2']:
+        exc = f"{extractor}-{option}"
+        extracted_urls = get_urls(f'{file_name}-{exc}.txt')
+        metrics[exc] = calculate_metrics(true_urls, extracted_urls)
+    # save metrics
+    base_name = os.path.basename(file_name)
+    all_metrics[base_name] = metrics
+    # print metric
+    df = pd.DataFrame.from_dict(metrics, orient='index')
+    df.index.name = base_name
     print(df)
 
-  # print aggregate metrics
+  # calculate and print aggregate metrics
   print('\n=================\naggregate metrics\n=================')
+  agg_metrics = calculate_agg_metrics(all_metrics)
   df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index')
   print(df_agg)
 
