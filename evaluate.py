@@ -25,7 +25,7 @@ def calculate_agg_metrics(metrics: dict) -> dict:
   agg_metrics = {}
   for method in ['A', 'B']:
     for option in ['R1', 'R2']:
-      exc = f"{method}-{option}"
+      exc = f"{method}-URLS_ALL-{option}"
       r = {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0}
       for sample in metrics:
         for measure in r:
@@ -48,9 +48,10 @@ def run(results_dir: str):
     # get URLs from each method
     for extractor in ['A', 'B']:
       for option in ['R1', 'R2']:
-        exc = f"{extractor}-{option}"
-        extracted_urls = get_urls(f'{file_name}-{exc}.txt')
-        metrics[exc] = calculate_metrics(true_urls, extracted_urls)
+        for cmd in ['URLS_ANN', 'URLS_ALL']:
+          exc = f"{extractor}-{cmd}-{option}"
+          extracted_urls = get_urls(f'{file_name}-{exc}.txt')
+          metrics[exc] = calculate_metrics(true_urls, extracted_urls)
     # save metrics
     base_name = os.path.basename(file_name)
     all_metrics[base_name] = metrics
