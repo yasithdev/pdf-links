@@ -23,9 +23,9 @@ def calculate_metrics(target: Set[str], got: Set[str]) -> dict:
 
 def calculate_agg_metrics(metrics: dict) -> dict:
   agg_metrics = {}
-  for method in ['A', 'B']:
+  for method in ['PDFM', 'GROB']:
     for option in ['R1', 'R2']:
-      exc = f"{method}-URLS_ALL-{option}"
+      exc = f"{method}-{option}-URLS_ALL"
       r = {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0}
       for sample in metrics:
         for measure in r:
@@ -46,24 +46,24 @@ def run(results_dir: str):
     true_urls = get_urls(f'{file_name}-true.txt')
     metrics = {}
     # get URLs from each method
-    for extractor in ['A', 'B']:
+    for extractor in ['PDFM', 'GROB']:
       for option in ['R1', 'R2']:
         for cmd in ['URLS_ANN', 'URLS_ALL']:
-          exc = f"{extractor}-{cmd}-{option}"
+          exc = f"{extractor}-{option}-{cmd}"
           extracted_urls = get_urls(f'{file_name}-{exc}.txt')
           metrics[exc] = calculate_metrics(true_urls, extracted_urls)
     # save metrics
     base_name = os.path.basename(file_name)
     all_metrics[base_name] = metrics
     # print metric
-    df = pd.DataFrame.from_dict(metrics, orient='index')
+    df = pd.DataFrame.from_dict(metrics, orient='index').sort_index()
     df.index.name = base_name
     print(df)
 
   # calculate and print aggregate metrics
   print('\n=================\naggregate metrics\n=================')
   agg_metrics = calculate_agg_metrics(all_metrics)
-  df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index')
+  df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index').sort_index()
   print(df_agg)
 
 

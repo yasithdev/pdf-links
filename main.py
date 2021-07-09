@@ -327,7 +327,7 @@ class Extractor:
     return sorted(annot_urls.union(full_text_urls))
 
 
-class ExtractorA(Extractor):
+class PDFMExecutor(Extractor):
   """
   URL extractor using PyPDF2 -> PDFMiner
 
@@ -347,7 +347,7 @@ class ExtractorA(Extractor):
     return sorted(full_text_urls)
 
 
-class ExtractorB(Extractor):
+class GROBExecutor(Extractor):
   """
   URL extractor using PyPDF2 -> GROBID
 
@@ -383,7 +383,7 @@ if __name__ == '__main__':
   import argparse
 
   parser = argparse.ArgumentParser(description='Link Extractor')
-  parser.add_argument('-e', required=True, help="extractor to use", choices=['A', 'B'])
+  parser.add_argument('-e', required=True, help="extractor to use", choices=['PDFM', 'GROB'])
   parser.add_argument('-c', required=True, help="command to run", choices=['TXT', 'URLS_ANN', 'URLS_TXT', 'URLS_ALL'])
   parser.add_argument('-r', metavar='OPTION_NUMBER', required=False, help="regex option to use", type=int)
   parser.add_argument('-i', metavar='INPUT_FILE', required=True, help="path to input file", type=str)
@@ -391,10 +391,10 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   # select extractor to use
-  if args.e == 'A':
-    e = ExtractorA()
-  elif args.e == 'B':
-    e = ExtractorB()
+  if args.e == 'PDFM':
+    e = PDFMExecutor()
+  elif args.e == 'GROB':
+    e = GROBExecutor()
   else:
     raise NotImplementedError('Extractor Does Not Exist!')
 

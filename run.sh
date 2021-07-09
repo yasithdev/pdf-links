@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-for executor in A B; do
+for executor in PDFM GROB; do
   echo "Executor: $executor"
   for filename in test/samples/*.pdf; do
     echo ""
@@ -13,7 +13,7 @@ for executor in A B; do
     for cmd in URLS_ANN URLS_TXT URLS_ALL; do
       for regex in 1 2; do
         echo "Command: $cmd, Regex: $regex"
-        ./main.py -e $executor -c $cmd -r $regex -i "$filename" -o "$op_prefix-$executor-$cmd-R$regex.txt"
+        ./main.py -e $executor -c $cmd -r $regex -i "$filename" -o "$op_prefix-$executor-R$regex-$cmd.txt"
       done
     done
   done
