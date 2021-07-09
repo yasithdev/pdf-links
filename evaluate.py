@@ -14,8 +14,8 @@ def get_urls(fp: str) -> Set[str]:
 
 def calculate_metrics(target: Set[str], got: Set[str]) -> dict:
   tp = len(got.intersection(target))
-  fn = len(got.difference(target))
-  fp = len(target.difference(got))
+  fn = len(target.difference(got))
+  fp = len(got.difference(target))
   tn = 0  # because ground truth only has valid URLs
   return {'tp': tp, 'fn': fn, 'fp': fp, 'tn': tn}
 
@@ -43,7 +43,7 @@ def run(labels_dir: str, urls_dir: str, cmd: str):
   all_metrics = {}
 
   # calculate and print metrics for each file
-  print('\n===============\nmetrics by file\n===============')
+  print('===============\nmetrics by file\n===============')
   for full_path in sorted(glob.glob(f"{labels_dir}/*.pdf.txt")):
     file_name = os.path.basename(full_path[:-4])
     true_urls = set(map(clean, get_urls(f'{labels_dir}/{file_name}.txt')))
@@ -59,10 +59,10 @@ def run(labels_dir: str, urls_dir: str, cmd: str):
     # print metric
     df = pd.DataFrame.from_dict(metrics, orient='index').sort_index()
     df.index.name = f"{file_name} ({len(true_urls)} URLs)"
-    print(df)
+    print(df, end="\n\n")
 
   # calculate and print aggregate metrics
-  print('\n=================\naggregate metrics\n=================')
+  print('=================\naggregate metrics\n=================')
   agg_metrics = calculate_agg_metrics(all_metrics, cmd)
   df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index').sort_index()
   print(df_agg)

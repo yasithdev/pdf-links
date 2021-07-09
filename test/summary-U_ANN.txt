@@ -1,4 +1,3 @@
-
 ===============
 metrics by file
 ===============
@@ -8,54 +7,61 @@ GROB-R1-U_ANN           24   1   1   0
 GROB-R2-U_ANN           24   1   1   0
 PDFM-R1-U_ANN           24   1   1   0
 PDFM-R2-U_ANN           24   1   1   0
+
                        tp  fn  fp  tn
 sample-2.pdf (2 URLs)                
-GROB-R1-U_ANN           0   0   2   0
-GROB-R2-U_ANN           0   0   2   0
-PDFM-R1-U_ANN           0   0   2   0
-PDFM-R2-U_ANN           0   0   2   0
+GROB-R1-U_ANN           0   2   0   0
+GROB-R2-U_ANN           0   2   0   0
+PDFM-R1-U_ANN           0   2   0   0
+PDFM-R2-U_ANN           0   2   0   0
+
                        tp  fn  fp  tn
 sample-3.pdf (6 URLs)                
-GROB-R1-U_ANN           0   0   6   0
-GROB-R2-U_ANN           0   0   6   0
-PDFM-R1-U_ANN           0   0   6   0
-PDFM-R2-U_ANN           0   0   6   0
+GROB-R1-U_ANN           0   6   0   0
+GROB-R2-U_ANN           0   6   0   0
+PDFM-R1-U_ANN           0   6   0   0
+PDFM-R2-U_ANN           0   6   0   0
+
                         tp  fn  fp  tn
 sample-4.pdf (11 URLs)                
 GROB-R1-U_ANN           11   0   0   0
 GROB-R2-U_ANN           11   0   0   0
 PDFM-R1-U_ANN           11   0   0   0
 PDFM-R2-U_ANN           11   0   0   0
+
                         tp  fn  fp  tn
 sample-5.pdf (10 URLs)                
-GROB-R1-U_ANN            0   0  10   0
-GROB-R2-U_ANN            0   0  10   0
-PDFM-R1-U_ANN            0   0  10   0
-PDFM-R2-U_ANN            0   0  10   0
+GROB-R1-U_ANN            0  10   0   0
+GROB-R2-U_ANN            0  10   0   0
+PDFM-R1-U_ANN            0  10   0   0
+PDFM-R2-U_ANN            0  10   0   0
+
                        tp  fn  fp  tn
 sample-6.pdf (5 URLs)                
-GROB-R1-U_ANN           0   0   5   0
-GROB-R2-U_ANN           0   0   5   0
-PDFM-R1-U_ANN           0   0   5   0
-PDFM-R2-U_ANN           0   0   5   0
+GROB-R1-U_ANN           0   5   0   0
+GROB-R2-U_ANN           0   5   0   0
+PDFM-R1-U_ANN           0   5   0   0
+PDFM-R2-U_ANN           0   5   0   0
+
                        tp  fn  fp  tn
 sample-7.pdf (4 URLs)                
-GROB-R1-U_ANN           0   0   4   0
-GROB-R2-U_ANN           0   0   4   0
-PDFM-R1-U_ANN           0   0   4   0
-PDFM-R2-U_ANN           0   0   4   0
+GROB-R1-U_ANN           0   4   0   0
+GROB-R2-U_ANN           0   4   0   0
+PDFM-R1-U_ANN           0   4   0   0
+PDFM-R2-U_ANN           0   4   0   0
+
                        tp  fn  fp  tn
 sample-8.pdf (4 URLs)                
-GROB-R1-U_ANN           2   0   2   0
-GROB-R2-U_ANN           2   0   2   0
-PDFM-R1-U_ANN           2   0   2   0
-PDFM-R2-U_ANN           2   0   2   0
+GROB-R1-U_ANN           2   2   0   0
+GROB-R2-U_ANN           2   2   0   0
+PDFM-R1-U_ANN           2   2   0   0
+PDFM-R2-U_ANN           2   2   0   0
 
 =================
 aggregate metrics
 =================
                tp  fn  fp  tn       tpr  fpr
-GROB-R1-U_ANN  37   1  30   0  0.973684  1.0
-GROB-R2-U_ANN  37   1  30   0  0.973684  1.0
-PDFM-R1-U_ANN  37   1  30   0  0.973684  1.0
-PDFM-R2-U_ANN  37   1  30   0  0.973684  1.0
+GROB-R1-U_ANN  37  30   1   0  0.552239  1.0
+GROB-R2-U_ANN  37  30   1   0  0.552239  1.0
+PDFM-R1-U_ANN  37  30   1   0  0.552239  1.0
+PDFM-R2-U_ANN  37  30   1   0  0.552239  1.0
