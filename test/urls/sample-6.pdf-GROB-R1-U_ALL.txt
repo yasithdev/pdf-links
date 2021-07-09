@@ -1,5 +1,4 @@
 https://terramood.informatics.indiana.edu/data
-https://www.ccs.neu.edu/home/amislove/twittermood
 https://www.cs.pitt.edu/mpqa/opinionfinderrelease
 https://www.gallup.com/poll/122840/gallup-daily-economic-indexes.aspx
 https://www.sca.isr.umich.edu

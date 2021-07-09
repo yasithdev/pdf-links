@@ -2,7 +2,6 @@
 
 import glob
 import os.path
-import sys
 from typing import Set
 
 import pandas as pd
@@ -21,11 +20,11 @@ def calculate_metrics(target: Set[str], got: Set[str]) -> dict:
   return {'tp': tp, 'fn': fn, 'fp': fp, 'tn': tn}
 
 
-def calculate_agg_metrics(metrics: dict) -> dict:
+def calculate_agg_metrics(metrics: dict, cmd: str) -> dict:
   agg_metrics = {}
   for method in ['PDFM', 'GROB']:
     for option in ['R1', 'R2']:
-      exc = f"{method}-{option}-URLS_ALL"
+      exc = f"{method}-{option}-{cmd}"
       r = {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0}
       for sample in metrics:
         for measure in r:
@@ -36,7 +35,7 @@ def calculate_agg_metrics(metrics: dict) -> dict:
   return agg_metrics
 
 
-def run(labels_dir: str, urls_dir: str):
+def run(labels_dir: str, urls_dir: str, cmd: str):
   all_metrics = {}
 
   # calculate and print metrics for each file
@@ -48,10 +47,9 @@ def run(labels_dir: str, urls_dir: str):
     # get URLs from each method
     for extractor in ['PDFM', 'GROB']:
       for option in ['R1', 'R2']:
-        for cmd in ['URLS_ANN', 'URLS_ALL']:
-          exc = f"{extractor}-{option}-{cmd}"
-          extracted_urls = get_urls(f'{urls_dir}/{file_name}-{exc}.txt')
-          metrics[exc] = calculate_metrics(true_urls, extracted_urls)
+        exc = f"{extractor}-{option}-{cmd}"
+        extracted_urls = get_urls(f'{urls_dir}/{file_name}-{exc}.txt')
+        metrics[exc] = calculate_metrics(true_urls, extracted_urls)
     # save metrics
     all_metrics[file_name] = metrics
     # print metric
@@ -61,7 +59,7 @@ def run(labels_dir: str, urls_dir: str):
 
   # calculate and print aggregate metrics
   print('\n=================\naggregate metrics\n=================')
-  agg_metrics = calculate_agg_metrics(all_metrics)
+  agg_metrics = calculate_agg_metrics(all_metrics, cmd)
   df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index').sort_index()
   print(df_agg)
 
@@ -72,5 +70,6 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Link Extractor Evaluator')
   parser.add_argument('-l', metavar="LABELS_PATH", required=True, help="path to labels directory", type=str)
   parser.add_argument('-u', metavar="URLS_PATH", required=True, help="path to urls directory", type=str)
+  parser.add_argument('-c', metavar="COMMAND", required=True, help="name of command", type=str)
   args = parser.parse_args()
-  run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '))
+  run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '), str(args.c))
