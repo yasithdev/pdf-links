@@ -36,28 +36,27 @@ def calculate_agg_metrics(metrics: dict) -> dict:
   return agg_metrics
 
 
-def run(results_dir: str):
+def run(labels_dir: str, urls_dir: str):
   all_metrics = {}
 
   # calculate and print metrics for each file
   print('\n===============\nmetrics by file\n===============')
-  for file_name in sorted(glob.glob(f"{results_dir.rstrip('/ ')}/*-true.txt")):
-    file_name = file_name[:-9]
-    true_urls = get_urls(f'{file_name}-true.txt')
+  for full_path in sorted(glob.glob(f"{labels_dir}/*.pdf.txt")):
+    file_name = os.path.basename(full_path[:-4])
+    true_urls = get_urls(f'{labels_dir}/{file_name}.txt')
     metrics = {}
     # get URLs from each method
     for extractor in ['PDFM', 'GROB']:
       for option in ['R1', 'R2']:
         for cmd in ['URLS_ANN', 'URLS_ALL']:
           exc = f"{extractor}-{option}-{cmd}"
-          extracted_urls = get_urls(f'{file_name}-{exc}.txt')
+          extracted_urls = get_urls(f'{urls_dir}/{file_name}-{exc}.txt')
           metrics[exc] = calculate_metrics(true_urls, extracted_urls)
     # save metrics
-    base_name = os.path.basename(file_name)
-    all_metrics[base_name] = metrics
+    all_metrics[file_name] = metrics
     # print metric
     df = pd.DataFrame.from_dict(metrics, orient='index').sort_index()
-    df.index.name = f"{base_name} ({len(true_urls)} URLs)"
+    df.index.name = f"{file_name} ({len(true_urls)} URLs)"
     print(df)
 
   # calculate and print aggregate metrics
@@ -68,4 +67,10 @@ def run(results_dir: str):
 
 
 if __name__ == '__main__':
-  run(sys.argv[1])
+  import argparse
+
+  parser = argparse.ArgumentParser(description='Link Extractor Evaluator')
+  parser.add_argument('-l', metavar="LABELS_PATH", required=True, help="path to labels directory", type=str)
+  parser.add_argument('-u', metavar="URLS_PATH", required=True, help="path to urls directory", type=str)
+  args = parser.parse_args()
+  run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '))
