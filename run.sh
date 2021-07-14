@@ -8,9 +8,12 @@ for executor in PDFM GROB; do
     # extract text
     echo "Command: TXT"
     ./main.py -e $executor -c TXT -i "$filename" -o "test/text/$(basename "$filename")-$executor.txt"
-    # extract urls
-    for regex in 1 2; do
-      for cmd in U_ANN U_TXT U_ALL; do
+    # extract annotations
+    echo "Command: U_ANN"
+    # extract urls from text
+    ./main.py -e "$executor" -c U_ANN -i "$filename" -o "test/urls/$(basename "$filename")-$executor-U_ANN.txt"
+    for regex in 3 4; do
+      for cmd in U_TXT U_ALL; do
         echo "Command: $cmd, Regex: $regex"
         ./main.py -e "$executor" -c "$cmd" -r "$regex" -i "$filename" -o "test/urls/$(basename "$filename")-$executor-R$regex-$cmd.txt"
       done

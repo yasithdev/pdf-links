@@ -6,6 +6,9 @@ from typing import Set
 
 import pandas as pd
 
+REGEXES = [3, 4]
+EXTRACTORS = ['PDFM', 'GROB']
+
 
 def get_urls(fp: str) -> Set[str]:
   with open(fp) as f:
@@ -21,17 +24,25 @@ def calculate_metrics(target: Set[str], got: Set[str]) -> dict:
 
 
 def calculate_agg_metrics(metrics: dict, cmd: str) -> dict:
+  def agg(exc: str):
+    r = {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0}
+    for sample in metrics:
+      for measure in r:
+        r[measure] += metrics[sample][exc][measure]
+    r['tpr'] = r['tp'] / max(r['tp'] + r['fn'], 1)  # lower bound to avoid ZeroDivisionError
+    r['fpr'] = r['fp'] / max(r['fp'] + r['tn'], 1)  # lower bound to avoid ZeroDivisionError
+    agg_metrics[exc] = r
+
   agg_metrics = {}
-  for method in ['PDFM', 'GROB']:
-    for option in ['R1', 'R2']:
-      exc = f"{method}-{option}-{cmd}"
-      r = {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0}
-      for sample in metrics:
-        for measure in r:
-          r[measure] += metrics[sample][exc][measure]
-      r['tpr'] = r['tp'] / (r['tp'] + r['fn'])
-      r['fpr'] = r['fp'] / (r['fp'] + r['tn'])
-      agg_metrics[exc] = r
+  for extractor in EXTRACTORS:
+    if cmd == "U_ANN":
+      # aggregate annotated URL metrics
+      agg(f"{extractor}-{cmd}")
+    else:
+      # aggregate fulltext URL metrics
+      for regex in REGEXES:
+        agg(f"{extractor}-R{regex}-{cmd}")
+
   return agg_metrics
 
 
@@ -49,11 +60,18 @@ def run(labels_dir: str, urls_dir: str, cmd: str):
     true_urls = set(map(clean, get_urls(f'{labels_dir}/{file_name}.txt')))
     metrics = {}
     # get URLs from each method
-    for extractor in ['PDFM', 'GROB']:
-      for option in ['R1', 'R2']:
-        exc = f"{extractor}-{option}-{cmd}"
+    for extractor in EXTRACTORS:
+      if cmd == "U_ANN":
+        # get annotated URL metric
+        exc = f"{extractor}-{cmd}"
         extracted_urls = set(map(clean, get_urls(f'{urls_dir}/{file_name}-{exc}.txt')))
         metrics[exc] = calculate_metrics(true_urls, extracted_urls)
+      else:
+        # get fulltext URL metrics
+        for regex in REGEXES:
+          exc = f"{extractor}-R{regex}-{cmd}"
+          extracted_urls = set(map(clean, get_urls(f'{urls_dir}/{file_name}-{exc}.txt')))
+          metrics[exc] = calculate_metrics(true_urls, extracted_urls)
     # save metrics
     all_metrics[file_name] = metrics
     # print metric

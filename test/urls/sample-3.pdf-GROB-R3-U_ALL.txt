@@ -1,0 +1,4 @@
+https://code.google.com/p/dkpro-similarity-asl
+https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations12
+https://www.wikipedia.org
+https://www.wiktionary.org

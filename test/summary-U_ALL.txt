@@ -3,65 +3,65 @@ metrics by file
 ===============
                         tp  fn  fp  tn
 sample-1.pdf (25 URLs)                
-GROB-R1-U_ALL           24   1   1   0
-GROB-R2-U_ALL           24   1   1   0
-PDFM-R1-U_ALL           24   1   1   0
-PDFM-R2-U_ALL           24   1   1   0
+GROB-R3-U_ALL           24   1   0   0
+GROB-R4-U_ALL           24   1   0   0
+PDFM-R3-U_ALL           24   1   1   0
+PDFM-R4-U_ALL           24   1   1   0
 
                        tp  fn  fp  tn
 sample-2.pdf (2 URLs)                
-GROB-R1-U_ALL           2   0   0   0
-GROB-R2-U_ALL           2   0   0   0
-PDFM-R1-U_ALL           2   0   0   0
-PDFM-R2-U_ALL           2   0   0   0
+GROB-R3-U_ALL           2   0   0   0
+GROB-R4-U_ALL           2   0   0   0
+PDFM-R3-U_ALL           2   0   0   0
+PDFM-R4-U_ALL           2   0   0   0
 
                        tp  fn  fp  tn
 sample-3.pdf (6 URLs)                
-GROB-R1-U_ALL           5   1   0   0
-GROB-R2-U_ALL           5   1   0   0
-PDFM-R1-U_ALL           1   5   2   0
-PDFM-R2-U_ALL           2   4   2   0
+GROB-R3-U_ALL           3   3   1   0
+GROB-R4-U_ALL           1   5   1   0
+PDFM-R3-U_ALL           1   5   2   0
+PDFM-R4-U_ALL           2   4   2   0
 
                         tp  fn  fp  tn
 sample-4.pdf (11 URLs)                
-GROB-R1-U_ALL           11   0   0   0
-GROB-R2-U_ALL           11   0   0   0
-PDFM-R1-U_ALL           11   0   0   0
-PDFM-R2-U_ALL           11   0   0   0
+GROB-R3-U_ALL           11   0   0   0
+GROB-R4-U_ALL           11   0   0   0
+PDFM-R3-U_ALL           11   0   0   0
+PDFM-R4-U_ALL           11   0   0   0
 
                         tp  fn  fp  tn
 sample-5.pdf (10 URLs)                
-GROB-R1-U_ALL            7   3   2   0
-GROB-R2-U_ALL            7   3   2   0
-PDFM-R1-U_ALL            7   3   3   0
-PDFM-R2-U_ALL            7   3   3   0
+GROB-R3-U_ALL            7   3   2   0
+GROB-R4-U_ALL            7   3   2   0
+PDFM-R3-U_ALL            7   3   3   0
+PDFM-R4-U_ALL            7   3   3   0
 
                        tp  fn  fp  tn
 sample-6.pdf (5 URLs)                
-GROB-R1-U_ALL           4   1   0   0
-GROB-R2-U_ALL           4   1   0   0
-PDFM-R1-U_ALL           5   0   0   0
-PDFM-R2-U_ALL           5   0   0   0
+GROB-R3-U_ALL           4   1   1   0
+GROB-R4-U_ALL           4   1   1   0
+PDFM-R3-U_ALL           5   0   0   0
+PDFM-R4-U_ALL           5   0   0   0
 
                        tp  fn  fp  tn
 sample-7.pdf (4 URLs)                
-GROB-R1-U_ALL           3   1   1   0
-GROB-R2-U_ALL           3   1   1   0
-PDFM-R1-U_ALL           4   0   0   0
-PDFM-R2-U_ALL           4   0   0   0
+GROB-R3-U_ALL           3   1   1   0
+GROB-R4-U_ALL           3   1   1   0
+PDFM-R3-U_ALL           4   0   0   0
+PDFM-R4-U_ALL           4   0   0   0
 
                        tp  fn  fp  tn
 sample-8.pdf (4 URLs)                
-GROB-R1-U_ALL           4   0   0   0
-GROB-R2-U_ALL           4   0   0   0
-PDFM-R1-U_ALL           4   0   0   0
-PDFM-R2-U_ALL           4   0   0   0
+GROB-R3-U_ALL           4   0   0   0
+GROB-R4-U_ALL           4   0   0   0
+PDFM-R3-U_ALL           4   0   0   0
+PDFM-R4-U_ALL           4   0   0   0
 
 =================
 aggregate metrics
 =================
                tp  fn  fp  tn       tpr  fpr
-GROB-R1-U_ALL  60   7   4   0  0.895522  1.0
-GROB-R2-U_ALL  60   7   4   0  0.895522  1.0
-PDFM-R1-U_ALL  58   9   6   0  0.865672  1.0
-PDFM-R2-U_ALL  59   8   6   0  0.880597  1.0
+GROB-R3-U_ALL  58   9   5   0  0.865672  1.0
+GROB-R4-U_ALL  56  11   5   0  0.835821  1.0
+PDFM-R3-U_ALL  58   9   6   0  0.865672  1.0
+PDFM-R4-U_ALL  59   8   6   0  0.880597  1.0
