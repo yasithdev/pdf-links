@@ -1,4 +1,5 @@
 https://code.google.com
 https://www.gutenberg.org
 https://www.ukp.tu-darmstadt.de
-https://www.wikipedia.org5www.wiktionary.org
+https://www.wikipedia.org
+https://www.wiktionary.org

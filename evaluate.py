@@ -6,7 +6,7 @@ from typing import Set
 
 import pandas as pd
 
-REGEXES = [3, 4]
+REGEXES = [1, 2, 3, 4]
 EXTRACTORS = ['PDFM', 'GROB']
 
 
@@ -84,6 +84,8 @@ def run(labels_dir: str, urls_dir: str, cmd: str):
   agg_metrics = calculate_agg_metrics(all_metrics, cmd)
   df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index').sort_index()
   print(df_agg)
+
+  # TODO calculate and print which urls are tp, fp, fn, and tn
 
 
 if __name__ == '__main__':

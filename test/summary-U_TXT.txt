@@ -1,67 +1,103 @@
 ===============
 metrics by file
 ===============
-                        tp  fn  fp  tn
-sample-1.pdf (25 URLs)                
-GROB-R3-U_TXT            7  18   7   0
-GROB-R4-U_TXT            7  18   7   0
-PDFM-R3-U_TXT            9  16  11   0
-PDFM-R4-U_TXT           10  15  11   0
+                        tp  fn   fp  tn
+sample-1.pdf (25 URLs)                 
+GROB-R1-U_TXT            7  18   68   0
+GROB-R2-U_TXT            6  19   69   0
+GROB-R3-U_TXT            7  18    7   0
+GROB-R4-U_TXT            7  18    7   0
+PDFM-R1-U_TXT            3  22  124   0
+PDFM-R2-U_TXT            2  23  124   0
+PDFM-R3-U_TXT            9  16   11   0
+PDFM-R4-U_TXT           10  15   11   0
 
                        tp  fn  fp  tn
 sample-2.pdf (2 URLs)                
+GROB-R1-U_TXT           2   0  30   0
+GROB-R2-U_TXT           2   0  33   0
 GROB-R3-U_TXT           2   0   0   0
 GROB-R4-U_TXT           2   0   0   0
+PDFM-R1-U_TXT           2   0  71   0
+PDFM-R2-U_TXT           2   0  81   0
 PDFM-R3-U_TXT           2   0   0   0
 PDFM-R4-U_TXT           2   0   0   0
 
-                       tp  fn  fp  tn
-sample-3.pdf (6 URLs)                
-GROB-R3-U_TXT           5   1   0   0
-GROB-R4-U_TXT           4   2   1   0
-PDFM-R3-U_TXT           1   5   2   0
-PDFM-R4-U_TXT           2   4   2   0
+                       tp  fn   fp  tn
+sample-3.pdf (6 URLs)                 
+GROB-R1-U_TXT           5   1   40   0
+GROB-R2-U_TXT           4   2   42   0
+GROB-R3-U_TXT           5   1    0   0
+GROB-R4-U_TXT           4   2    1   0
+PDFM-R1-U_TXT           3   3   14   0
+PDFM-R2-U_TXT           4   2  246   0
+PDFM-R3-U_TXT           3   3    1   0
+PDFM-R4-U_TXT           4   2    1   0
 
                         tp  fn  fp  tn
 sample-4.pdf (11 URLs)                
+GROB-R1-U_TXT           11   0  16   0
+GROB-R2-U_TXT           11   0  17   0
 GROB-R3-U_TXT           11   0   0   0
 GROB-R4-U_TXT           11   0   0   0
+PDFM-R1-U_TXT           11   0  19   0
+PDFM-R2-U_TXT           11   0  22   0
 PDFM-R3-U_TXT           11   0   0   0
 PDFM-R4-U_TXT           11   0   0   0
 
-                        tp  fn  fp  tn
-sample-5.pdf (10 URLs)                
-GROB-R3-U_TXT            7   3   2   0
-GROB-R4-U_TXT            7   3   2   0
-PDFM-R3-U_TXT            7   3   3   0
-PDFM-R4-U_TXT            7   3   3   0
+                        tp  fn   fp  tn
+sample-5.pdf (10 URLs)                 
+GROB-R1-U_TXT            7   3   69   0
+GROB-R2-U_TXT            7   3   78   0
+GROB-R3-U_TXT            7   3    2   0
+GROB-R4-U_TXT            7   3    2   0
+PDFM-R1-U_TXT            7   3  105   0
+PDFM-R2-U_TXT            7   3  109   0
+PDFM-R3-U_TXT            7   3    3   0
+PDFM-R4-U_TXT            7   3    3   0
 
                        tp  fn  fp  tn
 sample-6.pdf (5 URLs)                
-GROB-R3-U_TXT           5   0   1   0
+GROB-R1-U_TXT           4   1  24   0
+GROB-R2-U_TXT           4   1  26   0
+GROB-R3-U_TXT           4   1   1   0
 GROB-R4-U_TXT           5   0   1   0
+PDFM-R1-U_TXT           4   1  42   0
+PDFM-R2-U_TXT           4   1  42   0
 PDFM-R3-U_TXT           5   0   0   0
 PDFM-R4-U_TXT           5   0   0   0
 
                        tp  fn  fp  tn
 sample-7.pdf (4 URLs)                
+GROB-R1-U_TXT           3   1   4   0
+GROB-R2-U_TXT           3   1   4   0
 GROB-R3-U_TXT           3   1   1   0
 GROB-R4-U_TXT           3   1   1   0
+PDFM-R1-U_TXT           4   0  13   0
+PDFM-R2-U_TXT           4   0  13   0
 PDFM-R3-U_TXT           4   0   0   0
 PDFM-R4-U_TXT           4   0   0   0
 
                        tp  fn  fp  tn
 sample-8.pdf (4 URLs)                
+GROB-R1-U_TXT           4   0   0   0
+GROB-R2-U_TXT           4   0   0   0
 GROB-R3-U_TXT           4   0   0   0
 GROB-R4-U_TXT           4   0   0   0
+PDFM-R1-U_TXT           4   0  11   0
+PDFM-R2-U_TXT           4   0  11   0
 PDFM-R3-U_TXT           4   0   0   0
 PDFM-R4-U_TXT           4   0   0   0
 
 =================
 aggregate metrics
 =================
-               tp  fn  fp  tn       tpr  fpr
-GROB-R3-U_TXT  44  23  11   0  0.656716  1.0
-GROB-R4-U_TXT  43  24  12   0  0.641791  1.0
-PDFM-R3-U_TXT  43  24  16   0  0.641791  1.0
-PDFM-R4-U_TXT  45  22  16   0  0.671642  1.0
+               tp  fn   fp  tn       tpr  fpr
+GROB-R1-U_TXT  43  24  251   0  0.641791  1.0
+GROB-R2-U_TXT  41  26  269   0  0.611940  1.0
+GROB-R3-U_TXT  43  24   11   0  0.641791  1.0
+GROB-R4-U_TXT  43  24   12   0  0.641791  1.0
+PDFM-R1-U_TXT  38  29  399   0  0.567164  1.0
+PDFM-R2-U_TXT  38  29  648   0  0.567164  1.0
+PDFM-R3-U_TXT  45  22   15   0  0.671642  1.0
+PDFM-R4-U_TXT  47  20   15   0  0.701493  1.0

@@ -3,11 +3,10 @@ import re
 from typing import Optional, List, Set
 
 import bs4
-
-
 # ======================================================================================================================
 # REGEX CONFIGURATION
 # ======================================================================================================================
+import timeout_decorator
 
 
 class UrlRegex:
@@ -128,32 +127,36 @@ class Util:
     :return: subset of valid URLs
     """
 
-    def validator(url):
+    @timeout_decorator.timeout(seconds=2)
+    def is_valid(url: str):
       # validate against URL blacklist
       if blacklist.search(url) is not None:
-        ok = False
+        return False
+      # validate URL integrity
+      if online:
+        import requests
+        return requests.head(url).ok
       else:
-        # validate URL integrity
-        try:
-          if online:
-            import requests
-            ok = requests.head(url).ok
-          else:
-            import validators
-            ok = validators.url(url)
-        except:
-          ok = False
-      return ok
+        import validators
+        return validators.url(url, public=True)
 
     blacklist = UrlRegex.get_blacklist_regex()
-    return set(filter(validator, s.difference({None})))
+    valid_urls = set()
+    for u in s.difference({None}):
+      try:
+        if is_valid(u):
+          valid_urls.add(u)
+      except:
+        continue
+    return valid_urls
 
   @staticmethod
   def augment(text: str) -> str:
     # remove occurrences of [space(s)-newlines-space(s)]
     aug_text = re.sub(r"(\s*\n+\s*)", r"", text, flags=re.I)
-    aug_text = re.sub(r"(https?://)", r" \1", aug_text, flags=re.I)
-    return f"{aug_text}\n{text}\n"
+    aug_text = re.sub(r"(https?://www\.|https?://|www\.)", r" \1", aug_text, flags=re.I)
+    agg_text = f"{aug_text}\n{text}\n"
+    return agg_text
 
   @staticmethod
   def harvest_urls(text: str, regex: UrlRegex) -> Set[str]:
@@ -179,7 +182,8 @@ class Util:
     urls = urls.union(find_urls(text, regex.FULL_URL))
     urls = urls.union(find_urls(text, regex.PARTIAL_URL))
     # get valid urls from the set
-    return Util.get_valid_urls(urls)
+    valid_urls = Util.get_valid_urls(urls)
+    return valid_urls
 
   @staticmethod
   def has_match(x: str, pool: Set[str]):

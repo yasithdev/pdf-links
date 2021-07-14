@@ -1,12 +1,12 @@
-check for correctness of subnet mask blacklist and update it
 list of tp fp tn fn urls, and which file they are from
-fix the issue with regex 2 safe=false hanging on sample2.pdf
 high level comparison of complexity (time, resources)
 
 
 DONE (07/12-07/16)
 * remove ftp from regex
 * sanity check - validate for matching TLD
+* checked for correctness of blacklist and update it
+* fix the issue of regex hanging
 
 
 set of datasets
@@ -30,8 +30,7 @@ prototeam@googlegroups.com
 === misc ===
 http://labs.mementoweb.org/validator/app/
 
-
-according to rfc 1918, private address spaces are follows
+according to https://datatracker.ietf.org/doc/html/rfc1918, the private address spaces are,
 10.0.0.0        -   10.255.255.255  (10/8 prefix)
 172.16.0.0      -   172.31.255.255  (172.16/12 prefix)
 192.168.0.0     -   192.168.255.255 (192.168/16 prefix)
