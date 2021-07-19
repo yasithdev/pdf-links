@@ -1,41 +1,41 @@
 ===============
 metrics by file
 ===============
-                        tp  fp  fn  tn
-sample-1.pdf (25 URLs)                
-U_ANN                   24   0   1   0
+                        tp  fp  fn    p     r         f
+sample-1.pdf (25 URLs)                                 
+U_ANN                   24   0   1  1.0  0.96  0.979592
 
-                       tp  fp  fn  tn
-sample-2.pdf (2 URLs)                
-U_ANN                   0   0   2   0
+                       tp  fp  fn    p    r    f
+sample-2.pdf (2 URLs)                           
+U_ANN                   0   0   2  0.0  0.0  0.0
 
-                       tp  fp  fn  tn
-sample-3.pdf (6 URLs)                
-U_ANN                   0   0   6   0
+                       tp  fp  fn    p    r    f
+sample-3.pdf (6 URLs)                           
+U_ANN                   0   0   6  0.0  0.0  0.0
 
-                        tp  fp  fn  tn
-sample-4.pdf (11 URLs)                
-U_ANN                   11   0   0   0
+                        tp  fp  fn    p    r    f
+sample-4.pdf (11 URLs)                           
+U_ANN                   11   0   0  1.0  1.0  1.0
 
-                        tp  fp  fn  tn
-sample-5.pdf (10 URLs)                
-U_ANN                    0   0  10   0
+                        tp  fp  fn    p    r    f
+sample-5.pdf (10 URLs)                           
+U_ANN                    0   0  10  0.0  0.0  0.0
 
-                       tp  fp  fn  tn
-sample-6.pdf (5 URLs)                
-U_ANN                   0   0   5   0
+                       tp  fp  fn    p    r    f
+sample-6.pdf (5 URLs)                           
+U_ANN                   0   0   5  0.0  0.0  0.0
 
-                       tp  fp  fn  tn
-sample-7.pdf (4 URLs)                
-U_ANN                   0   0   4   0
+                       tp  fp  fn    p    r    f
+sample-7.pdf (4 URLs)                           
+U_ANN                   0   0   4  0.0  0.0  0.0
 
-                       tp  fp  fn  tn
-sample-8.pdf (4 URLs)                
-U_ANN                   2   0   2   0
+                       tp  fp  fn    p    r         f
+sample-8.pdf (4 URLs)                                
+U_ANN                   2   0   2  1.0  0.5  0.666667
 
 =================
 aggregate metrics
 =================
-       tp  fp  fn  tn       tpr  fpr
-U_ANN  37   0  30   0  0.552239  0.0
+       tp  fp  fn  mac_p   mac_r     mac_f  mic_p     mic_r     mic_f
+U_ANN  37   0  30  0.375  0.3075  0.330782    1.0  0.552239  0.711538
 

@@ -9,9 +9,11 @@ import pandas as pd
 pd.options.display.max_columns = None
 pd.options.display.max_rows = None
 pd.options.display.max_colwidth = None
+pd.options.display.expand_frame_repr = False
 
 REGEXES = [1, 2, 3, 4]
 EXTRACTORS = ['PDFM', 'GROB']
+EPSILON = 1e-10  # small constant to avoid ZeroDivisionError
 
 
 def get_urls(fp: str) -> Set[str]:
@@ -23,16 +25,21 @@ def calculate_metrics(target: Set[str], got: Set[str]) -> dict:
   tp_urls = sorted(got.intersection(target))
   fp_urls = sorted(got.difference(target))
   fn_urls = sorted(target.difference(got))
-  tn_urls = sorted(set())  # because ground truth only has valid URLs
+  # calculate metrics
+  [tp, fp, fn] = [*map(len, [tp_urls, fp_urls, fn_urls])]
+  precision = tp / max(tp + fp, EPSILON)
+  recall = tp / max(tp + fn, EPSILON)
+  f_measure = 2 * precision * recall / max(precision + recall, EPSILON)
   return {
     'tp_urls': tp_urls,
-    'tp': len(tp_urls),
+    'tp': tp,
     'fp_urls': fp_urls,
-    'fp': len(fp_urls),
+    'fp': fp,
     'fn_urls': fn_urls,
-    'fn': len(fn_urls),
-    'tn': len(tn_urls),
-    'tn_urls': tn_urls
+    'fn': fn,
+    'p': precision,
+    'r': recall,
+    'f': f_measure
   }
 
 
@@ -45,17 +52,26 @@ def calculate_agg_metrics(metrics: dict, cmd: str) -> dict:
       'fp': 0,
       'fn_urls': {},
       'fn': 0,
-      'tn_urls': {},
-      'tn': 0
+      'mac_p': 0,
+      'mac_r': 0,
+      'mac_f': 0,
+      'mic_p': 0,
+      'mic_r': 0,
+      'mic_f': 0
     }
     for sample in metrics:
-      for measure in r:
-        if measure.endswith('_urls'):
+      for measure in metrics[sample][exc]:
+        if measure in ['tp_urls', 'fp_urls', 'fn_urls']:
           r[measure][sample] = metrics[sample][exc][measure]
-        else:
+        elif measure in ['tp', 'fp', 'fn']:
           r[measure] += metrics[sample][exc][measure]
-    r['tpr'] = r['tp'] / max(r['tp'] + r['fn'], 1)  # lower bound to avoid ZeroDivisionError
-    r['fpr'] = r['fp'] / max(r['fp'] + r['tn'], 1)  # lower bound to avoid ZeroDivisionError
+        elif measure in ['p', 'r', 'f']:
+          # update macro average metrics
+          r[f'mac_{measure}'] += (metrics[sample][exc][measure]) / len(metrics)
+    # update micro average metrics
+    r['mic_p'] = r['tp'] / max(r['tp'] + r['fp'], EPSILON)
+    r['mic_r'] = r['tp'] / max(r['tp'] + r['fn'], EPSILON)
+    r['mic_f'] = 2 * r['mic_p'] * r['mic_r'] / max(r['mic_p'] + r['mic_r'], EPSILON)
     agg_metrics[exc] = r
 
   agg_metrics = {}
@@ -102,13 +118,13 @@ def run(labels_dir: str, urls_dir: str, cmd: str, out=None):
     # print metric
     df = pd.DataFrame.from_dict(metrics, orient='index').sort_index()
     df.index.name = f"{file_name} ({len(true_urls)} URLs)"
-    print(df[['tp', 'fp', 'fn', 'tn']], end="\n\n")
+    print(df[['tp', 'fp', 'fn', 'p', 'r', 'f']], end="\n\n")
 
   # calculate and print aggregate metrics
   print('=================\naggregate metrics\n=================')
   agg_metrics = calculate_agg_metrics(all_metrics, cmd)
   df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index').sort_index()
-  print(df_agg[['tp', 'fp', 'fn', 'tn', 'tpr', 'fpr']], end="\n\n")
+  print(df_agg[['tp', 'fp', 'fn', 'mac_p', 'mac_r', 'mac_f', 'mic_p', 'mic_r', 'mic_f']], end="\n\n")
 
   # print which urls are tp, fp, fn, and tn of each method
   if out:
@@ -116,7 +132,7 @@ def run(labels_dir: str, urls_dir: str, cmd: str, out=None):
     for extractor in sorted(agg_metrics.keys()):
       data = agg_metrics[extractor]
       # transform into table format
-      for metric in ['tp', 'fp', 'fn', 'tn']:
+      for metric in ['tp', 'fp', 'fn']:
         for sample in data[f'{metric}_urls']:
           for url in data[f'{metric}_urls'][sample]:
             table.loc[len(table)] = [extractor, metric, sample, url]
