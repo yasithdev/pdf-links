@@ -2,7 +2,6 @@ https://a.fr
 https://accuracy.mil
 https://algorithm.fi
 https://angle.ph
-https://angles.fi
 https://antenna.fi
 https://apa.fi
 https://apa.re
@@ -28,7 +27,6 @@ https://feasible.th
 https://hypothesis.it
 https://interest.to
 https://known.fi
-https://larger.fi
 https://level.im
 https://materials.fi
 https://mm.ba

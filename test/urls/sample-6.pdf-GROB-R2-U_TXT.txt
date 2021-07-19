@@ -6,7 +6,6 @@ https://2008.mo
 https://analysis.se
 https://days.ac
 https://days.th
-https://december2008.tab
 https://happy.th
 https://period.in
 https://range.so
@@ -14,7 +13,6 @@ https://receipts.al
 https://research.fi
 https://series.fi
 https://series.to
-https://site6.to
 https://std.er
 https://t.like
 https://terramood.informatics.indiana.edu/data

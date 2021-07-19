@@ -1,7 +1,6 @@
 https://15.fo
 https://15.in
 https://3.3.in
-https://3.3.strength
 https://859.in
 https://account.in
 https://annotator.acknowledgementsthis
@@ -9,7 +8,6 @@ https://bayes.error
 https://best.table
 https://characteristics.introductiontext
 https://class.plagiarism
-https://classificationsystemacc.fmajority
 https://code.google.com/p/dkpro-similarity-asl
 https://correlation.stylistic
 https://data.conclusions
@@ -25,8 +23,10 @@ https://henceforth.following
 https://imbalance.wikipedia
 https://individually.in
 https://not.in
+https://paper.strength
 https://para.paraphrase
 https://phase.in
+https://plag.majority
 https://respectively.based
 https://respectively.finally
 https://richness.error
@@ -40,7 +40,6 @@ https://texts.detecting
 https://texts.stopword
 https://used.th
 https://vectors.comparing
-https://www.gutenberg.org
 https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations
 https://www.wikipedia.org
 https://www.wiktionary.org

@@ -90,12 +90,12 @@ class Util:
   """
 
   @staticmethod
-  def read_blacklist(fp: str = 'blacklist.txt') -> List[str]:
+  def read_blacklist(fp: str = 'resources/blacklist.txt') -> List[str]:
     with open(fp, 'r', encoding='utf-8') as f:
       return sorted(map(str.strip, f.readlines()))
 
   @staticmethod
-  def read_tld_list(fp: str = 'tld.txt') -> List[str]:
+  def read_tld_list(fp: str = 'resources/tld.txt') -> List[str]:
     with open(fp, 'r', encoding='utf-8') as f:
       return sorted(map(str.strip, f.readlines()), key=len, reverse=True)
 

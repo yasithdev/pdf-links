@@ -6,6 +6,10 @@ from typing import Set
 
 import pandas as pd
 
+pd.options.display.max_columns = None
+pd.options.display.max_rows = None
+pd.options.display.max_colwidth = None
+
 REGEXES = [1, 2, 3, 4]
 EXTRACTORS = ['PDFM', 'GROB']
 
@@ -16,19 +20,40 @@ def get_urls(fp: str) -> Set[str]:
 
 
 def calculate_metrics(target: Set[str], got: Set[str]) -> dict:
-  tp = len(got.intersection(target))
-  fn = len(target.difference(got))
-  fp = len(got.difference(target))
-  tn = 0  # because ground truth only has valid URLs
-  return {'tp': tp, 'fn': fn, 'fp': fp, 'tn': tn}
+  tp_urls = sorted(got.intersection(target))
+  fp_urls = sorted(got.difference(target))
+  fn_urls = sorted(target.difference(got))
+  tn_urls = sorted(set())  # because ground truth only has valid URLs
+  return {
+    'tp_urls': tp_urls,
+    'tp': len(tp_urls),
+    'fp_urls': fp_urls,
+    'fp': len(fp_urls),
+    'fn_urls': fn_urls,
+    'fn': len(fn_urls),
+    'tn': len(tn_urls),
+    'tn_urls': tn_urls
+  }
 
 
 def calculate_agg_metrics(metrics: dict, cmd: str) -> dict:
   def agg(exc: str):
-    r = {'tp': 0, 'fn': 0, 'fp': 0, 'tn': 0}
+    r = {
+      'tp_urls': {},
+      'tp': 0,
+      'fp_urls': {},
+      'fp': 0,
+      'fn_urls': {},
+      'fn': 0,
+      'tn_urls': {},
+      'tn': 0
+    }
     for sample in metrics:
       for measure in r:
-        r[measure] += metrics[sample][exc][measure]
+        if measure.endswith('_urls'):
+          r[measure][sample] = metrics[sample][exc][measure]
+        else:
+          r[measure] += metrics[sample][exc][measure]
     r['tpr'] = r['tp'] / max(r['tp'] + r['fn'], 1)  # lower bound to avoid ZeroDivisionError
     r['fpr'] = r['fp'] / max(r['fp'] + r['tn'], 1)  # lower bound to avoid ZeroDivisionError
     agg_metrics[exc] = r
@@ -50,7 +75,7 @@ def clean(url: str) -> str:
   return url.strip().lower().rstrip('.,/?')
 
 
-def run(labels_dir: str, urls_dir: str, cmd: str):
+def run(labels_dir: str, urls_dir: str, cmd: str, out=None):
   all_metrics = {}
 
   # calculate and print metrics for each file
@@ -77,15 +102,26 @@ def run(labels_dir: str, urls_dir: str, cmd: str):
     # print metric
     df = pd.DataFrame.from_dict(metrics, orient='index').sort_index()
     df.index.name = f"{file_name} ({len(true_urls)} URLs)"
-    print(df, end="\n\n")
+    print(df[['tp', 'fp', 'fn', 'tn']], end="\n\n")
 
   # calculate and print aggregate metrics
   print('=================\naggregate metrics\n=================')
   agg_metrics = calculate_agg_metrics(all_metrics, cmd)
   df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index').sort_index()
-  print(df_agg)
+  print(df_agg[['tp', 'fp', 'fn', 'tn']], end="\n\n")
 
-  # TODO calculate and print which urls are tp, fp, fn, and tn
+  # print which urls are tp, fp, fn, and tn of each method
+  if out:
+    table = pd.DataFrame(columns=['method', 'metric', 'sample', 'url'])
+    for extractor in sorted(agg_metrics.keys()):
+      data = agg_metrics[extractor]
+      # transform into table format
+      for metric in ['tp', 'fp', 'fn', 'tn']:
+        for sample in data[f'{metric}_urls']:
+          for url in data[f'{metric}_urls'][sample]:
+            table.loc[len(table)] = [extractor, metric, sample, url]
+    table = table.set_index(['method', 'metric', 'sample'])
+    table.to_csv(out)
 
 
 if __name__ == '__main__':
@@ -95,5 +131,9 @@ if __name__ == '__main__':
   parser.add_argument('-l', metavar="LABELS_PATH", required=True, help="path to labels directory", type=str)
   parser.add_argument('-u', metavar="URLS_PATH", required=True, help="path to urls directory", type=str)
   parser.add_argument('-c', metavar="COMMAND", required=True, help="name of command", type=str)
+  parser.add_argument('-o', metavar="OUT_CSV", required=False, help="path to output csv", type=str)
   args = parser.parse_args()
-  run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '), str(args.c))
+  if args.o:
+    run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '), str(args.c), out=str(args.o))
+  else:
+    run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '), str(args.c))
