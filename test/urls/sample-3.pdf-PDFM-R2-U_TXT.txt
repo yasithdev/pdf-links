@@ -107,6 +107,7 @@ https://featuresofsimilarity.in
 https://forcomparingtexts.th
 https://fortextcomparisonratherthanmethodsfromnaturallanguageprocessing.acommonapproachtotextreusedetectionistocomputesimilaritybetweenasourcetextandapossiblyreusedtext.am
 https://fortextreusedetectionitisimportanttohavealignedpairsofreusedtextsandsourcetexts.th
+https://germaninstituteforeducationalresearchandeducationalinformationwww.ukp.tu-darmstadt.de
 https://hasbeenmanuallycreatedbycopyingportionsoftextfromasuitablewikipediaarticle.textreusenowoccursbetweenasourcetextandananswergivenbyoneof19participants.th
 https://henceforth.fo
 https://i.e.ne
@@ -115,7 +116,7 @@ https://i.e.th
 https://implementedtheremainingsystems.th
 https://improveddetectionofsimilaritiesincomputerprogramandothertexts.in
 https://india.ga
-https://inoursystem.th
+https://inoursystem.thesemeasurescomputetheaveragenumberoftokenspersentenceandtheaveragenumberofcharacterspertoken.4www.wikipedia.org5www.wiktionary.org
 https://inter-coderagreementforcomputationallinguistics.com
 https://introductiontomoderninformationretrieval.mcgraw-hill.sa
 https://isapopularmeansforcomparinglexicalpatternsbetweentwotexts.th
@@ -224,7 +225,7 @@ https://were-implementedtheirsystemandalsoappliedittothetwodatasetsintheremainde
 https://werefertothenumberofcorrectlypredictedtextsdividedbythetotalnumberoftexts.as
 https://wereportonamultitudeoftextsimilaritymeasuresfromthesedimensionsthatweusedforourexperiments.in
 https://wereportthebestresultsfromtheliteratureforcomparison.evaluationwascarriedoutintermsofaccuracyand-f1score.by
-https://wereportthedetailedresultsforaselectedsetofindividualtextsimilaritymeasuresintable1.th
+https://wereportthedetailedresultsforaselectedsetofindividualtextsimilaritymeasuresintable1.thesefiguresshowthat14www.gutenberg.org
 https://wethusovercomethetraditionallimitationoftextsimilaritymeasurestocontentfeatures.inc
 https://whenappliedindividually.int
 https://wheree.g.al
@@ -244,7 +245,4 @@ https://withapplicationtotwocasesofdisputedauthorship.bio
 https://withlotsofnewfactsbeingintroducedthere.co
 https://withtheadditionalconstraintthatthereuseneedstobeunacknowledged.ne
 https://withthemeasuresgreedystringtilingandword2-gramscontainmentperformingbest.as
-https://www.gutenberg.org
-https://www.ukp.tu-darmstadt.de
-https://www.wikipedia.org
-https://www.wiktionary.org
+https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations12strengthofagreementforkvaluesaccordingtolandisandkoch(1977)13wereporttheresultsforourre-implementationofthesystembycloughandstevenson(2011).intheiroriginalwork,theydidnotevaluateonthisdataset

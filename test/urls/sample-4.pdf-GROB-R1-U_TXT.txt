@@ -1,13 +1,8 @@
-https://applications.streaminghub
 https://aws.amazon.com/kinesis
-https://back.usage
 https://clemson.edu
 https://cs.odu.edu
-https://data.case
 https://design.in
 https://developers.google.com/protocol-buffers
-https://dfs.data
-https://exhausted.workflow
 https://flink.apache.org
 https://github.com/nirdslab/streaminghub-conduit
 https://github.com/nirdslab/streaminghub-dfs
@@ -16,12 +11,4 @@ https://idl.cs.washington.edu/papers/reactive-vega
 https://kepler-project.org
 https://mqtt.org
 https://nodered.org
-https://results.introductionin
-https://sponsors.removing
-https://streaming.figure
-https://streaminghub.using
-https://streams.here
-https://systems.conclusionusing
-https://time.ca
-https://workflows.as
 https://www.knime.com

@@ -10,8 +10,7 @@ https://forcomparingtexts.theconstructionofthesemanticspacewasdoneusingtheevalua
 https://i.e.paraphrasing
 https://i.e.thepatexthasbeenusedexclusivelyastextreusesource
 https://implementedtheremainingsystems.thisappliestoallresulttablesinthispaper
+https://inoursystem.thesemeasurescomputetheaveragenumberoftokenspersentenceandtheaveragenumberofcharacterspertoken.4www.wikipedia.org5www.wiktionary.org
 https://smechanicalturk.inproceedingsofthenaaclhltworkshoponcreatingspeechandlanguagedatawithamazon
 https://theirbestscorewasachievedbyusingak-nearestneighborclassifierwithafeaturesetof10similaritymeasures.theyexclusivelyusedsimilaritymeasuresthatoperateonthetexts
 https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations12strengthofagreementforkvaluesaccordingtolandisandkoch
-https://www.wikipedia.org
-https://www.wiktionary.org
