@@ -1,9 +1,7 @@
 all: clean process evaluate
 
 clean:
-	rm -f test/urls/*;
-	rm -f test/text/*;
-	rm -f test/summary*.txt;
+	rm -f test/urls/* test/text/* test/summary*.*
 
 process:
 	for filename in test/samples/*.pdf; do \
