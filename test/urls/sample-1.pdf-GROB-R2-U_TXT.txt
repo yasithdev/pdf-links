@@ -12,10 +12,11 @@ https://characteristics.fi
 https://cs.co
 https://cs.cv
 https://csail.mit.edu
-https://datasets.data
+https://datasets.tab
 https://directions.tab
 https://domain.fi
 https://domains.wang
+https://estimation.data
 https://estimation.fi
 https://estimation.to
 https://evaluation.th

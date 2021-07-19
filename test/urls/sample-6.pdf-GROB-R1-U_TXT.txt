@@ -4,7 +4,6 @@ https://2008.mood
 https://analysis.second
 https://days.acknowledgmentthis
 https://days.th
-https://december2008.table
 https://happy.th
 https://period.in
 https://range.sofnn
@@ -12,7 +11,6 @@ https://receipts.although
 https://research.fi
 https://series.fi
 https://series.to
-https://site6.to
 https://std.er
 https://t.like
 https://terramood.informatics.indiana.edu/data
@@ -22,6 +20,7 @@ https://twitter.com
 https://value.to
 https://values.however
 https://work.eugeneffamaeainternational
+https://www.ccs.neu.edu/home/amislove/twittermood
 https://www.cs.pitt.edu/mpqa/opinionfinderrelease
 https://www.gallup.com/poll/122840/gallup-daily-economic-indexes.aspx
 https://www.sca.isr.umich.edu

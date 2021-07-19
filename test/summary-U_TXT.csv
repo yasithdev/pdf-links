@@ -9,6 +9,7 @@ GROB-R1-U_TXT,tp,sample-1.pdf,https://www.sciencedirect.com/science/article/pii/
 GROB-R1-U_TXT,tp,sample-2.pdf,https://nlp.stanford.edu/projects/glove
 GROB-R1-U_TXT,tp,sample-2.pdf,https://www.aaai.org
 GROB-R1-U_TXT,tp,sample-3.pdf,https://code.google.com/p/dkpro-similarity-asl
+GROB-R1-U_TXT,tp,sample-3.pdf,https://www.gutenberg.org
 GROB-R1-U_TXT,tp,sample-3.pdf,https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations
 GROB-R1-U_TXT,tp,sample-3.pdf,https://www.wikipedia.org
 GROB-R1-U_TXT,tp,sample-3.pdf,https://www.wiktionary.org
@@ -31,6 +32,7 @@ GROB-R1-U_TXT,tp,sample-5.pdf,https://www.dailywireless.org/2014/01/03/60ghz-bac
 GROB-R1-U_TXT,tp,sample-5.pdf,https://www.mcelhearn.com/not-a-review-leap-motioncontroller-fails-in-normal-conditions
 GROB-R1-U_TXT,tp,sample-5.pdf,https://www.tdk.com
 GROB-R1-U_TXT,tp,sample-6.pdf,https://terramood.informatics.indiana.edu/data
+GROB-R1-U_TXT,tp,sample-6.pdf,https://www.ccs.neu.edu/home/amislove/twittermood
 GROB-R1-U_TXT,tp,sample-6.pdf,https://www.cs.pitt.edu/mpqa/opinionfinderrelease
 GROB-R1-U_TXT,tp,sample-6.pdf,https://www.gallup.com/poll/122840/gallup-daily-economic-indexes.aspx
 GROB-R1-U_TXT,tp,sample-6.pdf,https://www.sca.isr.umich.edu
@@ -84,6 +86,7 @@ GROB-R1-U_TXT,fp,sample-1.pdf,https://information.fi
 GROB-R1-U_TXT,fp,sample-1.pdf,https://map.th
 GROB-R1-U_TXT,fp,sample-1.pdf,https://methods.computer
 GROB-R1-U_TXT,fp,sample-1.pdf,https://methods.in
+GROB-R1-U_TXT,fp,sample-1.pdf,https://methods.table
 GROB-R1-U_TXT,fp,sample-1.pdf,https://methods.th
 GROB-R1-U_TXT,fp,sample-1.pdf,https://mpi-inf.mp
 GROB-R1-U_TXT,fp,sample-1.pdf,https://n.org/datasets
@@ -140,6 +143,7 @@ GROB-R1-U_TXT,fp,sample-2.pdf,https://testing.name
 GROB-R1-U_TXT,fp,sample-3.pdf,https://15.fo
 GROB-R1-U_TXT,fp,sample-3.pdf,https://15.in
 GROB-R1-U_TXT,fp,sample-3.pdf,https://3.3.in
+GROB-R1-U_TXT,fp,sample-3.pdf,https://3.3.strength
 GROB-R1-U_TXT,fp,sample-3.pdf,https://859.in
 GROB-R1-U_TXT,fp,sample-3.pdf,https://account.in
 GROB-R1-U_TXT,fp,sample-3.pdf,https://annotator.acknowledgementsthis
@@ -161,10 +165,8 @@ GROB-R1-U_TXT,fp,sample-3.pdf,https://henceforth.following
 GROB-R1-U_TXT,fp,sample-3.pdf,https://imbalance.wikipedia
 GROB-R1-U_TXT,fp,sample-3.pdf,https://individually.in
 GROB-R1-U_TXT,fp,sample-3.pdf,https://not.in
-GROB-R1-U_TXT,fp,sample-3.pdf,https://paper.strength
 GROB-R1-U_TXT,fp,sample-3.pdf,https://para.paraphrase
 GROB-R1-U_TXT,fp,sample-3.pdf,https://phase.in
-GROB-R1-U_TXT,fp,sample-3.pdf,https://plag.majority
 GROB-R1-U_TXT,fp,sample-3.pdf,https://respectively.based
 GROB-R1-U_TXT,fp,sample-3.pdf,https://respectively.finally
 GROB-R1-U_TXT,fp,sample-3.pdf,https://richness.error
@@ -194,7 +196,6 @@ GROB-R1-U_TXT,fp,sample-4.pdf,https://streams.here
 GROB-R1-U_TXT,fp,sample-4.pdf,https://systems.conclusionusing
 GROB-R1-U_TXT,fp,sample-4.pdf,https://time.ca
 GROB-R1-U_TXT,fp,sample-4.pdf,https://workflows.as
-GROB-R1-U_TXT,fp,sample-5.pdf,https://8.gh
 GROB-R1-U_TXT,fp,sample-5.pdf,https://a.from
 GROB-R1-U_TXT,fp,sample-5.pdf,https://algorithm.figure
 GROB-R1-U_TXT,fp,sample-5.pdf,https://angle.phase
@@ -230,8 +231,9 @@ GROB-R1-U_TXT,fp,sample-5.pdf,https://mtrack.table
 GROB-R1-U_TXT,fp,sample-5.pdf,https://mtrack.this
 GROB-R1-U_TXT,fp,sample-5.pdf,https://noise.figure
 GROB-R1-U_TXT,fp,sample-5.pdf,https://operations.notably
-GROB-R1-U_TXT,fp,sample-5.pdf,https://peaks.implementation
+GROB-R1-U_TXT,fp,sample-5.pdf,https://peaks.basicimplementation
 GROB-R1-U_TXT,fp,sample-5.pdf,https://period.tracking
+GROB-R1-U_TXT,fp,sample-5.pdf,https://phase-tracking.figure
 GROB-R1-U_TXT,fp,sample-5.pdf,https://phase-tracking.suppose
 GROB-R1-U_TXT,fp,sample-5.pdf,https://phase.target
 GROB-R1-U_TXT,fp,sample-5.pdf,https://position.mtrack
@@ -268,7 +270,6 @@ GROB-R1-U_TXT,fp,sample-6.pdf,https://2008.mood
 GROB-R1-U_TXT,fp,sample-6.pdf,https://analysis.second
 GROB-R1-U_TXT,fp,sample-6.pdf,https://days.acknowledgmentthis
 GROB-R1-U_TXT,fp,sample-6.pdf,https://days.th
-GROB-R1-U_TXT,fp,sample-6.pdf,https://december2008.table
 GROB-R1-U_TXT,fp,sample-6.pdf,https://happy.th
 GROB-R1-U_TXT,fp,sample-6.pdf,https://period.in
 GROB-R1-U_TXT,fp,sample-6.pdf,https://range.sofnn
@@ -276,7 +277,6 @@ GROB-R1-U_TXT,fp,sample-6.pdf,https://receipts.although
 GROB-R1-U_TXT,fp,sample-6.pdf,https://research.fi
 GROB-R1-U_TXT,fp,sample-6.pdf,https://series.fi
 GROB-R1-U_TXT,fp,sample-6.pdf,https://series.to
-GROB-R1-U_TXT,fp,sample-6.pdf,https://site6.to
 GROB-R1-U_TXT,fp,sample-6.pdf,https://std.er
 GROB-R1-U_TXT,fp,sample-6.pdf,https://t.like
 GROB-R1-U_TXT,fp,sample-6.pdf,https://thanksgiving.fi
@@ -308,12 +308,10 @@ GROB-R1-U_TXT,fn,sample-1.pdf,https://mpi-inf.mpg.de/mpiigaze
 GROB-R1-U_TXT,fn,sample-1.pdf,https://sh.rice.edu/cognitive-engagement/ tabletgaze
 GROB-R1-U_TXT,fn,sample-1.pdf,https://sites.google.com/nvidia.com/nvgaze
 GROB-R1-U_TXT,fn,sample-1.pdf,https://ut-vision.org/datasets
-GROB-R1-U_TXT,fn,sample-3.pdf,https://www.gutenberg.org
 GROB-R1-U_TXT,fn,sample-3.pdf,https://www.ukp.tu-darmstadt.de
 GROB-R1-U_TXT,fn,sample-5.pdf,"https://www.pcmag.com/article2/0,2817,2454187,00.asp"
 GROB-R1-U_TXT,fn,sample-5.pdf,https://www.roborealm.com/help/microsoft kinect.php
 GROB-R1-U_TXT,fn,sample-5.pdf,https://www.vicon.com
-GROB-R1-U_TXT,fn,sample-6.pdf,https://www.ccs.neu.edu/home/amislove/twittermood
 GROB-R1-U_TXT,fn,sample-7.pdf,https://github.com/nirdslab/streaminghub-conduit
 GROB-R2-U_TXT,tp,sample-1.pdf,https://phi-ai.org/gazehub
 GROB-R2-U_TXT,tp,sample-1.pdf,https://pypi.org/project/dlib/19.6.0
@@ -371,10 +369,11 @@ GROB-R2-U_TXT,fp,sample-1.pdf,https://characteristics.fi
 GROB-R2-U_TXT,fp,sample-1.pdf,https://cs.co
 GROB-R2-U_TXT,fp,sample-1.pdf,https://cs.cv
 GROB-R2-U_TXT,fp,sample-1.pdf,https://csail.mit.edu
-GROB-R2-U_TXT,fp,sample-1.pdf,https://datasets.data
+GROB-R2-U_TXT,fp,sample-1.pdf,https://datasets.tab
 GROB-R2-U_TXT,fp,sample-1.pdf,https://directions.tab
 GROB-R2-U_TXT,fp,sample-1.pdf,https://domain.fi
 GROB-R2-U_TXT,fp,sample-1.pdf,https://domains.wang
+GROB-R2-U_TXT,fp,sample-1.pdf,https://estimation.data
 GROB-R2-U_TXT,fp,sample-1.pdf,https://estimation.fi
 GROB-R2-U_TXT,fp,sample-1.pdf,https://estimation.to
 GROB-R2-U_TXT,fp,sample-1.pdf,https://evaluation.th
@@ -426,9 +425,9 @@ GROB-R2-U_TXT,fp,sample-1.pdf,https://size.ch/projects
 GROB-R2-U_TXT,fp,sample-1.pdf,https://subject.app
 GROB-R2-U_TXT,fp,sample-1.pdf,https://umbia.edu/ca
 GROB-R2-U_TXT,fp,sample-1.pdf,https://w.r.t.th
-GROB-R2-U_TXT,fp,sample-2.pdf,https://1.fi
 GROB-R2-U_TXT,fp,sample-2.pdf,https://agent.next
 GROB-R2-U_TXT,fp,sample-2.pdf,https://appendix.in
+GROB-R2-U_TXT,fp,sample-2.pdf,https://appendix.tab
 GROB-R2-U_TXT,fp,sample-2.pdf,https://aspects.app
 GROB-R2-U_TXT,fp,sample-2.pdf,https://cases.mo
 GROB-R2-U_TXT,fp,sample-2.pdf,https://cell.training
@@ -446,7 +445,7 @@ GROB-R2-U_TXT,fp,sample-2.pdf,https://modeling.re
 GROB-R2-U_TXT,fp,sample-2.pdf,https://problem.th
 GROB-R2-U_TXT,fp,sample-2.pdf,https://report.th
 GROB-R2-U_TXT,fp,sample-2.pdf,https://reserved.th
-GROB-R2-U_TXT,fp,sample-2.pdf,https://respectively.pe
+GROB-R2-U_TXT,fp,sample-2.pdf,https://respectively.fi
 GROB-R2-U_TXT,fp,sample-2.pdf,https://respectively.th
 GROB-R2-U_TXT,fp,sample-2.pdf,https://reward.to
 GROB-R2-U_TXT,fp,sample-2.pdf,https://sequence.to
@@ -461,8 +460,9 @@ GROB-R2-U_TXT,fp,sample-2.pdf,https://tasks.th
 GROB-R2-U_TXT,fp,sample-2.pdf,https://testing.name
 GROB-R2-U_TXT,fp,sample-3.pdf,https://15.fo
 GROB-R2-U_TXT,fp,sample-3.pdf,https://15.in
+GROB-R2-U_TXT,fp,sample-3.pdf,https://1exp.class.cu
 GROB-R2-U_TXT,fp,sample-3.pdf,https://3.3.in
-GROB-R2-U_TXT,fp,sample-3.pdf,https://3.3.st
+GROB-R2-U_TXT,fp,sample-3.pdf,https://3.3.sy
 GROB-R2-U_TXT,fp,sample-3.pdf,https://859.in
 GROB-R2-U_TXT,fp,sample-3.pdf,https://account.in
 GROB-R2-U_TXT,fp,sample-3.pdf,https://annotator.ac
@@ -486,6 +486,7 @@ GROB-R2-U_TXT,fp,sample-3.pdf,https://individually.in
 GROB-R2-U_TXT,fp,sample-3.pdf,https://not.in
 GROB-R2-U_TXT,fp,sample-3.pdf,https://para.pa
 GROB-R2-U_TXT,fp,sample-3.pdf,https://phase.in
+GROB-R2-U_TXT,fp,sample-3.pdf,https://plag.ma
 GROB-R2-U_TXT,fp,sample-3.pdf,https://respectively.ba
 GROB-R2-U_TXT,fp,sample-3.pdf,https://respectively.final
 GROB-R2-U_TXT,fp,sample-3.pdf,https://richness.er
@@ -521,6 +522,7 @@ GROB-R2-U_TXT,fp,sample-5.pdf,https://a.fr
 GROB-R2-U_TXT,fp,sample-5.pdf,https://accuracy.mil
 GROB-R2-U_TXT,fp,sample-5.pdf,https://algorithm.fi
 GROB-R2-U_TXT,fp,sample-5.pdf,https://angle.ph
+GROB-R2-U_TXT,fp,sample-5.pdf,https://angles.fi
 GROB-R2-U_TXT,fp,sample-5.pdf,https://antenna.fi
 GROB-R2-U_TXT,fp,sample-5.pdf,https://apa.fi
 GROB-R2-U_TXT,fp,sample-5.pdf,https://apa.re
@@ -545,6 +547,7 @@ GROB-R2-U_TXT,fp,sample-5.pdf,https://feasible.th
 GROB-R2-U_TXT,fp,sample-5.pdf,https://hypothesis.it
 GROB-R2-U_TXT,fp,sample-5.pdf,https://interest.to
 GROB-R2-U_TXT,fp,sample-5.pdf,https://known.fi
+GROB-R2-U_TXT,fp,sample-5.pdf,https://larger.fi
 GROB-R2-U_TXT,fp,sample-5.pdf,https://level.im
 GROB-R2-U_TXT,fp,sample-5.pdf,https://materials.fi
 GROB-R2-U_TXT,fp,sample-5.pdf,https://mm.ba
@@ -608,6 +611,7 @@ GROB-R2-U_TXT,fp,sample-6.pdf,https://receipts.al
 GROB-R2-U_TXT,fp,sample-6.pdf,https://research.fi
 GROB-R2-U_TXT,fp,sample-6.pdf,https://series.fi
 GROB-R2-U_TXT,fp,sample-6.pdf,https://series.to
+GROB-R2-U_TXT,fp,sample-6.pdf,https://site6.to
 GROB-R2-U_TXT,fp,sample-6.pdf,https://std.er
 GROB-R2-U_TXT,fp,sample-6.pdf,https://t.like
 GROB-R2-U_TXT,fp,sample-6.pdf,https://thanksgiving.fi
@@ -679,6 +683,7 @@ GROB-R3-U_TXT,tp,sample-5.pdf,https://www.dailywireless.org/2014/01/03/60ghz-bac
 GROB-R3-U_TXT,tp,sample-5.pdf,https://www.mcelhearn.com/not-a-review-leap-motioncontroller-fails-in-normal-conditions
 GROB-R3-U_TXT,tp,sample-5.pdf,https://www.tdk.com
 GROB-R3-U_TXT,tp,sample-6.pdf,https://terramood.informatics.indiana.edu/data
+GROB-R3-U_TXT,tp,sample-6.pdf,https://www.ccs.neu.edu/home/amislove/twittermood
 GROB-R3-U_TXT,tp,sample-6.pdf,https://www.cs.pitt.edu/mpqa/opinionfinderrelease
 GROB-R3-U_TXT,tp,sample-6.pdf,https://www.gallup.com/poll/122840/gallup-daily-economic-indexes.aspx
 GROB-R3-U_TXT,tp,sample-6.pdf,https://www.sca.isr.umich.edu
@@ -722,7 +727,6 @@ GROB-R3-U_TXT,fn,sample-3.pdf,https://www.ukp.tu-darmstadt.de
 GROB-R3-U_TXT,fn,sample-5.pdf,"https://www.pcmag.com/article2/0,2817,2454187,00.asp"
 GROB-R3-U_TXT,fn,sample-5.pdf,https://www.roborealm.com/help/microsoft kinect.php
 GROB-R3-U_TXT,fn,sample-5.pdf,https://www.vicon.com
-GROB-R3-U_TXT,fn,sample-6.pdf,https://www.ccs.neu.edu/home/amislove/twittermood
 GROB-R3-U_TXT,fn,sample-7.pdf,https://github.com/nirdslab/streaminghub-conduit
 GROB-R4-U_TXT,tp,sample-1.pdf,https://github.com/yadiraf/prnet
 GROB-R4-U_TXT,tp,sample-1.pdf,https://phi-ai.org/gazehub
@@ -756,6 +760,7 @@ GROB-R4-U_TXT,tp,sample-5.pdf,https://www.dailywireless.org/2014/01/03/60ghz-bac
 GROB-R4-U_TXT,tp,sample-5.pdf,https://www.mcelhearn.com/not-a-review-leap-motioncontroller-fails-in-normal-conditions
 GROB-R4-U_TXT,tp,sample-5.pdf,https://www.tdk.com
 GROB-R4-U_TXT,tp,sample-6.pdf,https://terramood.informatics.indiana.edu/data
+GROB-R4-U_TXT,tp,sample-6.pdf,https://www.ccs.neu.edu/home/amislove/twittermood
 GROB-R4-U_TXT,tp,sample-6.pdf,https://www.cs.pitt.edu/mpqa/opinionfinderrelease
 GROB-R4-U_TXT,tp,sample-6.pdf,https://www.gallup.com/poll/122840/gallup-daily-economic-indexes.aspx
 GROB-R4-U_TXT,tp,sample-6.pdf,https://www.sca.isr.umich.edu
@@ -801,7 +806,6 @@ GROB-R4-U_TXT,fn,sample-3.pdf,https://www.ukp.tu-darmstadt.de
 GROB-R4-U_TXT,fn,sample-5.pdf,"https://www.pcmag.com/article2/0,2817,2454187,00.asp"
 GROB-R4-U_TXT,fn,sample-5.pdf,https://www.roborealm.com/help/microsoft kinect.php
 GROB-R4-U_TXT,fn,sample-5.pdf,https://www.vicon.com
-GROB-R4-U_TXT,fn,sample-6.pdf,https://www.ccs.neu.edu/home/amislove/twittermood
 GROB-R4-U_TXT,fn,sample-7.pdf,https://github.com/nirdslab/streaminghub-conduit
 PDFM-R1-U_TXT,tp,sample-1.pdf,https://github.com/yadiraf/prnet
 PDFM-R1-U_TXT,tp,sample-1.pdf,https://phi-ai.org/gazehub

@@ -42,6 +42,7 @@ https://information.fi
 https://map.th
 https://methods.computer
 https://methods.in
+https://methods.table
 https://methods.th
 https://mpi-inf.mp
 https://n.org/datasets

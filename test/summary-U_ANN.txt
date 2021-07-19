@@ -36,6 +36,6 @@ U_ANN                   2   0   2   0
 =================
 aggregate metrics
 =================
-       tp  fp  fn  tn
-U_ANN  37   0  30   0
+       tp  fp  fn  tn       tpr  fpr
+U_ANN  37   0  30   0  0.552239  0.0
 

@@ -108,7 +108,7 @@ def run(labels_dir: str, urls_dir: str, cmd: str, out=None):
   print('=================\naggregate metrics\n=================')
   agg_metrics = calculate_agg_metrics(all_metrics, cmd)
   df_agg = pd.DataFrame.from_dict(agg_metrics, orient='index').sort_index()
-  print(df_agg[['tp', 'fp', 'fn', 'tn']], end="\n\n")
+  print(df_agg[['tp', 'fp', 'fn', 'tn', 'tpr', 'fpr']], end="\n\n")
 
   # print which urls are tp, fp, fn, and tn of each method
   if out:

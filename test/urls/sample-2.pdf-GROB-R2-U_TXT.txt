@@ -1,6 +1,6 @@
-https://1.fi
 https://agent.next
 https://appendix.in
+https://appendix.tab
 https://aspects.app
 https://cases.mo
 https://cell.training
@@ -19,7 +19,7 @@ https://nlp.stanford.edu/projects/glove
 https://problem.th
 https://report.th
 https://reserved.th
-https://respectively.pe
+https://respectively.fi
 https://respectively.th
 https://reward.to
 https://sequence.to

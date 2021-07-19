@@ -1,3 +1,4 @@
+https://1.figure
 https://agent.next
 https://appendix.in
 https://aspects.approachin
@@ -16,7 +17,7 @@ https://nlp.stanford.edu/projects/glove
 https://problem.th
 https://report.th
 https://reserved.th
-https://respectively.figure
+https://respectively.perplexity
 https://respectively.th
 https://reward.to
 https://sequence.to
