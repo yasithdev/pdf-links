@@ -34,11 +34,11 @@ def calculate_agg_metrics(metrics: dict, cmd: str) -> dict:
     agg_metrics[exc] = r
 
   agg_metrics = {}
-  for extractor in EXTRACTORS:
-    if cmd == "U_ANN":
-      # aggregate annotated URL metrics
-      agg(f"{extractor}-{cmd}")
-    else:
+  if cmd == "U_ANN":
+    # aggregate annotated URL metrics
+    agg(cmd)
+  else:
+    for extractor in EXTRACTORS:
       # aggregate fulltext URL metrics
       for regex in REGEXES:
         agg(f"{extractor}-R{regex}-{cmd}")
@@ -59,14 +59,14 @@ def run(labels_dir: str, urls_dir: str, cmd: str):
     file_name = os.path.basename(full_path[:-4])
     true_urls = set(map(clean, get_urls(f'{labels_dir}/{file_name}.txt')))
     metrics = {}
-    # get URLs from each method
-    for extractor in EXTRACTORS:
-      if cmd == "U_ANN":
-        # get annotated URL metric
-        exc = f"{extractor}-{cmd}"
-        extracted_urls = set(map(clean, get_urls(f'{urls_dir}/{file_name}-{exc}.txt')))
-        metrics[exc] = calculate_metrics(true_urls, extracted_urls)
-      else:
+    if cmd == "U_ANN":
+      # get annotated URL metric
+      exc = cmd
+      extracted_urls = set(map(clean, get_urls(f'{urls_dir}/{file_name}-{exc}.txt')))
+      metrics[exc] = calculate_metrics(true_urls, extracted_urls)
+    else:
+      # get URLs from each method
+      for extractor in EXTRACTORS:
         # get fulltext URL metrics
         for regex in REGEXES:
           exc = f"{extractor}-R{regex}-{cmd}"

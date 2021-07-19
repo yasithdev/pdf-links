@@ -8,7 +8,6 @@ https://bayes.error
 https://best.table
 https://characteristics.introductiontext
 https://class.plagiarism
-https://classificationsystemacc.fmajority
 https://code.google.com/p/dkpro-similarity-asl
 https://correlation.stylistic
 https://data.conclusions
@@ -24,6 +23,7 @@ https://henceforth.following
 https://imbalance.wikipedia
 https://individually.in
 https://not.in
+https://paper.strength
 https://para.paraphrase
 https://phase.in
 https://plag.majority

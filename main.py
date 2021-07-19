@@ -431,32 +431,33 @@ if __name__ == '__main__':
   import argparse
 
   parser = argparse.ArgumentParser(description='Link Extractor')
-  parser.add_argument('-e', required=True, help="extractor to use", choices=['PDFM', 'GROB'])
-  parser.add_argument('-c', required=True, help="command to run", choices=['TXT', 'U_ANN', 'U_TXT', 'U_ALL'])
+  parser.add_argument('-c', required=True, help="command to run", choices=['U_ANN', 'TXT', 'U_TXT', 'U_ALL'])
+  parser.add_argument('-e', required=False, help="extractor to use", choices=['PDFM', 'GROB'])
   parser.add_argument('-r', metavar='OPTION_NUMBER', required=False, help="regex option to use", type=int)
   parser.add_argument('-i', metavar='INPUT_FILE', required=True, help="path to input file", type=str)
   parser.add_argument('-o', metavar='OUTPUT_FILE', required=False, help="path to output file", type=str)
   args = parser.parse_args()
 
-  # select extractor to use
-  if args.e == 'PDFM':
-    e = PDFMExtractor()
-  elif args.e == 'GROB':
-    e = GROBExtractor()
-  else:
-    raise NotImplementedError('Extractor Does Not Exist!')
-
   # execute command
-  if args.c == 'TXT':
-    result = e.get_text(args.i)
-  elif args.c == 'U_ANN':
-    result = "\n".join(e.get_annot_urls(args.i))
-  elif args.c == 'U_TXT':
-    result = "\n".join(e.get_text_urls(UrlRegex(args.r), args.i))
-  elif args.c == 'U_ALL':
-    result = "\n".join(e.get_all_urls(UrlRegex(args.r), args.i))
+  if args.c == 'U_ANN':
+    result = "\n".join(PyPDF2.get_annot_urls(args.i))
   else:
-    raise NotImplementedError('Command Does Not Exist!')
+    # select extractor to use
+    if args.e == 'PDFM':
+      e = PDFMExtractor()
+    elif args.e == 'GROB':
+      e = GROBExtractor()
+    else:
+      raise NotImplementedError('Extractor Does Not Exist!')
+    # run extractor
+    if args.c == 'TXT':
+      result = e.get_text(args.i)
+    elif args.c == 'U_TXT':
+      result = "\n".join(e.get_text_urls(UrlRegex(args.r), args.i))
+    elif args.c == 'U_ALL':
+      result = "\n".join(e.get_all_urls(UrlRegex(args.r), args.i))
+    else:
+      raise NotImplementedError('Command Does Not Exist!')
 
   # write output
   if args.o:

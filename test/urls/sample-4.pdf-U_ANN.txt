@@ -1,0 +1,11 @@
+https://github.com/sccn/labstreaminglayer
+https://idl.cs.washington.edu/papers/reactive-vega
+https://www.knime.com
+https://developers.google.com/protocol-buffers
+https://flink.apache.org
+https://aws.amazon.com/kinesis
+https://kepler-project.org
+https://mqtt.org
+https://github.com/nirdslab/streaminghub-dfs
+https://github.com/nirdslab/streaminghub-conduit
+https://nodered.org

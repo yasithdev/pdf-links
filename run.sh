@@ -1,21 +1,20 @@
 #!/usr/bin/env sh
 
-for executor in PDFM GROB; do
-  echo "Executor: $executor"
-  for filename in test/samples/*.pdf; do
-    echo ""
-    echo "File: $filename"
+for filename in test/samples/*.pdf; do
+  echo ""
+  echo "File: $filename"
+  # extract annotations
+  echo "Command: U_ANN"
+  ./main.py -c U_ANN -i "$filename" -o "test/urls/$(basename "$filename")-U_ANN.txt"
+  for executor in PDFM GROB; do
     # extract text
-    echo "Command: TXT"
-    ./main.py -e $executor -c TXT -i "$filename" -o "test/text/$(basename "$filename")-$executor.txt"
-    # extract annotations
-    echo "Command: U_ANN"
+    echo "Command: TXT [Executor: $executor]"
+    ./main.py -c TXT -e $executor -i "$filename" -o "test/text/$(basename "$filename")-$executor.txt"
     # extract urls from text
-    ./main.py -e "$executor" -c U_ANN -i "$filename" -o "test/urls/$(basename "$filename")-$executor-U_ANN.txt"
-    for regex in 1 2 3 4; do
-      for cmd in U_TXT U_ALL; do
-        echo "Command: $cmd, Regex: $regex"
-        ./main.py -e "$executor" -c "$cmd" -r "$regex" -i "$filename" -o "test/urls/$(basename "$filename")-$executor-R$regex-$cmd.txt"
+    for cmd in U_TXT U_ALL; do
+      for regex in 1 2 3 4; do
+        echo "Command: $cmd [Executor: $executor] [Regex: $regex]"
+        ./main.py -c "$cmd" -e "$executor" -r "$regex" -i "$filename" -o "test/urls/$(basename "$filename")-$executor-R$regex-$cmd.txt"
       done
     done
   done
@@ -23,5 +22,5 @@ done
 
 # evaluation metrics
 for cmd in U_ANN U_TXT U_ALL; do
-  ./evaluate.py -l test/labels -u test/urls -c $cmd  >test/summary-$cmd.txt
+  ./evaluate.py -l test/labels -u test/urls -c $cmd >test/summary-$cmd.txt
 done

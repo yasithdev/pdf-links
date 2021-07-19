@@ -3,47 +3,38 @@ metrics by file
 ===============
                         tp  fn  fp  tn
 sample-1.pdf (25 URLs)                
-GROB-U_ANN              24   1   0   0
-PDFM-U_ANN              24   1   0   0
+U_ANN                   24   1   0   0
 
                        tp  fn  fp  tn
 sample-2.pdf (2 URLs)                
-GROB-U_ANN              0   2   0   0
-PDFM-U_ANN              0   2   0   0
+U_ANN                   0   2   0   0
 
                        tp  fn  fp  tn
 sample-3.pdf (6 URLs)                
-GROB-U_ANN              0   6   0   0
-PDFM-U_ANN              0   6   0   0
+U_ANN                   0   6   0   0
 
                         tp  fn  fp  tn
 sample-4.pdf (11 URLs)                
-GROB-U_ANN              11   0   0   0
-PDFM-U_ANN              11   0   0   0
+U_ANN                   11   0   0   0
 
                         tp  fn  fp  tn
 sample-5.pdf (10 URLs)                
-GROB-U_ANN               0  10   0   0
-PDFM-U_ANN               0  10   0   0
+U_ANN                    0  10   0   0
 
                        tp  fn  fp  tn
 sample-6.pdf (5 URLs)                
-GROB-U_ANN              0   5   0   0
-PDFM-U_ANN              0   5   0   0
+U_ANN                   0   5   0   0
 
                        tp  fn  fp  tn
 sample-7.pdf (4 URLs)                
-GROB-U_ANN              0   4   0   0
-PDFM-U_ANN              0   4   0   0
+U_ANN                   0   4   0   0
 
                        tp  fn  fp  tn
 sample-8.pdf (4 URLs)                
-GROB-U_ANN              2   2   0   0
-PDFM-U_ANN              2   2   0   0
+U_ANN                   2   2   0   0
 
 =================
 aggregate metrics
 =================
-            tp  fn  fp  tn       tpr  fpr
-GROB-U_ANN  37  30   0   0  0.552239  0.0
-PDFM-U_ANN  37  30   0   0  0.552239  0.0
+       tp  fn  fp  tn       tpr  fpr
+U_ANN  37  30   0   0  0.552239  0.0
