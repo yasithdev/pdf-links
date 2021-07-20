@@ -156,7 +156,7 @@ class Util:
     aug_text = re.sub(r"(\s*\n+\s*)", r"", text, flags=re.I)
     aug_text = re.sub(r"(https?://www\.|https?://|www\.)", r" \1", aug_text, flags=re.I)
     agg_text = f"{aug_text}\n{text}\n"
-    return text
+    return agg_text
 
   @staticmethod
   def harvest_urls(text: str, regex: UrlRegex) -> Set[str]:
