@@ -1,14 +1,12 @@
 metric,sample,url
+fp,sample-1.pdf,https://sh.rice.edu/cognitive-engagement/tabletgaze
 fp,sample-3.pdf,https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations12strengthofagreementforkvaluesaccordingtolandisandkoch
-fp,sample-3.pdf,https://www.wikipedia.org5www.wiktionary.org
 fp,sample-5.pdf,https://www.dailywireless.org/2014/01/03
 fp,sample-5.pdf,https://www.mcelhearn.com/not-a-review-leap-motioncontroller-fails-
 fp,sample-5.pdf,https://www.roborealm.com/help/microsoft
 fn,sample-3.pdf,https://www.gutenberg.org
 fn,sample-3.pdf,https://www.ukp.tu-darmstadt.de
 fn,sample-3.pdf,https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations
-fn,sample-3.pdf,https://www.wikipedia.org
-fn,sample-3.pdf,https://www.wiktionary.org
 fn,sample-5.pdf,https://www.dailywireless.org/2014/01/03/60ghz-backhaul-for-small-cells
 fn,sample-5.pdf,https://www.mcelhearn.com/not-a-review-leap-motioncontroller-fails-in-normal-conditions
 fn,sample-5.pdf,https://www.roborealm.com/help/microsoft%20kinect.php
