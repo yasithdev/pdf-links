@@ -11,8 +11,8 @@ pd.options.display.max_rows = None
 pd.options.display.max_colwidth = None
 pd.options.display.expand_frame_repr = False
 
-REGEXES = [1, 2, 3, 4]
-EXTRACTORS = ['PDFM', 'GROB']
+REGEXES = [3, 4]
+EXTRACTORS = ['PDFIUM', 'PDFM', 'GROB']
 EPSILON = 1e-10  # small constant to avoid ZeroDivisionError
 
 
@@ -80,9 +80,12 @@ def calculate_agg_metrics(metrics: dict, cmd: str) -> dict:
     agg(cmd)
   else:
     for extractor in EXTRACTORS:
-      # aggregate fulltext URL metrics
-      for regex in REGEXES:
-        agg(f"{extractor}-R{regex}-{cmd}")
+      if extractor == "PDFIUM":
+        agg(f"{extractor}-{cmd}")
+      else:
+        # aggregate fulltext URL metrics
+        for regex in REGEXES:
+          agg(f"{extractor}-R{regex}-{cmd}")
 
   return agg_metrics
 
@@ -108,11 +111,16 @@ def run(labels_dir: str, urls_dir: str, cmd: str, out=None):
     else:
       # get URLs from each method
       for extractor in EXTRACTORS:
-        # get fulltext URL metrics
-        for regex in REGEXES:
-          exc = f"{extractor}-R{regex}-{cmd}"
+        if extractor == "PDFIUM":
+          exc = f"{extractor}-{cmd}"
           extracted_urls = set(map(clean, get_urls(f'{urls_dir}/{file_name}-{exc}.txt')))
           metrics[exc] = calculate_metrics(true_urls, extracted_urls)
+        else:
+          # get fulltext URL metrics
+          for regex in REGEXES:
+            exc = f"{extractor}-R{regex}-{cmd}"
+            extracted_urls = set(map(clean, get_urls(f'{urls_dir}/{file_name}-{exc}.txt')))
+            metrics[exc] = calculate_metrics(true_urls, extracted_urls)
     # save metrics
     all_metrics[file_name] = metrics
     # print metric

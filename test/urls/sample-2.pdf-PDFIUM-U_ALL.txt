@@ -1,0 +1,2 @@
+https://nlp.stanford.edu/projects/glove
+https://www.aaai.org

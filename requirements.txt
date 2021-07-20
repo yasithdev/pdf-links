@@ -4,6 +4,7 @@ pypdf2~=1.26.0
 lxml~=4.6.3
 pandas~=1.3.0
 pdfminer.six==20201018
-requests~=2.25.1
+requests~=2.26.0
 validators~=0.18.2
 unidecode~=1.2.0
+pypdfium==0.0.15

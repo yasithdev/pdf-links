@@ -1,5 +1,0 @@
-https://code.google.com
-https://www.gutenberg.org
-https://www.ukp.tu-darmstadt.de/data/text-similarity/text-reuse-annotations
-https://www.wikipedia.org
-https://www.wiktionary.org

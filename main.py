@@ -108,7 +108,7 @@ class Util:
     :return: Canonical URL (or None)
     """
     # sanitize URL
-    url = url.lower().strip(" /\n")
+    url = url.lower().strip(" /\n").replace(" ", "%20")
     # if full URL, return HTTPS/FTP URL
     if url.startswith("http://"):
       return f"https://{url[7:]}"
@@ -341,6 +341,56 @@ class GROBID:
     return "\n".join(lines)
 
 
+class PDFIUM:
+  """
+PyPDFium utility functions for link extraction
+
+"""
+
+  @staticmethod
+  def get_urls(fp: str) -> Set[str]:
+    """
+    Extract Annotated URLs from PDF
+
+    :param fp: Path to PDF
+    :return: Set of URLs of PDF
+    """
+    import pypdfium as pdfium
+    import ctypes
+
+    urls = set()
+    buf_len = 2048
+    buffer = (ctypes.c_ushort * buf_len)()
+    buffer_ = ctypes.cast(buffer, ctypes.POINTER(ctypes.c_ushort))
+    # this line is very important, otherwise it won't work
+    pdfium.FPDF_InitLibraryWithConfig(pdfium.FPDF_LIBRARY_CONFIG(2, None, None, 0))
+
+    doc = pdfium.FPDF_LoadDocument(fp, None)
+    page_count = pdfium.FPDF_GetPageCount(doc)
+    for i in range(page_count):
+      # load PDF page
+      page = pdfium.FPDF_LoadPage(doc, i)
+      # load text in PDF page
+      text = pdfium.FPDFText_LoadPage(page)
+      # Load links in PDF text
+      links = pdfium.FPDFLink_LoadWebLinks(text)
+      link_count = pdfium.FPDFLink_CountWebLinks(links)
+      # get each URL
+      for j in range(link_count):
+        url_length = pdfium.FPDFLink_GetURL(links, j, buffer_, buf_len)
+        url_nums = buffer[:url_length - 1]
+        url = ''.join(map(chr, url_nums))
+        # ignore other protocols and mailto: links
+        if url.startswith('http'):
+          url = Util.canonicalize_url(url)
+          urls.add(url)
+      pdfium.FPDFLink_CloseWebLinks(links)
+      pdfium.FPDFText_ClosePage(text)
+      pdfium.FPDF_ClosePage(page)
+    pdfium.FPDF_CloseDocument(doc)
+    return Util.get_valid_urls(urls)
+
+
 # ======================================================================================================================
 # URL EXTRACTORS
 # ======================================================================================================================
@@ -359,14 +409,14 @@ class Extractor:
   def get_annot_urls(fp: str) -> List[str]:
     return sorted(PyPDF2.get_annot_urls(fp))
 
-  def get_text_urls(self, regex: UrlRegex, fp: str) -> List[str]:
+  def get_text_urls(self, fp: str, **kwargs) -> List[str]:
     raise NotImplementedError('Base Class!')
 
-  def get_all_urls(self, regex: UrlRegex, fp: str) -> List[str]:
+  def get_all_urls(self, fp: str, **kwargs) -> List[str]:
     # extract annotated URLs (baseline, always valid)
     annot_urls = set(self.get_annot_urls(fp))
     # extract full text URLs (error-prone)
-    full_text_urls = set(self.get_text_urls(regex, fp))
+    full_text_urls = set(self.get_text_urls(fp, **kwargs))
     # pick unique URLs from full_text_urls
     full_text_urls = Util.pick_uniq_urls(full_text_urls)
     # pick URLs from full_text_urls do not match (exact/partial) any URL in annot_urls
@@ -384,7 +434,8 @@ class PDFMExtractor(Extractor):
   def get_text(self, fp: str) -> str:
     return PDFMiner.get_full_text(fp)
 
-  def get_text_urls(self, regex: UrlRegex, fp: str) -> List[str]:
+  def get_text_urls(self, fp: str, **kwargs) -> List[str]:
+    regex: UrlRegex = kwargs['regex']
     # extract full text from PDF
     full_text = self.get_text(fp)
     # extract full text URLs
@@ -404,7 +455,8 @@ class GROBExtractor(Extractor):
   def get_text(self, fp: str) -> str:
     return GROBID.get_tei_xml(fp)
 
-  def get_text_urls(self, regex: UrlRegex, fp: str) -> List[str]:
+  def get_text_urls(self, fp: str, **kwargs) -> List[str]:
+    regex: UrlRegex = kwargs['regex']
     # convert PDF to TEI-XML
     tei_xml = self.get_text(fp)
     # extract annotated URLs from TEI-XML (assumed valid)
@@ -423,6 +475,28 @@ class GROBExtractor(Extractor):
     return sorted(tei_urls.union(full_text_urls))
 
 
+class PDFIUMExtractor(Extractor):
+  """
+  URL extractor using PyPDF2 -> PDFIUM
+
+  """
+
+  def get_text(self, fp: str) -> str:
+    # TODO this is a fake full text extraction, as it only returns URLs for now
+    return "\n".join(sorted(PDFIUM.get_urls(fp)))
+
+  def get_text_urls(self, fp: str, **kwargs) -> List[str]:
+    # extract full text from PDF
+    # TODO this is a fake implementation, as it returns newline-concatenated URLs as full text
+    full_text = self.get_text(fp)
+    # extract full text URLs.
+    full_text_urls = set(full_text.split("\n"))
+    # pick unique URLs from full_text_urls
+    full_text_urls = Util.pick_uniq_urls(full_text_urls)
+    # sort and return
+    return sorted(full_text_urls)
+
+
 # ======================================================================================================================
 # MAIN EXECUTION
 # ======================================================================================================================
@@ -432,7 +506,7 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser(description='Link Extractor')
   parser.add_argument('-c', required=True, help="command to run", choices=['U_ANN', 'TXT', 'U_TXT', 'U_ALL'])
-  parser.add_argument('-e', required=False, help="extractor to use", choices=['PDFM', 'GROB'])
+  parser.add_argument('-e', required=False, help="extractor to use", choices=['PDFM', 'PDFIUM', 'GROB'])
   parser.add_argument('-r', metavar='OPTION_NUMBER', required=False, help="regex option to use", type=int)
   parser.add_argument('-i', metavar='INPUT_FILE', required=True, help="path to input file", type=str)
   parser.add_argument('-o', metavar='OUTPUT_FILE', required=False, help="path to output file", type=str)
@@ -440,22 +514,28 @@ if __name__ == '__main__':
 
   # execute command
   if args.c == 'U_ANN':
-    result = "\n".join(PyPDF2.get_annot_urls(args.i))
+    result = "\n".join(sorted(PyPDF2.get_annot_urls(args.i)))
   else:
     # select extractor to use
     if args.e == 'PDFM':
       e = PDFMExtractor()
+    elif args.e == 'PDFIUM':
+      e = PDFIUMExtractor()
     elif args.e == 'GROB':
       e = GROBExtractor()
     else:
       raise NotImplementedError('Extractor Does Not Exist!')
+    # prepare kwargs
+    kw = {}
+    if args.r is not None:
+      kw['regex'] = UrlRegex(args.r)
     # run extractor
     if args.c == 'TXT':
       result = e.get_text(args.i)
     elif args.c == 'U_TXT':
-      result = "\n".join(e.get_text_urls(UrlRegex(args.r), args.i))
+      result = "\n".join(e.get_text_urls(args.i, **kw))
     elif args.c == 'U_ALL':
-      result = "\n".join(e.get_all_urls(UrlRegex(args.r), args.i))
+      result = "\n".join(e.get_all_urls(args.i, **kw))
     else:
       raise NotImplementedError('Command Does Not Exist!')
 
