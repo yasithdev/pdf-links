@@ -65,5 +65,5 @@ links-pdfm:
 # EVALUATION ===========================================================================================================
 evaluate:
 	for cmd in U_ANN U_TXT U_ALL; do \
-		./evaluate.py -l test/labels -u test/urls -c $$cmd -o test/summary-$$cmd.csv >test/summary-$$cmd.txt; \
+		./evaluate.py -l test/labels -u test/urls -c $$cmd -o test/ >test/summary-$$cmd.txt; \
 	done

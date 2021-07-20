@@ -94,7 +94,7 @@ def clean(url: str) -> str:
   return url.strip().lower().rstrip('.,/?')
 
 
-def run(labels_dir: str, urls_dir: str, cmd: str, out=None):
+def run(labels_dir: str, urls_dir: str, cmd: str, prefix=None):
   all_metrics = {}
 
   # calculate and print metrics for each file
@@ -135,17 +135,19 @@ def run(labels_dir: str, urls_dir: str, cmd: str, out=None):
   print(df_agg[['tp', 'fp', 'fn', 'mac_p', 'mac_r', 'mac_f', 'mic_p', 'mic_r', 'mic_f']], end="\n\n")
 
   # print which urls are tp, fp, fn, and tn of each method
-  if out:
-    table = pd.DataFrame(columns=['method', 'metric', 'sample', 'url'])
+  if prefix:
     for extractor in sorted(agg_metrics.keys()):
+      table = pd.DataFrame(columns=['metric', 'sample', 'url'])
       data = agg_metrics[extractor]
       # transform into table format
       for metric in ['tp', 'fp', 'fn']:
         for sample in data[f'{metric}_urls']:
           for url in data[f'{metric}_urls'][sample]:
-            table.loc[len(table)] = [extractor, metric, sample, url]
-    table = table.set_index(['method', 'metric', 'sample'])
-    table.to_csv(out)
+            table.loc[len(table)] = [metric, sample, url]
+      # filter out true positives
+      table = table[table['metric'] != 'tp']
+      table = table.set_index(['metric', 'sample'])
+      table.to_csv(f"{prefix.strip(' /')}/summary-{extractor}.csv")
 
 
 if __name__ == '__main__':
@@ -155,9 +157,9 @@ if __name__ == '__main__':
   parser.add_argument('-l', metavar="LABELS_PATH", required=True, help="path to labels directory", type=str)
   parser.add_argument('-u', metavar="URLS_PATH", required=True, help="path to urls directory", type=str)
   parser.add_argument('-c', metavar="COMMAND", required=True, help="name of command", type=str)
-  parser.add_argument('-o', metavar="OUT_CSV", required=False, help="path to output csv", type=str)
+  parser.add_argument('-o', metavar="OUT_CSV_PREFIX", required=False, help="path (with prefix) to output csv", type=str)
   args = parser.parse_args()
   if args.o:
-    run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '), str(args.c), out=str(args.o))
+    run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '), str(args.c), prefix=str(args.o))
   else:
     run(str(args.l).rstrip('/ '), str(args.u).rstrip('/ '), str(args.c))
