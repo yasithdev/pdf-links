@@ -1,0 +1,224 @@
+File: test/samples/sample-1.pdf [Command: U_ANN]
+generated in 0.270604 seconds
+File: test/samples/sample-2.pdf [Command: U_ANN]
+generated in 0.017547 seconds
+File: test/samples/sample-3.pdf [Command: U_ANN]
+generated in 0.025071000000000003 seconds
+File: test/samples/sample-4.pdf [Command: U_ANN]
+generated in 0.133793 seconds
+File: test/samples/sample-5.pdf [Command: U_ANN]
+generated in 0.019979 seconds
+File: test/samples/sample-6.pdf [Command: U_ANN]
+generated in 0.027719 seconds
+File: test/samples/sample-7.pdf [Command: U_ANN]
+generated in 0.011916000000000001 seconds
+File: test/samples/sample-8.pdf [Command: U_ANN]
+generated in 0.099639 seconds
+File: test/samples/sample-1.pdf [Command: TXT] [Executor: PDFIUM]
+generated in 0.43240300000000004 seconds
+File: test/samples/sample-2.pdf [Command: TXT] [Executor: PDFIUM]
+generated in 0.320129 seconds
+File: test/samples/sample-3.pdf [Command: TXT] [Executor: PDFIUM]
+generated in 0.217339 seconds
+File: test/samples/sample-4.pdf [Command: TXT] [Executor: PDFIUM]
+generated in 0.189415 seconds
+File: test/samples/sample-5.pdf [Command: TXT] [Executor: PDFIUM]
+generated in 0.33331700000000003 seconds
+File: test/samples/sample-6.pdf [Command: TXT] [Executor: PDFIUM]
+generated in 0.22912400000000002 seconds
+File: test/samples/sample-7.pdf [Command: TXT] [Executor: PDFIUM]
+generated in 0.134157 seconds
+File: test/samples/sample-8.pdf [Command: TXT] [Executor: PDFIUM]
+generated in 0.134643 seconds
+File: test/samples/sample-1.pdf [Executor: PDFIUM] [Command: U_TXT]
+generated in 0.30826800000000004 seconds
+File: test/samples/sample-1.pdf [Executor: PDFIUM] [Command: U_ALL]
+generated in 0.461089 seconds
+File: test/samples/sample-2.pdf [Executor: PDFIUM] [Command: U_TXT]
+generated in 0.30029900000000004 seconds
+File: test/samples/sample-2.pdf [Executor: PDFIUM] [Command: U_ALL]
+generated in 0.32011700000000004 seconds
+File: test/samples/sample-3.pdf [Executor: PDFIUM] [Command: U_TXT]
+generated in 0.21401 seconds
+File: test/samples/sample-3.pdf [Executor: PDFIUM] [Command: U_ALL]
+generated in 0.231188 seconds
+File: test/samples/sample-4.pdf [Executor: PDFIUM] [Command: U_TXT]
+generated in 0.20691800000000002 seconds
+File: test/samples/sample-4.pdf [Executor: PDFIUM] [Command: U_ALL]
+generated in 0.23328100000000002 seconds
+File: test/samples/sample-5.pdf [Executor: PDFIUM] [Command: U_TXT]
+generated in 0.318103 seconds
+File: test/samples/sample-5.pdf [Executor: PDFIUM] [Command: U_ALL]
+generated in 0.353434 seconds
+File: test/samples/sample-6.pdf [Executor: PDFIUM] [Command: U_TXT]
+generated in 0.231632 seconds
+File: test/samples/sample-6.pdf [Executor: PDFIUM] [Command: U_ALL]
+generated in 0.262033 seconds
+File: test/samples/sample-7.pdf [Executor: PDFIUM] [Command: U_TXT]
+generated in 0.12817 seconds
+File: test/samples/sample-7.pdf [Executor: PDFIUM] [Command: U_ALL]
+generated in 0.140209 seconds
+File: test/samples/sample-8.pdf [Executor: PDFIUM] [Command: U_TXT]
+generated in 0.132389 seconds
+File: test/samples/sample-8.pdf [Executor: PDFIUM] [Command: U_ALL]
+generated in 0.148984 seconds
+File: test/samples/sample-1.pdf [Command: TXT] [Executor: GROB]
+generated in 4.786857 seconds
+File: test/samples/sample-2.pdf [Command: TXT] [Executor: GROB]
+generated in 8.119052 seconds
+File: test/samples/sample-3.pdf [Command: TXT] [Executor: GROB]
+generated in 2.16345 seconds
+File: test/samples/sample-4.pdf [Command: TXT] [Executor: GROB]
+generated in 1.012126 seconds
+File: test/samples/sample-5.pdf [Command: TXT] [Executor: GROB]
+generated in 2.8987290000000003 seconds
+File: test/samples/sample-6.pdf [Command: TXT] [Executor: GROB]
+generated in 1.6561890000000001 seconds
+File: test/samples/sample-7.pdf [Command: TXT] [Executor: GROB]
+generated in 0.355368 seconds
+File: test/samples/sample-8.pdf [Command: TXT] [Executor: GROB]
+generated in 0.403884 seconds
+File: test/samples/sample-1.pdf [Executor: GROB] [Command: U_TXT] [Regex: 3]
+generated in 5.075264000000001 seconds
+File: test/samples/sample-1.pdf [Executor: GROB] [Command: U_TXT] [Regex: 4]
+generated in 5.0050680000000005 seconds
+File: test/samples/sample-1.pdf [Executor: GROB] [Command: U_ALL] [Regex: 3]
+generated in 5.2039290000000005 seconds
+File: test/samples/sample-1.pdf [Executor: GROB] [Command: U_ALL] [Regex: 4]
+generated in 5.172051000000001 seconds
+File: test/samples/sample-2.pdf [Executor: GROB] [Command: U_TXT] [Regex: 3]
+generated in 8.257009 seconds
+File: test/samples/sample-2.pdf [Executor: GROB] [Command: U_TXT] [Regex: 4]
+generated in 8.185029 seconds
+File: test/samples/sample-2.pdf [Executor: GROB] [Command: U_ALL] [Regex: 3]
+generated in 8.354996 seconds
+File: test/samples/sample-2.pdf [Executor: GROB] [Command: U_ALL] [Regex: 4]
+generated in 8.174132 seconds
+File: test/samples/sample-3.pdf [Executor: GROB] [Command: U_TXT] [Regex: 3]
+generated in 2.181989 seconds
+File: test/samples/sample-3.pdf [Executor: GROB] [Command: U_TXT] [Regex: 4]
+generated in 2.315423 seconds
+File: test/samples/sample-3.pdf [Executor: GROB] [Command: U_ALL] [Regex: 3]
+generated in 2.418826 seconds
+File: test/samples/sample-3.pdf [Executor: GROB] [Command: U_ALL] [Regex: 4]
+generated in 2.554008 seconds
+File: test/samples/sample-4.pdf [Executor: GROB] [Command: U_TXT] [Regex: 3]
+generated in 1.4330420000000001 seconds
+File: test/samples/sample-4.pdf [Executor: GROB] [Command: U_TXT] [Regex: 4]
+generated in 1.3527250000000002 seconds
+File: test/samples/sample-4.pdf [Executor: GROB] [Command: U_ALL] [Regex: 3]
+generated in 1.547929 seconds
+File: test/samples/sample-4.pdf [Executor: GROB] [Command: U_ALL] [Regex: 4]
+generated in 1.7198460000000002 seconds
+File: test/samples/sample-5.pdf [Executor: GROB] [Command: U_TXT] [Regex: 3]
+generated in 3.5477250000000002 seconds
+File: test/samples/sample-5.pdf [Executor: GROB] [Command: U_TXT] [Regex: 4]
+generated in 3.767125 seconds
+File: test/samples/sample-5.pdf [Executor: GROB] [Command: U_ALL] [Regex: 3]
+generated in 3.9295400000000003 seconds
+File: test/samples/sample-5.pdf [Executor: GROB] [Command: U_ALL] [Regex: 4]
+generated in 3.5714360000000003 seconds
+File: test/samples/sample-6.pdf [Executor: GROB] [Command: U_TXT] [Regex: 3]
+generated in 2.150135 seconds
+File: test/samples/sample-6.pdf [Executor: GROB] [Command: U_TXT] [Regex: 4]
+generated in 2.249743 seconds
+File: test/samples/sample-6.pdf [Executor: GROB] [Command: U_ALL] [Regex: 3]
+generated in 2.220367 seconds
+File: test/samples/sample-6.pdf [Executor: GROB] [Command: U_ALL] [Regex: 4]
+generated in 2.32473 seconds
+File: test/samples/sample-7.pdf [Executor: GROB] [Command: U_TXT] [Regex: 3]
+generated in 0.49522900000000003 seconds
+File: test/samples/sample-7.pdf [Executor: GROB] [Command: U_TXT] [Regex: 4]
+generated in 0.533512 seconds
+File: test/samples/sample-7.pdf [Executor: GROB] [Command: U_ALL] [Regex: 3]
+generated in 0.6576470000000001 seconds
+File: test/samples/sample-7.pdf [Executor: GROB] [Command: U_ALL] [Regex: 4]
+generated in 0.566623 seconds
+File: test/samples/sample-8.pdf [Executor: GROB] [Command: U_TXT] [Regex: 3]
+generated in 0.6208750000000001 seconds
+File: test/samples/sample-8.pdf [Executor: GROB] [Command: U_TXT] [Regex: 4]
+generated in 0.719696 seconds
+File: test/samples/sample-8.pdf [Executor: GROB] [Command: U_ALL] [Regex: 3]
+generated in 0.621967 seconds
+File: test/samples/sample-8.pdf [Executor: GROB] [Command: U_ALL] [Regex: 4]
+generated in 0.48325100000000004 seconds
+File: test/samples/sample-1.pdf [Command: TXT] [Executor: PDFM]
+generated in 5.339213 seconds
+File: test/samples/sample-2.pdf [Command: TXT] [Executor: PDFM]
+generated in 2.066716 seconds
+File: test/samples/sample-3.pdf [Command: TXT] [Executor: PDFM]
+generated in 1.118495 seconds
+File: test/samples/sample-4.pdf [Command: TXT] [Executor: PDFM]
+generated in 1.181971 seconds
+File: test/samples/sample-5.pdf [Command: TXT] [Executor: PDFM]
+generated in 4.929685 seconds
+File: test/samples/sample-6.pdf [Command: TXT] [Executor: PDFM]
+generated in 1.23871 seconds
+File: test/samples/sample-7.pdf [Command: TXT] [Executor: PDFM]
+generated in 0.25279100000000004 seconds
+File: test/samples/sample-8.pdf [Command: TXT] [Executor: PDFM]
+generated in 0.789698 seconds
+File: test/samples/sample-1.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 3]
+generated in 4.753668 seconds
+File: test/samples/sample-1.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 4]
+generated in 4.878387 seconds
+File: test/samples/sample-1.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 3]
+generated in 5.051718 seconds
+File: test/samples/sample-1.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 4]
+generated in 5.040115 seconds
+File: test/samples/sample-2.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 3]
+generated in 2.627978 seconds
+File: test/samples/sample-2.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 4]
+generated in 2.3173540000000004 seconds
+File: test/samples/sample-2.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 3]
+generated in 2.224139 seconds
+File: test/samples/sample-2.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 4]
+generated in 2.8403840000000002 seconds
+File: test/samples/sample-3.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 3]
+generated in 1.8646770000000001 seconds
+File: test/samples/sample-3.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 4]
+generated in 1.366104 seconds
+File: test/samples/sample-3.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 3]
+generated in 1.54335 seconds
+File: test/samples/sample-3.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 4]
+generated in 1.2307430000000001 seconds
+File: test/samples/sample-4.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 3]
+generated in 1.488734 seconds
+File: test/samples/sample-4.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 4]
+generated in 1.408284 seconds
+File: test/samples/sample-4.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 3]
+generated in 1.3997950000000001 seconds
+File: test/samples/sample-4.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 4]
+generated in 1.279163 seconds
+File: test/samples/sample-5.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 3]
+generated in 4.5508750000000004 seconds
+File: test/samples/sample-5.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 4]
+generated in 5.194276 seconds
+File: test/samples/sample-5.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 3]
+generated in 4.457262 seconds
+File: test/samples/sample-5.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 4]
+generated in 4.896425000000001 seconds
+File: test/samples/sample-6.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 3]
+generated in 1.2982090000000002 seconds
+File: test/samples/sample-6.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 4]
+generated in 1.2984220000000002 seconds
+File: test/samples/sample-6.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 3]
+generated in 1.330643 seconds
+File: test/samples/sample-6.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 4]
+generated in 1.447708 seconds
+File: test/samples/sample-7.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 3]
+generated in 0.374304 seconds
+File: test/samples/sample-7.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 4]
+generated in 0.32142600000000005 seconds
+File: test/samples/sample-7.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 3]
+generated in 0.323813 seconds
+File: test/samples/sample-7.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 4]
+generated in 0.33651400000000004 seconds
+File: test/samples/sample-8.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 3]
+generated in 0.9286650000000001 seconds
+File: test/samples/sample-8.pdf [Executor: PDFM] [Command: U_TXT] [Regex: 4]
+generated in 0.8572310000000001 seconds
+File: test/samples/sample-8.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 3]
+generated in 0.759688 seconds
+File: test/samples/sample-8.pdf [Executor: PDFM] [Command: U_ALL] [Regex: 4]
+generated in 0.753544 seconds

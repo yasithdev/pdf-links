@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import re
+import time
 from typing import Optional, List, Set
 
 import bs4
@@ -514,7 +515,9 @@ if __name__ == '__main__':
 
   # execute command
   if args.c == 'U_ANN':
+    time_start = time.time_ns()
     result = "\n".join(sorted(PyPDF2.get_annot_urls(args.i)))
+    time_end = time.time_ns()
   else:
     # select extractor to use
     if args.e == 'PDFM':
@@ -530,6 +533,7 @@ if __name__ == '__main__':
     if args.r is not None:
       kw['regex'] = UrlRegex(args.r)
     # run extractor
+    time_start = time.time_ns()
     if args.c == 'TXT':
       result = e.get_text(args.i)
     elif args.c == 'U_TXT':
@@ -538,6 +542,10 @@ if __name__ == '__main__':
       result = "\n".join(e.get_all_urls(args.i, **kw))
     else:
       raise NotImplementedError('Command Does Not Exist!')
+    time_end = time.time_ns()
+
+  duration = (time_end - time_start) * 1e-9
+  print(f'generated in {duration} seconds')
 
   # write output
   if args.o:

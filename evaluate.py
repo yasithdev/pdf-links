@@ -144,8 +144,6 @@ def run(labels_dir: str, urls_dir: str, cmd: str, prefix=None):
         for sample in data[f'{metric}_urls']:
           for url in data[f'{metric}_urls'][sample]:
             table.loc[len(table)] = [metric, sample, url]
-      # filter out true positives
-      table = table[table['metric'] != 'tp']
       table = table.set_index(['metric', 'sample'])
       table.to_csv(f"{prefix.strip(' /')}/summary-{extractor}.csv")
 
