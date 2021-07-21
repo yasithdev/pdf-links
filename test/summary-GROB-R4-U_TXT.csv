@@ -31,6 +31,7 @@ tp,sample-5.pdf,https://www.dailywireless.org/2014/01/03/60ghz-backhaul-for-smal
 tp,sample-5.pdf,https://www.mcelhearn.com/not-a-review-leap-motioncontroller-fails-in-normal-conditions
 tp,sample-5.pdf,https://www.tdk.com
 tp,sample-6.pdf,https://terramood.informatics.indiana.edu/data
+tp,sample-6.pdf,https://www.ccs.neu.edu/home/amislove/twittermood
 tp,sample-6.pdf,https://www.cs.pitt.edu/mpqa/opinionfinderrelease
 tp,sample-6.pdf,https://www.gallup.com/poll/122840/gallup-daily-economic-indexes.aspx
 tp,sample-6.pdf,https://www.sca.isr.umich.edu
@@ -76,5 +77,4 @@ fn,sample-3.pdf,https://www.ukp.tu-darmstadt.de
 fn,sample-5.pdf,"https://www.pcmag.com/article2/0,2817,2454187,00.asp"
 fn,sample-5.pdf,https://www.roborealm.com/help/microsoft%20kinect.php
 fn,sample-5.pdf,https://www.vicon.com
-fn,sample-6.pdf,https://www.ccs.neu.edu/home/amislove/twittermood
 fn,sample-7.pdf,https://github.com/nirdslab/streaminghub-conduit

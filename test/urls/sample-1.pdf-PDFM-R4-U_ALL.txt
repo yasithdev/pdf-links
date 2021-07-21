@@ -17,7 +17,6 @@ https://mpi-inf.mpg.de/mpiigaze
 https://phi-ai.org/gazehub
 https://pypi.org/project/dlib/19.6.0
 https://sh.rice.edu/cognitive-engagement/%20tabletgaze
-https://sh.rice.edu/cognitive-engagement/tabletgaze
 https://sites.google.com/nvidia.com/nvgaze
 https://ut-vision.org/datasets
 https://www.sciencedirect.com/science/article/pii/s0169814115000761
