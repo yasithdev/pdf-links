@@ -4,33 +4,33 @@ OVERALL
 ============================
 
 =====U_ANN=====
-value    0.08091
+value    0.080037
 dtype: float64
 
 =====TXT=====
              value
 executor          
-GROB      2.793706
-PDFIUM    0.278797
-PDFM      1.991002
+GROB      2.691834
+PDFIUM    0.272377
+PDFM      1.906046
 
 =====U_TXT=====
                    value
 executor regex          
-GROB     3      2.956544
-         4      2.955790
-PDFIUM   -      0.248993
-PDFM     3      2.134165
-         4      2.080828
+GROB     3      2.888267
+         4      2.902433
+PDFIUM   -      0.240908
+PDFM     3      2.042955
+         4      2.006117
 
 =====U_ALL=====
                    value
 executor regex          
-GROB     3      3.001453
-         4      2.982846
-PDFIUM   -      0.285143
-PDFM     3      2.131529
-         4      2.122509
+GROB     3      2.920776
+         4      2.927634
+PDFIUM   -      0.275661
+PDFM     3      2.071187
+         4      2.043983
 
 ============================
 PER FILE
@@ -39,127 +39,127 @@ PER FILE
 =====U_ANN=====
                  value
 file                  
-sample-1.pdf  0.279882
-sample-2.pdf  0.018846
-sample-3.pdf  0.024229
-sample-4.pdf  0.139384
-sample-5.pdf  0.025165
-sample-6.pdf  0.035071
-sample-7.pdf  0.013751
-sample-8.pdf  0.110952
+sample-1.pdf  0.277881
+sample-2.pdf  0.017049
+sample-3.pdf  0.024360
+sample-4.pdf  0.143873
+sample-5.pdf  0.023161
+sample-6.pdf  0.032681
+sample-7.pdf  0.014884
+sample-8.pdf  0.106405
 
 =====TXT=====
                           value
 file         executor          
-sample-1.pdf GROB      5.018376
-             PDFIUM    0.484788
-             PDFM      4.839389
-sample-2.pdf GROB      8.386579
-             PDFIUM    0.343545
-             PDFM      2.018455
-sample-3.pdf GROB      2.175835
-             PDFIUM    0.251064
-             PDFM      0.984383
-sample-4.pdf GROB      1.093631
-             PDFIUM    0.216671
-             PDFM      1.198888
-sample-5.pdf GROB      3.104730
-             PDFIUM    0.380069
-             PDFM      4.689869
-sample-6.pdf GROB      1.736195
-             PDFIUM    0.263865
-             PDFM      1.246689
-sample-7.pdf GROB      0.395897
-             PDFIUM    0.144545
-             PDFM      0.236953
-sample-8.pdf GROB      0.438405
-             PDFIUM    0.145826
-             PDFM      0.713392
+sample-1.pdf GROB      4.788780
+             PDFIUM    0.471336
+             PDFM      4.505199
+sample-2.pdf GROB      8.186879
+             PDFIUM    0.333792
+             PDFM      1.939257
+sample-3.pdf GROB      2.100155
+             PDFIUM    0.246829
+             PDFM      0.953689
+sample-4.pdf GROB      1.057262
+             PDFIUM    0.221765
+             PDFM      1.153715
+sample-5.pdf GROB      2.944667
+             PDFIUM    0.362397
+             PDFM      4.531250
+sample-6.pdf GROB      1.669420
+             PDFIUM    0.251245
+             PDFM      1.208901
+sample-7.pdf GROB      0.374607
+             PDFIUM    0.146492
+             PDFM      0.235401
+sample-8.pdf GROB      0.412902
+             PDFIUM    0.145164
+             PDFM      0.720955
 
 =====U_TXT=====
                                 value
 file         executor regex          
-sample-1.pdf GROB     3      5.305108
-                      4      5.348401
-             PDFIUM   -      0.337833
-             PDFM     3      4.949092
-                      4      4.687423
-sample-2.pdf GROB     3      8.584824
-                      4      8.473670
-             PDFIUM   -      0.313312
-             PDFM     3      2.210949
-                      4      2.213403
-sample-3.pdf GROB     3      2.273024
-                      4      2.322364
-             PDFIUM   -      0.233877
-             PDFM     3      1.415439
-                      4      1.176162
-sample-4.pdf GROB     3      1.268042
-                      4      1.276822
-             PDFIUM   -      0.201215
-             PDFM     3      1.349783
-                      4      1.337571
-sample-5.pdf GROB     3      3.228838
-                      4      3.152393
-             PDFIUM   -      0.368982
-             PDFM     3      4.698168
-                      4      4.804200
-sample-6.pdf GROB     3      1.928658
-                      4      1.990508
-             PDFIUM   -      0.247692
-             PDFM     3      1.313822
-                      4      1.306243
-sample-7.pdf GROB     3      0.510403
-                      4      0.511648
-             PDFIUM   -      0.138188
-             PDFM     3      0.340202
-                      4      0.335762
-sample-8.pdf GROB     3      0.553458
-                      4      0.570516
-             PDFIUM   -      0.150847
-             PDFM     3      0.795867
-                      4      0.785863
+sample-1.pdf GROB     3      5.084473
+                      4      5.075718
+             PDFIUM   -      0.331472
+             PDFM     3      4.697039
+                      4      4.612510
+sample-2.pdf GROB     3      8.433929
+                      4      8.431001
+             PDFIUM   -      0.297751
+             PDFM     3      2.077198
+                      4      2.083197
+sample-3.pdf GROB     3      2.265315
+                      4      2.394286
+             PDFIUM   -      0.229439
+             PDFM     3      1.313297
+                      4      1.090942
+sample-4.pdf GROB     3      1.244983
+                      4      1.236292
+             PDFIUM   -      0.204301
+             PDFM     3      1.264402
+                      4      1.272561
+sample-5.pdf GROB     3      3.165530
+                      4      3.180658
+             PDFIUM   -      0.335159
+             PDFM     3      4.604273
+                      4      4.600478
+sample-6.pdf GROB     3      1.893498
+                      4      1.894740
+             PDFIUM   -      0.246026
+             PDFM     3      1.289541
+                      4      1.298487
+sample-7.pdf GROB     3      0.492504
+                      4      0.491854
+             PDFIUM   -      0.140472
+             PDFM     3      0.319244
+                      4      0.321779
+sample-8.pdf GROB     3      0.525904
+                      4      0.514920
+             PDFIUM   -      0.142645
+             PDFM     3      0.778650
+                      4      0.768987
 
 =====U_ALL=====
                                 value
 file         executor regex          
-sample-1.pdf GROB     3      5.494344
-                      4      5.396038
-             PDFIUM   -      0.495676
-             PDFM     3      4.934818
-                      4      5.019854
-sample-2.pdf GROB     3      8.465048
-                      4      8.358290
-             PDFIUM   -      0.333611
-             PDFM     3      2.213191
-                      4      2.206633
-sample-3.pdf GROB     3      2.431978
-                      4      2.451408
-             PDFIUM   -      0.244907
-             PDFM     3      1.375476
-                      4      1.139333
-sample-4.pdf GROB     3      1.302626
-                      4      1.338486
-             PDFIUM   -      0.251334
-             PDFM     3      1.352966
-                      4      1.361662
-sample-5.pdf GROB     3      3.199115
-                      4      3.242369
-             PDFIUM   -      0.373320
-             PDFM     3      4.688615
-                      4      4.772393
-sample-6.pdf GROB     3      2.015595
-                      4      2.005870
-             PDFIUM   -      0.277948
-             PDFM     3      1.335022
-                      4      1.332617
-sample-7.pdf GROB     3      0.539828
-                      4      0.523523
-             PDFIUM   -      0.147189
-             PDFM     3      0.345392
-                      4      0.341352
-sample-8.pdf GROB     3      0.563087
-                      4      0.546781
-             PDFIUM   -      0.157158
-             PDFM     3      0.806752
-                      4      0.806231
+sample-1.pdf GROB     3      5.206332
+                      4      5.333903
+             PDFIUM   -      0.470183
+             PDFM     3      4.775225
+                      4      4.754829
+sample-2.pdf GROB     3      8.412194
+                      4      8.331343
+             PDFIUM   -      0.314016
+             PDFM     3      2.065620
+                      4      2.098685
+sample-3.pdf GROB     3      2.395286
+                      4      2.396561
+             PDFIUM   -      0.247176
+             PDFM     3      1.297650
+                      4      1.107246
+sample-4.pdf GROB     3      1.271867
+                      4      1.254191
+             PDFIUM   -      0.239276
+             PDFM     3      1.310294
+                      4      1.330048
+sample-5.pdf GROB     3      3.167549
+                      4      3.189255
+             PDFIUM   -      0.353895
+             PDFM     3      4.662265
+                      4      4.627669
+sample-6.pdf GROB     3      1.895014
+                      4      1.913431
+             PDFIUM   -      0.271227
+             PDFM     3      1.355236
+                      4      1.316465
+sample-7.pdf GROB     3      0.489564
+                      4      0.493865
+             PDFIUM   -      0.155775
+             PDFM     3      0.326560
+                      4      0.332023
+sample-8.pdf GROB     3      0.528400
+                      4      0.508527
+             PDFIUM   -      0.153743
+             PDFM     3      0.776643
+                      4      0.784896
